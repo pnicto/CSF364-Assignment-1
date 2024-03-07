@@ -462,21 +462,7 @@ clean:	clean_shell_$(PLATFORM_SHELL)
 
 clean_shell_sh:
     # remove desktop build files
-    ifeq ($(PLATFORM_OS),LINUX)
-		find . -type f -executable -delete
-		rm -fv *.o
-    endif
-    ifeq ($(PLATFORM_OS),OSX)
-		find . -type f -perm +ugo+x -delete
-		rm -f *.o
-    endif
-    # remove web output files
-    ifeq ($(PLATFORM_OS),LINUX)
-		rm -fv *.o $(PROJECT_NAME).data $(PROJECT_NAME).html $(PROJECT_NAME).js $(PROJECT_NAME).wasm
-    endif
-    ifeq ($(PLATFORM_OS),OSX)
-		rm -f *.o $(PROJECT_NAME).data $(PROJECT_NAME).html $(PROJECT_NAME).js $(PROJECT_NAME).wasm
-    endif
+	@rm -rf $(OUTPUT_DIR)
 
 # Set specific target variable
 clean_shell_cmd: SHELL=cmd
