@@ -1,0 +1,18 @@
+#!/bin/bash
+WATCH_DIR=$(realpath .)
+
+platform="$1"
+
+if [ -z "$platform" ]; then
+	echo "Usage: $0 PLATFORM"
+	echo "  PLATFORM: PLATFORM_WEB, PLATFORM_DESKTOP"
+	exit 1
+fi
+
+# Monitor file changes
+echo "Monitoring $WATCH_DIR for changes..."
+while inotifywait -e modify -e create -e delete -e move "$WATCH_DIR"; do
+	clear
+	eval "./run"
+	eval "make PLATFORM=$platform"
+done
