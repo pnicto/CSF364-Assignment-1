@@ -2,21 +2,13 @@
     "configurations": [
         {
             "name": "raylib web",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "external/raylib-web/**",
-                "/usr/lib/emscripten/system/**"
-            ],
-            "defines": ["PLATFORM_WEB"]
+            "includePath": ["${workspaceFolder}/include/**", "external/**"],
+            "defines": ["PLATFORM_WEB=1"]
         },
         {
             "name": "raylib desktop",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "external/raylib-desktop/**",
-                "/usr/lib/emscripten/system/**"
-            ],
-            "defines": ["PLATFORM_DESKTOP"]
+            "includePath": ["${workspaceFolder}/include/**", "external/**"],
+            "defines": ["PLATFORM_DESKTOP=1"]
         }
     ],
     "version": 4
