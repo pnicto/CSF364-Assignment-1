@@ -6,7 +6,7 @@
 
 -   Install [Visual Studio Code](https://code.visualstudio.com/). You are free to use other text editors and IDEs but you will be on your own for the intellisense setup.
 -   Install [emscripten](https://emscripten.org/docs/getting_started/downloads.html).
--   In the `.vscode/c_cpp_properties.json` file, add the installed emscripten's `include` and `lib` files.
+-   In the `.vscode/c_cpp_properties.json` file, add the installed emscripten's `include` and `lib` paths only if the existing path is not the same or let me(@pnicto) know where it is installed so I can try making it same for everyone.
 -   There should be no errors when you open the project `cpp` files in `VSCode`.
 -   [Optional] Install `live-server` using `pnpm i`.
 -   Test your setup by running both the commands. Note that both commands should run successfully, especially the first one should not fail if you have setup everything correctly.
