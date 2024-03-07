@@ -5,6 +5,7 @@
 ## Setup
 
 -   Install [Visual Studio Code](https://code.visualstudio.com/). You are free to use other text editors and IDEs but you will be on your own for the intellisense setup.
+-   Install raylib dependencies for your operating system following the wiki [here](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
 -   Install [emscripten](https://emscripten.org/docs/getting_started/downloads.html) in the `external` directory.
     ```bash
         # run these commands in the project root
