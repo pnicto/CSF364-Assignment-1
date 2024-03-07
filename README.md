@@ -5,9 +5,21 @@
 ## Setup
 
 -   Install [Visual Studio Code](https://code.visualstudio.com/). You are free to use other text editors and IDEs but you will be on your own for the intellisense setup.
--   Install [emscripten](https://emscripten.org/docs/getting_started/downloads.html).
--   In the `.vscode/c_cpp_properties.json` file, add the installed emscripten's `include` and `lib` paths only if the existing path is not the same or let me(@pnicto) know where it is installed so I can try making it same for everyone.
--   There should be no errors when you open the project `cpp` files in `VSCode`.
+-   Install [emscripten](https://emscripten.org/docs/getting_started/downloads.html) in the `external` directory.
+    ```bash
+        # run these commands in the project root
+        cd external
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        # this is optional
+        # rm -rf .git
+        ./emsdk install latest
+        ./emsdk activate latest # it shows you some information on updating the PATH
+        # verify the installation
+        emcc --check
+    ```
+-   In `VSCode`, in the command center(<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>), choose the `Select configuration` option given by the `C/C++` extension by `Microsoft`. Choose the `raylib web` option.
+-   There should be no errors when you open the project's `cpp` files in `VSCode`.
 -   [Optional] Install `live-server` using `pnpm i`.
 -   Test your setup by running both the commands. Note that both commands should run successfully, especially the first one should not fail if you have setup everything correctly.
 
