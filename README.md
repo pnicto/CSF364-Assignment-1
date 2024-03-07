@@ -15,7 +15,7 @@
         # this is optional
         # rm -rf .git
         ./emsdk install latest
-        ./emsdk activate latest # it shows you some information on updating the PATH
+        ./emsdk activate latest # it shows you some information on updating the PATH either follow them or do it on your own
         # verify the installation
         emcc --check
     ```
