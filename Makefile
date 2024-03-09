@@ -253,7 +253,7 @@ endif
 # Define include paths for required headers: INCLUDE_PATHS
 # NOTE: Some external/extras libraries could be required (stb, physac, easings...)
 #------------------------------------------------------------------------------------------------
-INCLUDE_PATHS = -I./include -I$(RAYLIB_PATH)/include -I$(RAYLIB_PATH)/src/external -I$(RAYLIB_PATH)/src/extras
+INCLUDE_PATHS = -I./include -I$(RAYLIB_PATH)/include -I$(RAYLIB_PATH)/src/external -I$(RAYLIB_PATH)/src/extras -I./external/raygui/src
 
 # Define additional directories containing required header files
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
