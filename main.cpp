@@ -13,8 +13,6 @@ EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-Camera camera = {0};
-Vector3 cubePosition = {0};
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -67,7 +65,7 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    UpdateCamera(&camera, CAMERA_ORBITAL);
+
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -75,18 +73,6 @@ static void UpdateDrawFrame(void)
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
-
-    BeginMode3D(camera);
-
-    DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, RED);
-    DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, GREEN);
-    DrawGrid(15, 1.0f);
-
-    EndMode3D();
-
-    DrawText("This is a raylib example", 10, 40, 20, MAGENTA);
-
-    DrawFPS(10, 10);
 
     EndDrawing();
     //----------------------------------------------------------------------------------
