@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
 
-#include "file1.h"
-#include "file2.h"
 #include "raylib.h"
 
 #if defined(PLATFORM_WEB)
@@ -27,16 +25,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    std::cout << "Hello, World! " << TOMATO << std::endl;
-    printPotato();
     const int screenWidth = 1270;
     const int screenHeight = 720;
-    std::vector<int> v = {1, 2, 3, 4, 5};
-
-    for (auto x : v)
-    {
-        std::cout << x << std::endl;
-    }
 
     InitWindow(screenWidth, screenHeight, "raylib");
 
