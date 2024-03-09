@@ -5,6 +5,9 @@
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
+// use js to get the body height and width
+EM_JS(int, getDocumentBodyWidth, (), { return window.innerWidth; });
+EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
 #endif
 
 //----------------------------------------------------------------------------------
@@ -25,16 +28,16 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 1270;
-    const int screenHeight = 720;
+    int screenWidth = 1270;
+    int screenHeight = 720;
 
-    InitWindow(screenWidth, screenHeight, "raylib");
+#if defined(PLATFORM_WEB)
+    // when running on web, set the screen width and height to the body width and height
+    screenWidth = getDocumentBodyWidth();
+    screenHeight = getDocumentBodyHeight();
+#endif
 
-    camera.position = (Vector3){10.0f, 10.0f, 8.0f};
-    camera.target = (Vector3){0.0f, 0.0f, 0.0f};
-    camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-    camera.fovy = 60.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    InitWindow(screenWidth, screenHeight, "Convex Hull");
 
     //--------------------------------------------------------------------------------------
 
