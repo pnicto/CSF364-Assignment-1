@@ -14,7 +14,7 @@
 #include "raylib.h"
 
 #if defined(PLATFORM_WEB)
-#include <emscripten/emscripten.h>
+#include "emscripten/emscripten.h"
 // use js to get the body height and width
 EM_JS(int, getDocumentBodyWidth, (), { return window.innerWidth; });
 EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
