@@ -319,9 +319,9 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # endif
 
     # # Add resources building if required
-    # ifeq ($(BUILD_WEB_RESOURCES),TRUE)
-    #     LDFLAGS += --preload-file $(BUILD_WEB_RESOURCES_PATH)
-    # endif
+    ifeq ($(BUILD_WEB_RESOURCES),TRUE)
+        LDFLAGS += --preload-file $(BUILD_WEB_RESOURCES_PATH)
+    endif
 
     # Add debug mode flags if required
     ifeq ($(BUILD_MODE),DEBUG)
