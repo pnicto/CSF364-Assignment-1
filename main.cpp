@@ -61,6 +61,11 @@ int isDropdownOpen = false;
  *
  */
 bool showConvexHull = false;
+/**
+ * @brief Height of the toolbar.
+ *
+ */
+const float toolbarHeight = 70;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -130,6 +135,7 @@ static void UpdateDrawFrame(void)
     ClearBackground(RAYWHITE);
 
     // Toolbar
+    GuiLine(Rectangle{0, toolbarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
     if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 320), 10, 310, 50},
                        "Jarvis March;Kirk Patrick Seidel", &selectedAlgorithm, isDropdownOpen))
     {
