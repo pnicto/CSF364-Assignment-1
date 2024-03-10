@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @brief Contains the entry point for the application as well as the implementation of the UpdateDrawFrame function,
+ * responsible for updating and drawing the frame in the application's main loop.
+ *
+ */
+#define RAYGUI_IMPLEMENTATION
+
+#include "raygui.h"
+#include "raylib.h"
 #include <iostream>
 #include <vector>
 
@@ -13,6 +23,44 @@ EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
 //----------------------------------------------------------------------------------
 // Local Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
+/**
+ * @brief Enumerates algorithms available in the application.
+ *
+ * It includes the following algorithms:
+ *   - JARVIS_MARCH: Jarvis March Algorithm
+ *   - KIRK_PATRICK_SEIDEL: Kirk Patrick Seidel Algorithm
+ */
+enum Algorithms
+{
+    JARVIS_MARCH,
+    KIRK_PATRICK_SEIDEL
+};
+/**
+ * @brief Represents the custom font used for rendering which is set as default for raygui
+ */
+Font defaultFont = {0};
+/**
+ * @brief Represents the currently selected algorithm.
+ *
+ */
+int selectedAlgorithm = 0;
+/**
+ * @brief Represents the previously selected algorithm.
+ *
+ * This variable is compared with selectedAlgorithm and change showConvexHull variable only if the selectedAlgorithm is
+ * changed.
+ */
+int previousAlgorithm = selectedAlgorithm;
+/**
+ * @brief Indicates whether the dropdown menu is open.
+ *
+ */
+int isDropdownOpen = false;
+/**
+ * @brief Indicates whether to display the convex hull.
+ *
+ */
+bool showConvexHull = false;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -73,6 +121,35 @@ static void UpdateDrawFrame(void)
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
+
+    // Toolbar
+    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 320), 10, 310, 50},
+                       "Jarvis March;Kirk Patrick Seidel", &selectedAlgorithm, isDropdownOpen))
+    {
+        isDropdownOpen = !isDropdownOpen;
+        if (previousAlgorithm != selectedAlgorithm)
+        {
+            showConvexHull = false;
+        }
+        previousAlgorithm = selectedAlgorithm;
+    }
+
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
+    {
+        showConvexHull = !showConvexHull;
+    }
+
+    switch (static_cast<Algorithms>(selectedAlgorithm))
+    {
+    case JARVIS_MARCH: {
+        GuiDrawText("Jarvis March Algorithm", {10, 10, 400, 50}, TEXT_ALIGN_LEFT, BLACK);
+    }
+    break;
+    case KIRK_PATRICK_SEIDEL: {
+        GuiDrawText("Kirk Patrick Seidel Algorithm", {10, 10, 500, 50}, TEXT_ALIGN_LEFT, BLACK);
+    }
+    break;
+    }
 
     EndDrawing();
     //----------------------------------------------------------------------------------
