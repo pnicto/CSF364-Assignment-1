@@ -85,6 +85,13 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
+    // load defaultFont
+    defaultFont = LoadFontEx("resources/JetBrainsMono-2.304/fonts/ttf/JetBrainsMono-Bold.ttf", 30, 0, 0);
+
+    GuiSetFont(defaultFont);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+    SetTextureFilter(defaultFont.texture, TEXTURE_FILTER_BILINEAR);
+
     //--------------------------------------------------------------------------------------
 
 #if defined(PLATFORM_WEB)
