@@ -37,7 +37,7 @@ make run
 -   `main.cpp` is the root of the project.
 -   `src` and `include` is where most code is going to be written in.
 -   After making changes to the code, you have to run the `make` command with appropriate arguments.
--   You can use the experimental utility script `run` to run make on **saving** files.
+-   You can use the experimental utility script `run` to run make on **saving** files. For which you will have to install `entr`. You can probably do this using your package manager.
 -   **Note that the utility script runs `make`(i.e., it compiles the project using `make`) for you but it does not run the build.**
 
 ### Desktop
