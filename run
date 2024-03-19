@@ -1,18 +1,14 @@
 #!/bin/bash
-WATCH_DIR=$(realpath .)
+PLATFORM="$1"
 
-platform="$1"
-
-if [ -z "$platform" ]; then
+if [ -z "$PLATFORM" ]; then
 	echo "Usage: $0 PLATFORM"
 	echo "  PLATFORM: PLATFORM_WEB, PLATFORM_DESKTOP"
 	exit 1
 fi
 
-# Monitor file changes
-echo "Monitoring $WATCH_DIR for changes..."
-while inotifywait -e modify -e create -e delete -e move "$WATCH_DIR"; do
-	clear
-	eval "./run"
-	eval "make PLATFORM=$platform"
-done
+echo "Monitoring src and include folders for changes..."
+(
+	find src include -type f -name '*.cpp'
+	find . -type f -name 'main.cpp'
+) | entr -rcs "make PLATFORM=$PLATFORM"
