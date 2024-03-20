@@ -9,6 +9,7 @@
 #include "jarvis_march.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "settings.h"
 #include "timer.h"
 #include <iostream>
 #include <vector>
@@ -62,6 +63,41 @@ int isDropdownOpen = false;
  */
 bool showConvexHull = false;
 /**
+ * @brief Indicates whether to display the settings modal.
+ *
+ */
+bool showSettings = false;
+/**
+ * @brief Specifies the position for the settings window
+ * 
+ */
+Vector2 window_position = {10, 80};
+/**
+ * @brief Specifies the size of the settings window
+ * 
+ */
+Vector2 window_size = {400, 400};
+/**
+ * @brief Specifies if the settings window is currently minimized
+ * 
+ */
+bool minimized = false;
+/**
+ * @brief Specifies if the settings window is currently being moved
+ * 
+ */
+bool moving = false;
+/**
+ * @brief Specifies if the settings window is currently being resized
+ * 
+ */
+bool resizing = false;
+/**
+ * @brief Specifies the size of the content to be displayed in the settings window
+ * 
+ */
+Vector2 content_size = {360, 360};
+/**
  * @brief Height of the toolbar.
  *
  */
@@ -76,6 +112,11 @@ std::vector<Vector2> dataPoints;
  *
  */
 JarvisMarch jm(dataPoints);
+/**
+ * @brief Represents the Settings object.
+ *
+ */
+Settings settings(&window_position, &window_size, &minimized, &moving, &resizing, &content_size, "Settings");
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -158,7 +199,7 @@ static void UpdateDrawFrame(void)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetMousePosition();
-            if (mousePos.y > toolbarHeight)
+            if (mousePos.y > toolbarHeight && settings.checkPointValidity(mousePos, &showSettings))
             {
 
                 dataPoints.push_back(mousePos);
@@ -191,7 +232,18 @@ static void UpdateDrawFrame(void)
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
+        showSettings = false;
     }
+
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 840), 10, 190, 50}, "Settings"))
+    {
+        if (showConvexHull) {
+            showConvexHull = !showConvexHull;
+        }
+        showSettings = !showSettings;
+    }
+
+    settings.showSettings(&showSettings, toolbarHeight);
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
@@ -199,7 +251,8 @@ static void UpdateDrawFrame(void)
         GuiDrawText("Jarvis March Algorithm", {10, 10, 400, 50}, TEXT_ALIGN_LEFT, BLACK);
         for (size_t i = 0; i < dataPoints.size(); i++)
         {
-            DrawCircleV(dataPoints[i], 5, BLACK);
+            if (settings.checkPointValidity(dataPoints[i], &showSettings))
+                DrawCircleV(dataPoints[i], 5, BLACK);
         }
 
         if (showConvexHull)
