@@ -147,8 +147,12 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone())
+    if (frameTimer.isTimerDone() && !jm.isFinished())
     {
+        jm.update();
+        frameTimer.resetTimer(0.01);
+    }
+
     if (!showConvexHull)
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -200,31 +204,16 @@ static void UpdateDrawFrame(void)
 
         if (showConvexHull)
         {
-            frameTimer.startTimer(0.3);
-
-            int i = jm.leftMostPointIndex;
-            DrawCircleV(dataPoints[i], 5, RED);
-
-            i = jm.currentPointIndex;
-            DrawCircleV(dataPoints[i], 5, GREEN);
-
-            if (!done)
+            if (!jm.isFinished())
             {
-                DrawCircleV(dataPoints[jm.nextPointIndex], 5, BLUE);
-                DrawCircleV(dataPoints[jm.comparePointIndex], 5, PURPLE);
-                DrawLineV(dataPoints[jm.currentPointIndex], dataPoints[jm.nextPointIndex], BLACK);
-                DrawLineV(dataPoints[jm.currentPointIndex], dataPoints[jm.comparePointIndex], RED);
-            }
 
-            for (auto &p : jm.convexHull)
-            {
-                DrawCircleV(p, 5, MAROON);
+                frameTimer.startTimer(0.5);
             }
-            for (size_t i = 0; i < jm.convexHull.size() - 1; i++)
+            else
             {
-                size_t j = i + 1;
-                DrawLineV(jm.convexHull[i], jm.convexHull[j], GREEN);
+                frameTimer.stopTimer();
             }
+            jm.draw();
         }
     }
     break;
