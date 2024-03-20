@@ -9,6 +9,6 @@ fi
 
 echo "Monitoring src and include folders for changes..."
 (
-	find src include -type f -name '*.cpp'
+	find src include -type f -name '*.cpp' -or -name '*.h'
 	find . -type f -name 'main.cpp'
 ) | entr -rcs "make PLATFORM=$PLATFORM"
