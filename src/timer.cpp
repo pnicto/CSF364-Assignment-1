@@ -43,3 +43,9 @@ double Timer::getElapsed()
 {
     return GetTime() - startTime;
 }
+
+void Timer::stopTimer()
+{
+    startTime = 0;
+    duration = 0;
+}
