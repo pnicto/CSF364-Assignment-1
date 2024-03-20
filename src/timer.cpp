@@ -12,6 +12,10 @@ Timer::~Timer()
 
 bool Timer::isTimerDone()
 {
+    if (!hasTimerStarted())
+    {
+        return false;
+    }
     return GetTime() - startTime >= duration;
 }
 
