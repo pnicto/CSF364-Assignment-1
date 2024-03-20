@@ -9,6 +9,7 @@
 #include "jarvis_march.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "timer.h"
 #include <iostream>
 #include <vector>
 
@@ -80,6 +81,7 @@ JarvisMarch jm(dataPoints);
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
 static void UpdateDrawFrame(void); // Update and draw one frame
+Timer frameTimer;
 
 //----------------------------------------------------------------------------------
 // Main entry point
@@ -97,17 +99,37 @@ int main()
     screenHeight = getDocumentBodyHeight();
 #endif
 
-    dataPoints.push_back({0, 3});
-    dataPoints.push_back({1.1, 1.2});
-    dataPoints.push_back({-2, 4});
-    dataPoints.push_back({-3, 12});
-    dataPoints.push_back({4, -16});
-    dataPoints.push_back({0, 0});
-    dataPoints.push_back({0, 10});
-    dataPoints.push_back({0, -10});
+    // dataPoints.push_back({0, 3});
+    // dataPoints.push_back({0, 20});
+    // dataPoints.push_back({-3, 12});
+    // dataPoints.push_back({0, -20});
+    // dataPoints.push_back({0, 0});
+    // dataPoints.push_back({4, -16});
+    // dataPoints.push_back({1.1, 1.2});
+    // dataPoints.push_back({-2, 4});
+    // dataPoints.push_back({0, 10});
+    // dataPoints.push_back({0, -10});
 
-    dataPoints.push_back({0, 20});
-    dataPoints.push_back({0, -20});
+    dataPoints.push_back({4, -2});
+    dataPoints.push_back({8, -1});
+    dataPoints.push_back({-2, 7});
+    dataPoints.push_back({3, 5});
+    dataPoints.push_back({-5, 1});
+    dataPoints.push_back({-1, 2});
+    dataPoints.push_back({-5, -9});
+    dataPoints.push_back({-3, -6});
+    dataPoints.push_back({7, -4});
+    dataPoints.push_back({-6, -1});
+    dataPoints.push_back({8, -3});
+    dataPoints.push_back({6, 2});
+    dataPoints.push_back({3, 4});
+    dataPoints.push_back({6, 9});
+    dataPoints.push_back({0, -8});
+    dataPoints.push_back({-2, -10});
+    dataPoints.push_back({4, -5});
+    dataPoints.push_back({0, 8});
+    dataPoints.push_back({4, 6});
+    dataPoints.push_back({-10, -6});
 
     float centerX = screenWidth / 2.0f;
     float centerY = (screenHeight + toolbarHeight) / 2.0f;
@@ -151,13 +173,44 @@ int main()
 
     return 0;
 }
-
+bool done = false;
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
+    if (frameTimer.isTimerDone())
+    {
+        if (!done)
+        {
 
+            if (jm.orientation(dataPoints[jm.currentPointIndex], dataPoints[jm.comparePointIndex],
+                               dataPoints[jm.nextPointIndex]) == 2)
+            {
+                jm.nextPointIndex = jm.comparePointIndex;
+            }
+
+            jm.comparePointIndex = (jm.comparePointIndex + 1) % jm.points.size();
+
+            if (jm.comparePointIndex == 0)
+            {
+                jm.currentPointIndex = jm.nextPointIndex;
+                jm.convexHull.push_back(jm.points[jm.currentPointIndex]);
+                jm.nextPointIndex = (jm.nextPointIndex + 1) % jm.points.size();
+            }
+        }
+
+        if (jm.convexHull.size() > 1 && jm.currentPointIndex == jm.leftMostPointIndex)
+        {
+            done = true;
+            std::cout << jm.convexHull.size() << std::endl;
+            // for (auto &p : jm.convexHull)
+            // {
+            //     std::cout << p.x << " " << p.y << std::endl;
+            // }
+        }
+        frameTimer.resetTimer(0.3);
+    }
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -195,11 +248,30 @@ static void UpdateDrawFrame(void)
 
         if (showConvexHull)
         {
+            frameTimer.startTimer(0.3);
 
-            auto hull = jm.getConvexHull();
-            for (size_t i = 0; i < hull.size(); i++)
+            int i = jm.leftMostPointIndex;
+            DrawCircleV(dataPoints[i], 5, RED);
+
+            i = jm.currentPointIndex;
+            DrawCircleV(dataPoints[i], 5, GREEN);
+
+            if (!done)
             {
-                DrawLineV(hull[i], hull[(i + 1) % hull.size()], RED);
+                DrawCircleV(dataPoints[jm.nextPointIndex], 5, BLUE);
+                DrawCircleV(dataPoints[jm.comparePointIndex], 5, PURPLE);
+                DrawLineV(dataPoints[jm.currentPointIndex], dataPoints[jm.nextPointIndex], BLACK);
+                DrawLineV(dataPoints[jm.currentPointIndex], dataPoints[jm.comparePointIndex], RED);
+            }
+
+            for (auto &p : jm.convexHull)
+            {
+                DrawCircleV(p, 5, MAROON);
+            }
+            for (size_t i = 0; i < jm.convexHull.size() - 1; i++)
+            {
+                size_t j = i + 1;
+                DrawLineV(jm.convexHull[i], jm.convexHull[j], GREEN);
             }
         }
     }

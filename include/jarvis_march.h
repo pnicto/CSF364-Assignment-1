@@ -13,13 +13,20 @@
 class JarvisMarch
 {
   private:
-    std::vector<Vector2> points;
-    int orientation(Vector2 p, Vector2 q, Vector2 r);
+    int getLeftMostPointIndex();
+    int n;
 
   public:
+    int leftMostPointIndex = 0;
+    int currentPointIndex = 0;
+    int nextPointIndex = 0;
+    int comparePointIndex = 0;
+    std::vector<Vector2> points;
+    std::vector<Vector2> convexHull;
     JarvisMarch(std::vector<Vector2> points);
     ~JarvisMarch();
     std::vector<Vector2> getConvexHull();
+    int orientation(Vector2 p, Vector2 q, Vector2 r);
 };
 
 #endif

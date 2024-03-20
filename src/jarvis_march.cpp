@@ -5,14 +5,25 @@
  */
 #include "jarvis_march.h"
 
-JarvisMarch::JarvisMarch(std::vector<Vector2> points)
+JarvisMarch::JarvisMarch(std::vector<Vector2> p)
 {
-    this->points = points;
+    points = p;
+    n = points.size();
+    leftMostPointIndex = getLeftMostPointIndex();
+    currentPointIndex = leftMostPointIndex;
+
+    // TODO: Uh deal with this later
+    if (n != 0)
+    {
+        nextPointIndex = (leftMostPointIndex + 1) % n;
+        comparePointIndex = (leftMostPointIndex + 2) % n;
+    }
 }
 
 JarvisMarch::~JarvisMarch()
 {
     points.clear();
+    convexHull.clear();
 }
 
 int JarvisMarch::orientation(Vector2 p, Vector2 q, Vector2 r)
@@ -22,7 +33,22 @@ int JarvisMarch::orientation(Vector2 p, Vector2 q, Vector2 r)
     {
         return 0;
     }
+    // clock or counterclock wise
     return (val > 0) ? 1 : 2;
+}
+
+int JarvisMarch::getLeftMostPointIndex()
+{
+    int left = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (points[i].x < points[left].x)
+        {
+            left = i;
+        }
+    }
+    convexHull.push_back(points[left]);
+    return left;
 }
 
 std::vector<Vector2> JarvisMarch::getConvexHull()
@@ -34,16 +60,7 @@ std::vector<Vector2> JarvisMarch::getConvexHull()
         return convexHull;
     }
 
-    int l = 0;
-    for (int i = 1; i < n; i++)
-    {
-        if (points[i].x < points[l].x)
-        {
-            l = i;
-        }
-    }
-
-    int p = l, q;
+    int p = leftMostPointIndex, q;
     do
     {
         convexHull.push_back(points[p]);
@@ -56,7 +73,7 @@ std::vector<Vector2> JarvisMarch::getConvexHull()
             }
         }
         p = q;
-    } while (p != l);
+    } while (p != leftMostPointIndex);
 
     return convexHull;
 }
