@@ -15,8 +15,10 @@ JarvisMarch::JarvisMarch(std::vector<Vector2> p)
     currentPointIndex = leftMostPointIndex;
 
     if (n != 0)
+    {
         nextPointIndex = (leftMostPointIndex + 1) % n;
-    convexHull.push_back(points[currentPointIndex]);
+        convexHull.push_back(points[currentPointIndex]);
+    }
 }
 
 JarvisMarch::~JarvisMarch()
