@@ -79,9 +79,9 @@ void JarvisMarch::draw()
     if (!isFinished())
     {
         DrawCircleV(points[nextPointIndex], 5, BLUE);
-        DrawCircleV(points[comparePointIndex], 5, PURPLE);
+        DrawCircleV(points[candidatePointIndex], 5, PURPLE);
         DrawLineV(points[currentPointIndex], points[nextPointIndex], BLACK);
-        DrawLineV(points[currentPointIndex], points[comparePointIndex], RED);
+        DrawLineV(points[currentPointIndex], points[candidatePointIndex], RED);
     }
     drawConvexHull();
     EndDrawing();
@@ -98,40 +98,40 @@ void JarvisMarch::update()
             currentState = State::FINISHED;
         }
 
-        if (orientation(points[currentPointIndex], points[comparePointIndex], points[nextPointIndex]) ==
+        if (orientation(points[currentPointIndex], points[candidatePointIndex], points[nextPointIndex]) ==
             Orientation::COUNTER_CLOCKWISE)
         {
-            nextPointIndex = comparePointIndex;
+            nextPointIndex = candidatePointIndex;
         }
 
-        comparePointIndex = (comparePointIndex + 1);
+        candidatePointIndex = (candidatePointIndex + 1);
 
-        if (comparePointIndex == n)
+        if (candidatePointIndex == n)
         {
             currentPointIndex = nextPointIndex;
             convexHull.push_back(points[currentPointIndex]);
             nextPointIndex = (currentPointIndex + 1) % n;
-            comparePointIndex = 0;
+            candidatePointIndex = 0;
             currentState = State::FINDING_HULL_POINT;
         }
 
         break;
 
     case State::FINDING_HULL_POINT:
-        if (orientation(points[currentPointIndex], points[comparePointIndex], points[nextPointIndex]) ==
+        if (orientation(points[currentPointIndex], points[candidatePointIndex], points[nextPointIndex]) ==
             Orientation::COUNTER_CLOCKWISE)
         {
-            nextPointIndex = comparePointIndex;
+            nextPointIndex = candidatePointIndex;
         }
 
-        comparePointIndex = (comparePointIndex + 1);
+        candidatePointIndex = (candidatePointIndex + 1);
 
-        if (comparePointIndex == n)
+        if (candidatePointIndex == n)
         {
             currentPointIndex = nextPointIndex;
             convexHull.push_back(points[currentPointIndex]);
             nextPointIndex = (currentPointIndex + 1) % n;
-            comparePointIndex = 0;
+            candidatePointIndex = 0;
         }
 
         if (currentPointIndex == leftMostPointIndex)

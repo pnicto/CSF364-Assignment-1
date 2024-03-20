@@ -34,7 +34,7 @@ class JarvisMarch
     State currentState = State::INIT;
     int leftMostPointIndex;
     int nextPointIndex;
-    int comparePointIndex = 0;
+    int candidatePointIndex = 0;
     int currentPointIndex;
     int getLeftMostPointIndex();
     int n;
