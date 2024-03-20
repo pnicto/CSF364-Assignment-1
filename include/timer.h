@@ -18,6 +18,7 @@ class Timer
     void startTimer(double duration);
     double getElapsed();
     void resetTimer(double duration);
+    void stopTimer();
 };
 
 #endif

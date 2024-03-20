@@ -9,6 +9,7 @@
 #include "jarvis_march.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "timer.h"
 #include <iostream>
 #include <vector>
 
@@ -80,6 +81,7 @@ JarvisMarch jm(dataPoints);
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
 static void UpdateDrawFrame(void); // Update and draw one frame
+Timer frameTimer;
 
 //----------------------------------------------------------------------------------
 // Main entry point
@@ -96,18 +98,6 @@ int main()
     screenWidth = getDocumentBodyWidth();
     screenHeight = getDocumentBodyHeight();
 #endif
-
-    dataPoints.push_back({0, 3});
-    dataPoints.push_back({1.1, 1.2});
-    dataPoints.push_back({-2, 4});
-    dataPoints.push_back({-3, 12});
-    dataPoints.push_back({4, -16});
-    dataPoints.push_back({0, 0});
-    dataPoints.push_back({0, 10});
-    dataPoints.push_back({0, -10});
-
-    dataPoints.push_back({0, 20});
-    dataPoints.push_back({0, -20});
 
     float centerX = screenWidth / 2.0f;
     float centerY = (screenHeight + toolbarHeight) / 2.0f;
@@ -151,13 +141,32 @@ int main()
 
     return 0;
 }
-
+bool done = false;
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
+    if (frameTimer.isTimerDone() && !jm.isFinished())
+    {
+        jm.update();
+        frameTimer.resetTimer(0.01);
+    }
 
+    if (!showConvexHull)
+    {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            Vector2 mousePos = GetMousePosition();
+            if (mousePos.y > toolbarHeight)
+            {
+
+                dataPoints.push_back(mousePos);
+                jm = JarvisMarch(dataPoints);
+                done = false;
+            }
+        }
+    }
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -195,12 +204,16 @@ static void UpdateDrawFrame(void)
 
         if (showConvexHull)
         {
-
-            auto hull = jm.getConvexHull();
-            for (size_t i = 0; i < hull.size(); i++)
+            if (!jm.isFinished())
             {
-                DrawLineV(hull[i], hull[(i + 1) % hull.size()], RED);
+
+                frameTimer.startTimer(0.5);
             }
+            else
+            {
+                frameTimer.stopTimer();
+            }
+            jm.draw();
         }
     }
     break;

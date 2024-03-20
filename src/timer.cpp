@@ -12,6 +12,10 @@ Timer::~Timer()
 
 bool Timer::isTimerDone()
 {
+    if (!hasTimerStarted())
+    {
+        return false;
+    }
     return GetTime() - startTime >= duration;
 }
 
@@ -38,4 +42,10 @@ void Timer::resetTimer(double duration)
 double Timer::getElapsed()
 {
     return GetTime() - startTime;
+}
+
+void Timer::stopTimer()
+{
+    startTime = 0;
+    duration = 0;
 }
