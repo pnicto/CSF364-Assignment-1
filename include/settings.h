@@ -11,7 +11,7 @@ class Settings
     Settings(Vector2 *position, Vector2 *size, bool *min, bool *mov, bool *resiz, Vector2 *content_size,
              const char *title);
     ~Settings();
-    void showSettings(bool *showSettings, float toolbarWidth);
+    void showSettings(bool *showSettings, float toolbarWidth, float *numberOfPoints, std::vector<Vector2> &dataPoints);
     bool checkPointValidity(Vector2 p, bool *showSettings);
 
   private:

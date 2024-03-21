@@ -38,7 +38,8 @@ Settings::~Settings()
     resizing = false;
 }
 
-void Settings::showSettings(bool *showSettings, float toolbarHeight)
+void Settings::showSettings(bool *showSettings, float toolbarHeight, float *numberOfPoints,
+                            std::vector<Vector2> &dataPoints)
 {
     if (*showSettings)
     {
@@ -150,14 +151,33 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight)
                 BeginScissorMode(scissor.x, scissor.y, scissor.width, scissor.height);
             }
 
-            GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 50 + scroll.y, 200, 25},
-                      "Button 1");
-            GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 100 + scroll.y, 200, 25},
-                      "Button 2");
-            GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 150 + scroll.y, 200, 25},
-                      "Button 3");
-            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 200 + scroll.y, 250, 25},
-                     "A Label");
+            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 50 + scroll.y, 250, 25},
+                     "Number of Points");
+            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 100 + scroll.y, 300, 25}, NULL,
+                      TextFormat("%1.0f", *numberOfPoints), numberOfPoints, 0.0f, 100.0f);
+
+            if (GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 150 + scroll.y, 150, 25},
+                          "Generate"))
+            {
+                dataPoints.clear();
+                int i = 0;
+                while (i < *numberOfPoints)
+                {
+                    int x = rand() % GetScreenWidth(), y = rand() % GetScreenHeight();
+                    if (y > toolbarHeight + 10 && y < GetScreenWidth() - 10 && x > 10 && x < GetScreenWidth() - 10)
+                    {
+                        dataPoints.push_back({static_cast<float>(x), static_cast<float>(y)});
+                        i++;
+                    }
+                }
+            }
+            if (GuiButton(
+                    (Rectangle){window_position.x + 20 + scroll.x + 160, window_position.y + 150 + scroll.y, 150, 25},
+                    "Clear"))
+            {
+                dataPoints.clear();
+            }
+
             GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 250 + scroll.y, 250, 25},
                      "Another Label");
             GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 300 + scroll.y, 250, 25},

@@ -69,34 +69,39 @@ bool showConvexHull = false;
 bool showSettings = false;
 /**
  * @brief Specifies the position for the settings window
- * 
+ *
  */
 Vector2 window_position = {10, 80};
 /**
  * @brief Specifies the size of the settings window
- * 
+ *
  */
 Vector2 window_size = {400, 400};
 /**
  * @brief Specifies if the settings window is currently minimized
- * 
+ *
  */
 bool minimized = false;
 /**
  * @brief Specifies if the settings window is currently being moved
- * 
+ *
  */
 bool moving = false;
 /**
  * @brief Specifies if the settings window is currently being resized
- * 
+ *
  */
 bool resizing = false;
 /**
  * @brief Specifies the size of the content to be displayed in the settings window
- * 
+ *
  */
 Vector2 content_size = {360, 360};
+/**
+ * @brief Specifies the number of points to be randomly generated
+ *
+ */
+float numberOfPoints = 0.0f;
 /**
  * @brief Height of the toolbar.
  *
@@ -182,7 +187,6 @@ int main()
 
     return 0;
 }
-bool done = false;
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
@@ -201,12 +205,10 @@ static void UpdateDrawFrame(void)
             Vector2 mousePos = GetMousePosition();
             if (mousePos.y > toolbarHeight && settings.checkPointValidity(mousePos, &showSettings))
             {
-
                 dataPoints.push_back(mousePos);
-                jm = JarvisMarch(dataPoints);
-                done = false;
             }
         }
+        jm = JarvisMarch(dataPoints);
     }
     //----------------------------------------------------------------------------------
 
@@ -237,13 +239,14 @@ static void UpdateDrawFrame(void)
 
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 840), 10, 190, 50}, "Settings"))
     {
-        if (showConvexHull) {
+        if (showConvexHull)
+        {
             showConvexHull = !showConvexHull;
         }
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight);
+    settings.showSettings(&showSettings, toolbarHeight, &numberOfPoints, dataPoints);
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
