@@ -188,10 +188,16 @@ static void UpdateDrawFrame(void)
         previousAlgorithm = selectedAlgorithm;
     }
 
+    // disable the GuiButton when there are no points
+    if (dataPoints.size() == 0)
+        GuiDisable();
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
     }
+    // enable the remaining GUI
+    if (dataPoints.size() == 0)
+        GuiEnable();
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
