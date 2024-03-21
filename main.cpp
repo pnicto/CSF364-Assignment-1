@@ -72,6 +72,11 @@ const float toolbarHeight = 70;
  */
 std::vector<Vector2> dataPoints;
 /**
+ * @brief Indicates whether to visualize the algorithm one step at a time or play the full thing.
+ *
+ */
+bool visualizeStepByStep = true;
+/**
  * @brief Represents the JarvisMarch object.
  *
  */
@@ -147,7 +152,7 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone() && !jm.isFinished())
+    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
     {
         jm.update();
         frameTimer.resetTimer(0.01);
@@ -191,6 +196,28 @@ static void UpdateDrawFrame(void)
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
+    }
+
+    if (showConvexHull)
+    {
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1000), 10, 310, 50},
+                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
+        {
+            visualizeStepByStep = !visualizeStepByStep;
+        }
+
+        if (visualizeStepByStep)
+        {
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1120), 10, 110, 50}, "Next"))
+            {
+                jm.update();
+            }
+
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1240), 10, 110, 50}, "Prev"))
+            {
+                jm.previous();
+            }
+        }
     }
 
     switch (static_cast<Algorithms>(selectedAlgorithm))

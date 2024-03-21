@@ -25,11 +25,18 @@ class JarvisMarch
     void drawConvexHull();
     void changeState(State s);
     void update();
+    void previous();
     void draw();
     std::vector<Vector2> convexHull;
     bool isFinished();
 
   private:
+    struct StepInfo
+    {
+        int currentPointIndex, nextPointIndex, candidatePointIndex;
+        std::vector<Vector2> convexHull;
+    };
+
     std::vector<Vector2> points;
     State currentState = State::INIT;
     int leftMostPointIndex;
@@ -39,6 +46,9 @@ class JarvisMarch
     int getLeftMostPointIndex();
     int n;
     Orientation orientation(Vector2 p, Vector2 q, Vector2 r);
+    std::vector<StepInfo> steps;
+    int currentStep;
+    void computeNextStep();
 };
 
 #endif
