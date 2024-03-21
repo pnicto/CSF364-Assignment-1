@@ -40,7 +40,7 @@ Settings::~Settings()
 
 void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scale, float *duration,
                             std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
-                            std::vector<Vector2> &dataPoints)
+                            std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints)
 {
     if (*showSettings)
     {
@@ -182,7 +182,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
             GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 200 + scroll.y, 500, 25},
                      "Scale");
             GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 250 + scroll.y, 500, 25}, NULL,
-                      TextFormat("%d", (int)(*scale)), scale, 1.0f, 100.0f);
+                      TextFormat("%0.1f", *scale), scale, 0.1f, 50.0f);
 
             if (*isFilePathAdded == 0)
             {
@@ -203,7 +203,24 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                         (Rectangle){window_position.x + 20 + scroll.x, window_position.y + 400 + scroll.y, 200, 25},
                         "Draw"))
                 {
-                    // TODO: Logic to extract points and draw them using given scale
+                    if (fileDataPoints.size() > 0)
+                    {
+                        dataPoints.clear();
+                        float smallestX = static_cast<float>(INT64_MAX), smallestY = static_cast<float>(INT64_MAX);
+                        for (auto &point : fileDataPoints)
+                        {
+                            smallestX = std::min(smallestX, point.x);
+                            smallestY = std::min(smallestY, point.y);
+                        }
+                        float centerX = smallestX;
+                        float centerY = smallestY;
+
+                        for (auto &point : fileDataPoints)
+                        {
+                            dataPoints.push_back({(point.x - centerX) * (*scale) + 25.0f,
+                                                  (point.y - centerY) * (*scale) + toolbarHeight + 25.0f});
+                        }
+                    }
                 }
                 if (GuiButton((Rectangle){window_position.x + 20 + scroll.x + 210, window_position.y + 400 + scroll.y,
                                           200, 25},
@@ -217,7 +234,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
             GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 450 + scroll.y, 500, 25},
                      "Timestep");
             GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 500 + scroll.y, 500, 25}, NULL,
-                      TextFormat("%1.2f", *duration), duration, 0.01f, 0.50f);
+                      TextFormat("%0.2f", *duration), duration, 0.01f, 0.50f);
 
             if (require_scissor)
             {

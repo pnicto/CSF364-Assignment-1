@@ -3,8 +3,8 @@
 
 #include "raylib.h"
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 class Settings
 {
@@ -13,7 +13,8 @@ class Settings
              const char *title);
     ~Settings();
     void showSettings(bool *showSettings, float toolbarWidth, float *scale, float *duration, std::string &filePath,
-                      bool *isFilePathAdded, float *numberOfPoints, std::vector<Vector2> &dataPoints);
+                      bool *isFilePathAdded, float *numberOfPoints, std::vector<Vector2> &fileDataPoints,
+                      std::vector<Vector2> &dataPoints);
     bool checkPointValidity(Vector2 p, bool *showSettings);
 
   private:

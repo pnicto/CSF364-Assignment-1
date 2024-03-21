@@ -11,6 +11,7 @@
 #include "raylib.h"
 #include "settings.h"
 #include "timer.h"
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -134,6 +135,11 @@ const float toolbarHeight = 70;
  */
 std::vector<Vector2> dataPoints;
 /**
+ * @brief A collection of points (x, y) obtained from a file before scaling
+ *
+ */
+std::vector<Vector2> fileDataPoints;
+/**
  * @brief Represents the JarvisMarch object.
  *
  */
@@ -241,9 +247,39 @@ static void UpdateDrawFrame(void)
         {
             filePath = std::string(droppedFile.paths[0]);
             isFilePathAdded = 1;
+
+            fileDataPoints.clear();
+            std::ifstream istream(filePath);
+            float x, y;
+            char openParenthesis, closeParenthesis, separator;
+            while (istream >> openParenthesis >> x >> separator >> y >> closeParenthesis)
+            {
+                fileDataPoints.push_back({x, y});
+            }
+
+            if (fileDataPoints.size() > 0)
+            {
+                float smallestX = static_cast<float>(INT64_MAX), largestX = static_cast<float>(INT64_MIN),
+                      smallestY = static_cast<float>(INT64_MAX), largestY = static_cast<float>(INT64_MIN);
+                for (auto &point : fileDataPoints)
+                {
+                    smallestX = std::min(smallestX, point.x);
+                    largestX = std::max(largestX, point.x);
+                    smallestY = std::min(smallestY, point.y);
+                    largestY = std::max(largestY, point.y);
+                }
+
+                float computedScale = 50.0f;
+                while ((largestX - smallestX) * computedScale > (static_cast<float>(GetScreenWidth()) - 50.0f) ||
+                       (largestY - smallestY) * computedScale >
+                           (static_cast<float>(GetScreenHeight()) - toolbarHeight - 50.0f))
+                {
+                    computedScale -= 0.1f;
+                }
+                scale = computedScale;
+            }
         }
 
-        // TODO: Read and store the file buffer before it is dropped
         UnloadDroppedFiles(droppedFile);
     }
     //----------------------------------------------------------------------------------
@@ -283,7 +319,7 @@ static void UpdateDrawFrame(void)
     }
 
     settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          dataPoints);
+                          fileDataPoints, dataPoints);
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
