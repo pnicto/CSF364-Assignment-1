@@ -39,7 +39,8 @@ Settings::~Settings()
 }
 
 void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scale, float *duration,
-                            float *numberOfPoints, std::vector<Vector2> &dataPoints)
+                            std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
+                            std::vector<Vector2> &dataPoints)
 {
     if (*showSettings)
     {
@@ -151,12 +152,12 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                 BeginScissorMode(scissor.x, scissor.y, scissor.width, scissor.height);
             }
 
-            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 50 + scroll.y, 250, 25},
+            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 50 + scroll.y, 500, 25},
                      "Number of Points");
-            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 100 + scroll.y, 300, 25}, NULL,
+            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 100 + scroll.y, 500, 25}, NULL,
                       TextFormat("%d", (int)(*numberOfPoints)), numberOfPoints, 10.0f, 100.0f);
 
-            if (GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 150 + scroll.y, 150, 25},
+            if (GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 150 + scroll.y, 200, 25},
                           "Generate"))
             {
                 dataPoints.clear();
@@ -172,20 +173,50 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                 }
             }
             if (GuiButton(
-                    (Rectangle){window_position.x + 20 + scroll.x + 160, window_position.y + 150 + scroll.y, 150, 25},
+                    (Rectangle){window_position.x + 20 + scroll.x + 210, window_position.y + 150 + scroll.y, 200, 25},
                     "Clear"))
             {
                 dataPoints.clear();
             }
 
-            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 250 + scroll.y, 250, 25},
+            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 200 + scroll.y, 500, 25},
                      "Scale");
-            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 300 + scroll.y, 300, 25}, NULL,
+            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 250 + scroll.y, 500, 25}, NULL,
                       TextFormat("%d", (int)(*scale)), scale, 1.0f, 100.0f);
 
-            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 400 + scroll.y, 250, 25},
+            if (*isFilePathAdded == 0)
+            {
+                GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 300 + scroll.y, 250, 25},
+                         "Drop files here!");
+                DrawRectangle(window_position.x + 20 + scroll.x, window_position.y + 330 + scroll.y, 500, 100,
+                              Fade(LIGHTGRAY, 0.3f));
+            }
+            else
+            {
+                GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 300 + scroll.y, 500, 25},
+                         "Current File");
+                DrawRectangle(window_position.x + 20 + scroll.x, window_position.y + 350 + scroll.y, 500, 30,
+                              Fade(LIGHTGRAY, 0.3f));
+                GuiLabel((Rectangle){window_position.x + 25 + scroll.x, window_position.y + 350 + scroll.y, 500, 30},
+                         filePath.c_str());
+                if (GuiButton(
+                        (Rectangle){window_position.x + 20 + scroll.x, window_position.y + 400 + scroll.y, 200, 25},
+                        "Draw"))
+                {
+                    // TODO: Logic to extract points and draw them using given scale
+                }
+                if (GuiButton((Rectangle){window_position.x + 20 + scroll.x + 210, window_position.y + 400 + scroll.y,
+                                          200, 25},
+                              "Clear"))
+                {
+                    *isFilePathAdded = false;
+                    filePath.clear();
+                }
+            }
+
+            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 450 + scroll.y, 500, 25},
                      "Timestep");
-            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 450 + scroll.y, 300, 25}, NULL,
+            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 500 + scroll.y, 500, 25}, NULL,
                       TextFormat("%1.2f", *duration), duration, 0.01f, 0.50f);
 
             if (require_scissor)

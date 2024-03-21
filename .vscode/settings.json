@@ -23,6 +23,7 @@
         "*.rex": "rexx",
         "*.rexx": "rexx",
         ".env": "env",
-        "raylib.h": "c"
+        "raylib.h": "c",
+        "string": "cpp"
     }
 }

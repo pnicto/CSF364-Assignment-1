@@ -12,6 +12,7 @@
 #include "settings.h"
 #include "timer.h"
 #include <iostream>
+#include <string>
 #include <vector>
 
 #if defined(PLATFORM_WEB)
@@ -76,7 +77,7 @@ Vector2 window_position = {10, 80};
  * @brief Specifies the size of the settings window
  *
  */
-Vector2 window_size = {400, 600};
+Vector2 window_size = {600, 600};
 /**
  * @brief Specifies if the settings window is currently minimized
  *
@@ -96,12 +97,22 @@ bool resizing = false;
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
-Vector2 content_size = {360, 560};
+Vector2 content_size = {560, 560};
 /**
  * @brief Specifies the scale for drawing points
- * 
+ *
  */
 float scale = 20.0f;
+/**
+ * @brief Specifies the file path from which points are loaded
+ *
+ */
+std::string filePath;
+/**
+ * @brief Specifies where the file path has been added or not
+ *
+ */
+bool isFilePathAdded = 0;
 /**
  * @brief Specifies the number of points to be randomly generated
  *
@@ -109,7 +120,7 @@ float scale = 20.0f;
 float numberOfPoints = 10.0f;
 /**
  * @brief Specifies the duration for the timer
- * 
+ *
  */
 float duration = 0.01f;
 /**
@@ -219,6 +230,22 @@ static void UpdateDrawFrame(void)
         }
         jm = JarvisMarch(dataPoints);
     }
+
+    if (IsFileDropped())
+    {
+        Vector2 position = GetMousePosition();
+        FilePathList droppedFile = LoadDroppedFiles();
+
+        if (window_position.x + 20 <= position.x && window_position.x + 20 + 500 >= position.x &&
+            window_position.y + 330 <= position.y && window_position.y + 330 + 100 >= position.y)
+        {
+            filePath = std::string(droppedFile.paths[0]);
+            isFilePathAdded = 1;
+        }
+
+        // TODO: Read and store the file buffer before it is dropped
+        UnloadDroppedFiles(droppedFile);
+    }
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -255,7 +282,8 @@ static void UpdateDrawFrame(void)
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, &numberOfPoints, dataPoints);
+    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
+                          dataPoints);
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
