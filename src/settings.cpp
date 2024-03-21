@@ -154,7 +154,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *numb
             GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 50 + scroll.y, 250, 25},
                      "Number of Points");
             GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 100 + scroll.y, 300, 25}, NULL,
-                      TextFormat("%d", (int)(*numberOfPoints)), numberOfPoints, 0.0f, 100.0f);
+                      TextFormat("%d", (int)(*numberOfPoints)), numberOfPoints, 10.0f, 100.0f);
 
             if (GuiButton((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 150 + scroll.y, 150, 25},
                           "Generate"))

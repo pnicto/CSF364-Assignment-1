@@ -101,7 +101,7 @@ Vector2 content_size = {360, 360};
  * @brief Specifies the number of points to be randomly generated
  *
  */
-float numberOfPoints = 0.0f;
+float numberOfPoints = 10.0f;
 /**
  * @brief Height of the toolbar.
  *
