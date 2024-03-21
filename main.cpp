@@ -98,6 +98,11 @@ bool resizing = false;
  */
 Vector2 content_size = {360, 360};
 /**
+ * @brief Specifies the scale for drawing points
+ * 
+ */
+float scale = 20.0f;
+/**
  * @brief Specifies the number of points to be randomly generated
  *
  */
@@ -147,7 +152,6 @@ int main()
 
     float centerX = screenWidth / 2.0f;
     float centerY = (screenHeight + toolbarHeight) / 2.0f;
-    const float scale = 20.0f;
     for (auto &point : dataPoints)
     {
         point.x = centerX + point.x * scale;
@@ -246,7 +250,7 @@ static void UpdateDrawFrame(void)
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, &numberOfPoints, dataPoints);
+    settings.showSettings(&showSettings, toolbarHeight, &scale, &numberOfPoints, dataPoints);
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
