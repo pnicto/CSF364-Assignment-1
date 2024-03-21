@@ -38,8 +38,8 @@ Settings::~Settings()
     resizing = false;
 }
 
-void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scale, float *numberOfPoints,
-                            std::vector<Vector2> &dataPoints)
+void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scale, float *duration,
+                            float *numberOfPoints, std::vector<Vector2> &dataPoints)
 {
     if (*showSettings)
     {
@@ -183,8 +183,10 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
             GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 300 + scroll.y, 300, 25}, NULL,
                       TextFormat("%d", (int)(*scale)), scale, 1.0f, 100.0f);
 
-            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 350 + scroll.y, 250, 25},
-                     "Yet Another Label");
+            GuiLabel((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 400 + scroll.y, 250, 25},
+                     "Timestep");
+            GuiSlider((Rectangle){window_position.x + 20 + scroll.x, window_position.y + 450 + scroll.y, 300, 25}, NULL,
+                      TextFormat("%1.2f", *duration), duration, 0.01f, 0.50f);
 
             if (require_scissor)
             {

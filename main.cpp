@@ -76,7 +76,7 @@ Vector2 window_position = {10, 80};
  * @brief Specifies the size of the settings window
  *
  */
-Vector2 window_size = {400, 400};
+Vector2 window_size = {400, 600};
 /**
  * @brief Specifies if the settings window is currently minimized
  *
@@ -96,7 +96,7 @@ bool resizing = false;
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
-Vector2 content_size = {360, 360};
+Vector2 content_size = {360, 560};
 /**
  * @brief Specifies the scale for drawing points
  * 
@@ -107,6 +107,11 @@ float scale = 20.0f;
  *
  */
 float numberOfPoints = 10.0f;
+/**
+ * @brief Specifies the duration for the timer
+ * 
+ */
+float duration = 0.01f;
 /**
  * @brief Height of the toolbar.
  *
@@ -199,7 +204,7 @@ static void UpdateDrawFrame(void)
     if (frameTimer.isTimerDone() && !jm.isFinished())
     {
         jm.update();
-        frameTimer.resetTimer(0.01);
+        frameTimer.resetTimer(duration);
     }
 
     if (!showConvexHull)
@@ -250,7 +255,7 @@ static void UpdateDrawFrame(void)
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &numberOfPoints, dataPoints);
+    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, &numberOfPoints, dataPoints);
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
