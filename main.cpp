@@ -78,7 +78,7 @@ Vector2 window_position = {10, 80};
  * @brief Specifies the size of the settings window
  *
  */
-Vector2 window_size = {600, 600};
+Vector2 window_size = {400, 400};
 /**
  * @brief Specifies if the settings window is currently minimized
  *
@@ -98,7 +98,7 @@ bool resizing = false;
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
-Vector2 content_size = {560, 560};
+Vector2 content_size = {600, 600};
 /**
  * @brief Specifies the scale for drawing points
  *
