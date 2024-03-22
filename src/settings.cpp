@@ -86,7 +86,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                     window_position.x = GetScreenWidth() - window_size.x - 10;
                 if (window_position.y < toolbarHeight)
                     window_position.y = toolbarHeight + 10;
-                else if (window_position.y > GetScreenHeight())
+                else if (window_position.y > GetScreenHeight() - toolbarHeight)
                     window_position.y = GetScreenHeight() - RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT - 10;
             }
         }
