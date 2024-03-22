@@ -11,7 +11,6 @@
 #include "raylib.h"
 #include "settings.h"
 #include "timer.h"
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -228,32 +227,7 @@ static void UpdateDrawFrame(void)
         }
         jm = JarvisMarch(dataPoints);
     }
-
-    if (IsFileDropped())
-    {
-        Vector2 position = GetMousePosition();
-        FilePathList droppedFile = LoadDroppedFiles();
-
-        if (window_position.x + 20 <= position.x && window_position.x + 20 + 500 >= position.x &&
-            window_position.y + 330 <= position.y && window_position.y + 330 + 100 >= position.y)
-        {
-            filePath = std::string(droppedFile.paths[0]);
-            isFilePathAdded = 1;
-
-            fileDataPoints.clear();
-            std::ifstream istream(filePath);
-            float x, y;
-            char openParenthesis, closeParenthesis, separator;
-            while (istream >> openParenthesis >> x >> separator >> y >> closeParenthesis)
-            {
-                fileDataPoints.push_back({x, y});
-            }
-
-            settings.computeScale(fileDataPoints, &scale, toolbarHeight);
-        }
-
-        UnloadDroppedFiles(droppedFile);
-    }
+    
     //----------------------------------------------------------------------------------
 
     // Draw

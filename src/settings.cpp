@@ -143,7 +143,8 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                                &scroll, scale);
 
             drawFileInputComponent({20.0f, 50.0f}, {window_position.x, window_position.y + 250.0f}, {500.0f, 200.0f},
-                                   &scroll, isFilePathAdded, filePath, fileDataPoints, dataPoints, toolbarHeight, scale);
+                                   &scroll, isFilePathAdded, filePath, fileDataPoints, dataPoints, toolbarHeight, scale,
+                                   scissor);
 
             drawTimestepComponent({20.0f, 50.0f}, {window_position.x, window_position.y + 450.0f}, {500.0f, 100.0f},
                                   &scroll, duration);
@@ -204,15 +205,15 @@ void Settings::drawScaleComponent(Vector2 padding, Vector2 component_position, V
                          component_size.x, (0.125f) * component_size.y},
              "Scale");
     GuiSlider((Rectangle){component_position.x + padding.x + (*scroll).x,
-                          component_position.y + padding.y + (0.375f) * component_size.y + (*scroll).y, component_size.x,
-                          (0.25f) * component_size.y},
+                          component_position.y + padding.y + (0.375f) * component_size.y + (*scroll).y,
+                          component_size.x, (0.25f) * component_size.y},
               NULL, TextFormat("%0.1f", *scale), scale, 0.1f, 50.0f);
 }
 
 void Settings::drawFileInputComponent(Vector2 padding, Vector2 component_position, Vector2 component_size,
                                       Vector2 *scroll, bool *isFilePathAdded, std::string &filePath,
                                       std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints,
-                                      float toolbarHeight, float *scale)
+                                      float toolbarHeight, float *scale, Rectangle scissor)
 {
     if (*isFilePathAdded == 0)
     {
@@ -223,6 +224,41 @@ void Settings::drawFileInputComponent(Vector2 padding, Vector2 component_positio
         DrawRectangle(component_position.x + padding.x + (*scroll).x,
                       component_position.y + padding.y + ((0.25f) * component_size.y) + (*scroll).y, component_size.x,
                       (0.5f) * component_size.y, Fade(LIGHTGRAY, 0.3f));
+
+        if (IsFileDropped())
+        {
+            Vector2 position = GetMousePosition();
+            FilePathList droppedFile = LoadDroppedFiles();
+
+            float xCoord = std::max((component_position.x + padding.x + (*scroll).x), scissor.x),
+                  yCoord = std::max((component_position.y + padding.y + ((0.25f) * component_size.y) + (*scroll).y),
+                                    scissor.y),
+                  xGap = std::max(0.0f, padding.x + (*scroll).x), yGap = std::min(0.0f, 300.0f + (*scroll).y);
+
+            if (CheckCollisionPointRec(
+                    position,
+                    (Rectangle){xCoord, yCoord,
+                                std::min(scissor.width - (xCoord - scissor.x),
+                                         component_size.x + (padding.x - xGap) + (*scroll).x),
+                                std::min(scissor.height - (yCoord - scissor.y), ((0.5f) * component_size.y) + yGap)}))
+            {
+                filePath = std::string(droppedFile.paths[0]);
+                *isFilePathAdded = 1;
+
+                fileDataPoints.clear();
+                std::ifstream istream(filePath);
+                float x, y;
+                char openParenthesis, closeParenthesis, separator;
+                while (istream >> openParenthesis >> x >> separator >> y >> closeParenthesis)
+                {
+                    fileDataPoints.push_back({x, y});
+                }
+
+                computeScale(fileDataPoints, scale, toolbarHeight);
+            }
+
+            UnloadDroppedFiles(droppedFile);
+        }
     }
     else
     {
@@ -280,23 +316,9 @@ void Settings::drawTimestepComponent(Vector2 padding, Vector2 component_position
                          component_size.x, (0.125f) * component_size.y},
              "Timestep");
     GuiSlider((Rectangle){component_position.x + padding.x + (*scroll).x,
-                          component_position.y + padding.y + (0.375f) * component_size.y + (*scroll).y, component_size.x,
-                          (0.25f) * component_size.y},
+                          component_position.y + padding.y + (0.375f) * component_size.y + (*scroll).y,
+                          component_size.x, (0.25f) * component_size.y},
               NULL, TextFormat("%0.2f", *duration), duration, 0.01f, 0.50f);
-}
-
-bool Settings::checkPointValidity(Vector2 p, bool *showSettings)
-{
-    if (!*showSettings)
-    {
-        return true;
-    }
-    if (window_position.x <= p.x && window_position.x + window_size.x >= p.x && window_position.y <= p.y &&
-        window_position.y + window_size.y >= p.y)
-    {
-        return false;
-    }
-    return true;
 }
 
 void Settings::computeScale(std::vector<Vector2> &fileDataPoints, float *scale, float toolbarHeight)
@@ -321,4 +343,18 @@ void Settings::computeScale(std::vector<Vector2> &fileDataPoints, float *scale, 
         }
         *scale = computedScale;
     }
+}
+
+bool Settings::checkPointValidity(Vector2 p, bool *showSettings)
+{
+    if (!*showSettings)
+    {
+        return true;
+    }
+    if (window_position.x <= p.x && window_position.x + window_size.x >= p.x && window_position.y <= p.y &&
+        window_position.y + window_size.y >= p.y)
+    {
+        return false;
+    }
+    return true;
 }
