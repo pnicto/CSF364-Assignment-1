@@ -234,6 +234,13 @@ static void UpdateDrawFrame(void)
                 dataPoints.push_back(mousePos);
             }
         }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            if (dataPoints.size() > 0)
+            {
+                dataPoints.pop_back();
+            }
+        }
         jm = JarvisMarch(dataPoints);
     }
 

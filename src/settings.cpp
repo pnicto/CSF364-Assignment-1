@@ -228,6 +228,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                 {
                     *isFilePathAdded = false;
                     filePath.clear();
+                    fileDataPoints.clear();
                 }
             }
 
