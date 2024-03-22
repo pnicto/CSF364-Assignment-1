@@ -80,21 +80,6 @@ Vector2 window_position = {10, 80};
  */
 Vector2 window_size = {400, 400};
 /**
- * @brief Specifies if the settings window is currently minimized
- *
- */
-bool minimized = false;
-/**
- * @brief Specifies if the settings window is currently being moved
- *
- */
-bool moving = false;
-/**
- * @brief Specifies if the settings window is currently being resized
- *
- */
-bool resizing = false;
-/**
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
@@ -148,7 +133,7 @@ JarvisMarch jm(dataPoints);
  * @brief Represents the Settings object.
  *
  */
-Settings settings(&window_position, &window_size, &minimized, &moving, &resizing, &content_size, "Settings");
+Settings settings(&window_position, &window_size, &content_size, "Settings");
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -264,27 +249,7 @@ static void UpdateDrawFrame(void)
                 fileDataPoints.push_back({x, y});
             }
 
-            if (fileDataPoints.size() > 0)
-            {
-                float smallestX = static_cast<float>(INT64_MAX), largestX = static_cast<float>(INT64_MIN),
-                      smallestY = static_cast<float>(INT64_MAX), largestY = static_cast<float>(INT64_MIN);
-                for (auto &point : fileDataPoints)
-                {
-                    smallestX = std::min(smallestX, point.x);
-                    largestX = std::max(largestX, point.x);
-                    smallestY = std::min(smallestY, point.y);
-                    largestY = std::max(largestY, point.y);
-                }
-
-                float computedScale = 50.0f;
-                while ((largestX - smallestX) * computedScale > (static_cast<float>(GetScreenWidth()) - 50.0f) ||
-                       (largestY - smallestY) * computedScale >
-                           (static_cast<float>(GetScreenHeight()) - toolbarHeight - 50.0f))
-                {
-                    computedScale -= 0.1f;
-                }
-                scale = computedScale;
-            }
+            settings.computeScale(fileDataPoints, &scale, toolbarHeight);
         }
 
         UnloadDroppedFiles(droppedFile);
