@@ -18,6 +18,16 @@ JarvisMarch::JarvisMarch(std::vector<Vector2> p)
     {
         nextPointIndex = (leftMostPointIndex + 1) % n;
         convexHull.push_back(points[currentPointIndex]);
+
+        currentStep = 0;
+        steps.push_back((struct StepInfo){0, 0, 0, convexHull});
+        steps.push_back((struct StepInfo){currentPointIndex, nextPointIndex, candidatePointIndex, convexHull});
+
+        while (currentState != State::FINISHED)
+        {
+            computeNextStep();
+            steps.push_back((struct StepInfo){currentPointIndex, nextPointIndex, candidatePointIndex, convexHull});
+        }
     }
 }
 
@@ -29,14 +39,14 @@ JarvisMarch::~JarvisMarch()
 
 void JarvisMarch::drawConvexHull()
 {
-    for (auto &p : convexHull)
+    for (auto &p : steps[currentStep].convexHull)
     {
         DrawCircle(p.x, p.y, 5, BLUE);
     }
 
-    for (int i = 0; i < convexHull.size() - 1; i++)
+    for (int i = 0; i < steps[currentStep].convexHull.size() - 1; i++)
     {
-        DrawLineEx(convexHull[i], convexHull[i + 1], 2, GREEN);
+        DrawLineEx(steps[currentStep].convexHull[i], steps[currentStep].convexHull[i + 1], 2, GREEN);
     }
 }
 
@@ -78,16 +88,16 @@ void JarvisMarch::draw()
     BeginDrawing();
     if (!isFinished())
     {
-        DrawCircleV(points[nextPointIndex], 5, BLUE);
-        DrawCircleV(points[candidatePointIndex], 5, PURPLE);
-        DrawLineV(points[currentPointIndex], points[nextPointIndex], BLACK);
-        DrawLineV(points[currentPointIndex], points[candidatePointIndex], RED);
+        DrawCircleV(points[steps[currentStep].nextPointIndex], 5, BLUE);
+        DrawCircleV(points[steps[currentStep].candidatePointIndex], 5, PURPLE);
+        DrawLineV(points[steps[currentStep].currentPointIndex], points[steps[currentStep].nextPointIndex], BLACK);
+        DrawLineV(points[steps[currentStep].currentPointIndex], points[steps[currentStep].candidatePointIndex], RED);
     }
     drawConvexHull();
     EndDrawing();
 }
 
-void JarvisMarch::update()
+void JarvisMarch::computeNextStep()
 {
     switch (currentState)
     {
@@ -145,7 +155,19 @@ void JarvisMarch::update()
     }
 }
 
+void JarvisMarch::update()
+{
+    if (currentStep < steps.size() - 1)
+        currentStep++;
+}
+
+void JarvisMarch::previous()
+{
+    if (currentStep > 0)
+        currentStep--;
+}
+
 bool JarvisMarch::isFinished()
 {
-    return currentState == State::FINISHED;
+    return currentStep >= steps.size() - 1;
 }
