@@ -18,7 +18,15 @@
 #if defined(PLATFORM_WEB)
 #include "emscripten/emscripten.h"
 // use js to get the body height and width
+/**
+ * @brief EM JS object that gets the browser window's inner width.
+ *
+ */
 EM_JS(int, getDocumentBodyWidth, (), { return window.innerWidth; });
+/**
+ * @brief EM JS object that gets the browser window's inner height.
+ *
+ */
 EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
 #endif
 
@@ -142,7 +150,15 @@ Settings settings(&window_position, &window_size, &content_size, "Settings");
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
-static void UpdateDrawFrame(void); // Update and draw one frame
+/**
+ * @brief Updates and draws the frame.
+ *
+ */
+static void UpdateDrawFrame(void);
+/**
+ * @brief Represents a timer for controlling frame updates.
+ *
+ */
 Timer frameTimer;
 
 //----------------------------------------------------------------------------------
