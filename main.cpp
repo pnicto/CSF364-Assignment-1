@@ -9,8 +9,10 @@
 #include "jarvis_march.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "settings.h"
 #include "timer.h"
 #include <iostream>
+#include <string>
 #include <vector>
 
 #if defined(PLATFORM_WEB)
@@ -62,6 +64,51 @@ int isDropdownOpen = false;
  */
 bool showConvexHull = false;
 /**
+ * @brief Indicates whether to display the settings modal.
+ *
+ */
+bool showSettings = false;
+/**
+ * @brief Specifies the position for the settings window
+ *
+ */
+Vector2 window_position = {10, 80};
+/**
+ * @brief Specifies the size of the settings window
+ *
+ */
+Vector2 window_size = {400, 400};
+/**
+ * @brief Specifies the size of the content to be displayed in the settings window
+ *
+ */
+Vector2 content_size = {600, 600};
+/**
+ * @brief Specifies the scale for drawing points
+ *
+ */
+float scale = 20.0f;
+/**
+ * @brief Specifies the file path from which points are loaded
+ *
+ */
+std::string filePath;
+/**
+ * @brief Specifies where the file path has been added or not
+ *
+ */
+bool isFilePathAdded = 0;
+/**
+ * @brief Specifies the number of points to be randomly generated
+ *
+ */
+float numberOfPoints = 10.0f;
+/**
+ * @brief Specifies the duration for the timer
+ *
+ */
+float duration = 0.01f;
+/**
  * @brief Height of the toolbar.
  *
  */
@@ -77,10 +124,20 @@ std::vector<Vector2> dataPoints;
  */
 bool visualizeStepByStep = true;
 /**
+ * @brief A collection of points (x, y) obtained from a file before scaling
+ *
+ */
+std::vector<Vector2> fileDataPoints;
+/**
  * @brief Represents the JarvisMarch object.
  *
  */
 JarvisMarch jm(dataPoints);
+/**
+ * @brief Represents the Settings object.
+ *
+ */
+Settings settings(&window_position, &window_size, &content_size, "Settings");
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -106,7 +163,6 @@ int main()
 
     float centerX = screenWidth / 2.0f;
     float centerY = (screenHeight + toolbarHeight) / 2.0f;
-    const float scale = 20.0f;
     for (auto &point : dataPoints)
     {
         point.x = centerX + point.x * scale;
@@ -146,7 +202,6 @@ int main()
 
     return 0;
 }
-bool done = false;
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
@@ -155,7 +210,7 @@ static void UpdateDrawFrame(void)
     if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
     {
         jm.update();
-        frameTimer.resetTimer(0.01);
+        frameTimer.resetTimer(duration);
     }
 
     if (!showConvexHull)
@@ -163,15 +218,21 @@ static void UpdateDrawFrame(void)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetMousePosition();
-            if (mousePos.y > toolbarHeight)
+            if (mousePos.y > toolbarHeight && settings.checkPointValidity(mousePos, &showSettings))
             {
-
                 dataPoints.push_back(mousePos);
-                jm = JarvisMarch(dataPoints);
-                done = false;
             }
         }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            if (dataPoints.size() > 0)
+            {
+                dataPoints.pop_back();
+            }
+        }
+        jm = JarvisMarch(dataPoints);
     }
+
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -199,10 +260,23 @@ static void UpdateDrawFrame(void)
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
+        showSettings = false;
     }
     // enable the remaining GUI
     if (dataPoints.size() == 0)
         GuiEnable();
+
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 840), 10, 190, 50}, "Settings"))
+    {
+        if (showConvexHull)
+        {
+            showConvexHull = !showConvexHull;
+        }
+        showSettings = !showSettings;
+    }
+
+    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
+                          fileDataPoints, dataPoints);
 
     if (showConvexHull)
     {
@@ -232,7 +306,8 @@ static void UpdateDrawFrame(void)
         GuiDrawText("Jarvis March Algorithm", {10, 10, 400, 50}, TEXT_ALIGN_LEFT, BLACK);
         for (size_t i = 0; i < dataPoints.size(); i++)
         {
-            DrawCircleV(dataPoints[i], 5, BLACK);
+            if (settings.checkPointValidity(dataPoints[i], &showSettings))
+                DrawCircleV(dataPoints[i], 5, BLACK);
         }
 
         if (showConvexHull)
