@@ -51,9 +51,9 @@ void JarvisMarch::drawConvexHull()
     }
 }
 
-void JarvisMarch::changeState(State s)
+void JarvisMarch::changeCurrentState(State state)
 {
-    currentState = s;
+    currentState = state;
 }
 
 int JarvisMarch::getLeftMostPointIndex()

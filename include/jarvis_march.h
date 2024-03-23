@@ -23,6 +23,7 @@ class JarvisMarch
         COUNTER_CLOCKWISE
     };
     void drawConvexHull();
+    void changeCurrentState(State state);
     void next();
     void previous();
     void draw();
