@@ -9,25 +9,9 @@ JarvisMarch::JarvisMarch(std::vector<Vector2> p)
 {
     n = p.size();
     points = p;
-
-    leftMostPointIndex = getLeftMostPointIndex();
-
-    currentPointIndex = leftMostPointIndex;
-
     if (n != 0)
     {
-        nextPointIndex = (leftMostPointIndex + 1) % n;
-        convexHull.push_back(points[currentPointIndex]);
-
-        currentStep = 0;
-        steps.push_back((struct StepInfo){0, 0, 0, convexHull});
-        steps.push_back((struct StepInfo){currentPointIndex, nextPointIndex, candidatePointIndex, convexHull});
-
-        while (currentState != State::FINISHED)
-        {
-            computeNextStep();
-            steps.push_back((struct StepInfo){currentPointIndex, nextPointIndex, candidatePointIndex, convexHull});
-        }
+        computeConvexHull();
     }
 }
 
@@ -41,16 +25,10 @@ void JarvisMarch::drawConvexHull()
     {
         DrawCircle(p.x, p.y, 5, BLUE);
     }
-
     for (int i = 0; i < steps[currentStep].convexHull.size() - 1; i++)
     {
         DrawLineEx(steps[currentStep].convexHull[i], steps[currentStep].convexHull[i + 1], 2, GREEN);
     }
-}
-
-void JarvisMarch::changeCurrentState(State state)
-{
-    currentState = state;
 }
 
 int JarvisMarch::getLeftMostPointIndex()
@@ -95,64 +73,6 @@ void JarvisMarch::draw()
     EndDrawing();
 }
 
-void JarvisMarch::computeNextStep()
-{
-    switch (currentState)
-    {
-    case State::INIT:
-        if (n < 3)
-        {
-            convexHull = points;
-            currentState = State::FINISHED;
-        }
-
-        if (orientation(points[currentPointIndex], points[candidatePointIndex], points[nextPointIndex]) ==
-            Orientation::COUNTER_CLOCKWISE)
-        {
-            nextPointIndex = candidatePointIndex;
-        }
-
-        candidatePointIndex = (candidatePointIndex + 1);
-
-        if (candidatePointIndex == n)
-        {
-            currentPointIndex = nextPointIndex;
-            convexHull.push_back(points[currentPointIndex]);
-            nextPointIndex = (currentPointIndex + 1) % n;
-            candidatePointIndex = 0;
-            currentState = State::FINDING_HULL_POINT;
-        }
-
-        break;
-
-    case State::FINDING_HULL_POINT:
-        if (orientation(points[currentPointIndex], points[candidatePointIndex], points[nextPointIndex]) ==
-            Orientation::COUNTER_CLOCKWISE)
-        {
-            nextPointIndex = candidatePointIndex;
-        }
-
-        candidatePointIndex = (candidatePointIndex + 1);
-
-        if (candidatePointIndex == n)
-        {
-            currentPointIndex = nextPointIndex;
-            convexHull.push_back(points[currentPointIndex]);
-            nextPointIndex = (currentPointIndex + 1) % n;
-            candidatePointIndex = 0;
-        }
-
-        if (currentPointIndex == leftMostPointIndex)
-        {
-            currentState = State::FINISHED;
-        }
-        break;
-
-    case State::FINISHED:
-        break;
-    }
-}
-
 void JarvisMarch::next()
 {
     if (currentStep < steps.size() - 1)
@@ -168,4 +88,37 @@ void JarvisMarch::previous()
 bool JarvisMarch::isFinished()
 {
     return currentStep >= steps.size() - 1;
+}
+
+void JarvisMarch::computeConvexHull()
+{
+    if (n < 4)
+    {
+        convexHull = points;
+        return;
+    }
+
+    int left = getLeftMostPointIndex();
+    int current = left, next;
+
+    do
+    {
+        convexHull.push_back(points[current]);
+        next = (current + 1) % n;
+
+        for (int i = 0; i < n; i++)
+        {
+            steps.push_back((struct StepInfo){current, next, i, convexHull});
+            if (orientation(points[current], points[i], points[next]) == Orientation::COUNTER_CLOCKWISE)
+            {
+                next = i;
+            }
+        }
+
+        current = next;
+    } while (current != left);
+    ;
+
+    convexHull.push_back(convexHull[0]);
+    steps.push_back((struct StepInfo){current, next, 0, convexHull});
 }

@@ -27,20 +27,6 @@ class JarvisMarch
 {
   private:
     /**
-     * @brief Represents the possible states of the JarvisMarch object.
-     *
-     * The possible states are:
-     *  - INIT: The initial state of the JarvisMarch object.
-     *  - FINDING_HULL_POINT: The state in which the JarvisMarch object is finding the next hull point.
-     *  - FINISHED: The state in which the JarvisMarch object has finished.
-     */
-    enum State
-    {
-        INIT,
-        FINDING_HULL_POINT,
-        FINISHED
-    };
-    /**
      * @brief Represents the orientation of any three points.
      *
      */
@@ -55,12 +41,6 @@ class JarvisMarch
      *
      */
     void drawConvexHull();
-    /**
-     * @brief Changes the JarvisMarch::currentState of the JarvisMarch object.
-     *
-     * @param state The new state of the JarvisMarch object.
-     */
-    void changeCurrentState(State state);
     /**
      * @brief Represents the convex hull.
      *
@@ -110,42 +90,6 @@ class JarvisMarch
      */
     std::vector<Vector2> points;
     /**
-     * @brief The current state of the JarvisMarch object.
-     *
-     */
-    State currentState = State::INIT;
-    /**
-     * @brief The index of the leftmost point in the set of points.
-     *
-     * This member variable stores the index of the leftmost point among the points provided to the JarvisMarch class.
-     * It is used as a reference point for the Jarvis March algorithm to start constructing the convex hull.
-     */
-    int leftMostPointIndex;
-
-    /**
-     * @brief The index of the next point to be considered.
-     *
-     * This member variable stores the index of the next point to be considered during the Jarvis March algorithm. It
-     * represents the point that forms the convex hull with the current point.
-     */
-    int nextPointIndex;
-
-    /**
-     * @brief The index of the candidate point being considered.
-     *
-     * This member variable stores the index of the candidate point currently being evaluated for inclusion in the
-     * convex hull during the Jarvis March algorithm.
-     */
-    int candidatePointIndex = 0;
-
-    /**
-     * @brief The index of the current point in the algorithm's iteration.
-     *
-     * This member variable stores the index of the current point being processed in the Jarvis March algorithm. It is
-     * used to track the progress of the algorithm as it constructs the convex hull.
-     */
-    int currentPointIndex;
-    /**
      * @brief Gets the index of the left most point in JarvisMarch::points.
      *
      * @return int The index of the left most point.
@@ -177,10 +121,10 @@ class JarvisMarch
      */
     int currentStep;
     /**
-     * @brief Computes the next step of the JarvisMarch object.
+     * @brief Computes all the steps in the convex hull computation process.
      *
      */
-    void computeNextStep();
+    void computeConvexHull();
 
   public:
     /**
