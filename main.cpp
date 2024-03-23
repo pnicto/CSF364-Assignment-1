@@ -213,7 +213,7 @@ static void UpdateDrawFrame(void)
         frameTimer.resetTimer(duration);
     }
 
-    if (!showConvexHull)
+    if (!showConvexHull && !isDropdownOpen)
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
