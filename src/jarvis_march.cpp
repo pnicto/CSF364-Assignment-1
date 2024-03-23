@@ -155,7 +155,7 @@ void JarvisMarch::computeNextStep()
     }
 }
 
-void JarvisMarch::update()
+void JarvisMarch::next()
 {
     if (currentStep < steps.size() - 1)
         currentStep++;

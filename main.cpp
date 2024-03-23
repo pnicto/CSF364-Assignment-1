@@ -209,7 +209,7 @@ static void UpdateDrawFrame(void)
     //----------------------------------------------------------------------------------
     if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
     {
-        jm.update();
+        jm.next();
         frameTimer.resetTimer(duration);
     }
 
@@ -290,7 +290,7 @@ static void UpdateDrawFrame(void)
         {
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1120), 10, 110, 50}, "Next"))
             {
-                jm.update();
+                jm.next();
             }
 
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1240), 10, 110, 50}, "Prev"))

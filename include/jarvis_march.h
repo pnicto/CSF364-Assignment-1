@@ -23,8 +23,7 @@ class JarvisMarch
         COUNTER_CLOCKWISE
     };
     void drawConvexHull();
-    void changeState(State s);
-    void update();
+    void next();
     void previous();
     void draw();
     std::vector<Vector2> convexHull;
