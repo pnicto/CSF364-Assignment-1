@@ -57,7 +57,7 @@ int previousAlgorithm = selectedAlgorithm;
  * @brief Indicates whether the dropdown menu is open.
  *
  */
-int isDropdownOpen = false;
+bool isDropdownOpen = false;
 /**
  * @brief Indicates whether to display the convex hull.
  *
