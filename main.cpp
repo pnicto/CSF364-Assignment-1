@@ -112,7 +112,7 @@ float duration = 0.01f;
  * @brief Height of the toolbar.
  *
  */
-const float toolbarHeight = 70;
+const float toolbarHeight = 50;
 /**
  * @brief A collection of points (x, y) to be used as test data
  *
@@ -177,7 +177,7 @@ int main()
     defaultFont = LoadFontEx("resources/JetBrainsMono-2.304/fonts/ttf/JetBrainsMono-Bold.ttf", 30, 0, 0);
 
     GuiSetFont(defaultFont);
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
     SetTextureFilter(defaultFont.texture, TEXTURE_FILTER_BILINEAR);
 
     //--------------------------------------------------------------------------------------
@@ -243,8 +243,8 @@ static void UpdateDrawFrame(void)
 
     // Toolbar
     GuiLine(Rectangle{0, toolbarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
-    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 320), 10, 310, 50},
-                       "Jarvis March;Kirk Patrick Seidel", &selectedAlgorithm, isDropdownOpen))
+    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 260), 10, 250, 30},
+                       "Jarvis March;Kirkpatrick-Seidel", &selectedAlgorithm, isDropdownOpen))
     {
         isDropdownOpen = !isDropdownOpen;
         if (previousAlgorithm != selectedAlgorithm)
@@ -257,7 +257,7 @@ static void UpdateDrawFrame(void)
     // disable the GuiButton when there are no points
     if (dataPoints.size() == 0)
         GuiDisable();
-    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 480), 10, 210, 30}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
         showSettings = false;
@@ -266,7 +266,7 @@ static void UpdateDrawFrame(void)
     if (dataPoints.size() == 0)
         GuiEnable();
 
-    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 840), 10, 190, 50}, "Settings"))
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 590), 10, 100, 30}, "Settings"))
     {
         if (showConvexHull)
         {
@@ -280,7 +280,7 @@ static void UpdateDrawFrame(void)
 
     if (showConvexHull)
     {
-        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1000), 10, 310, 50},
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
                       (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
         {
             visualizeStepByStep = !visualizeStepByStep;
@@ -288,12 +288,12 @@ static void UpdateDrawFrame(void)
 
         if (visualizeStepByStep)
         {
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1120), 10, 110, 50}, "Next"))
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
             {
                 jm.update();
             }
 
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1240), 10, 110, 50}, "Prev"))
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
             {
                 jm.previous();
             }
@@ -303,7 +303,7 @@ static void UpdateDrawFrame(void)
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
     case JARVIS_MARCH: {
-        GuiDrawText("Jarvis March Algorithm", {10, 10, 400, 50}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("Jarvis March Algorithm", {10, 10, 250, 30}, TEXT_ALIGN_LEFT, BLACK);
         for (size_t i = 0; i < dataPoints.size(); i++)
         {
             if (settings.checkPointValidity(dataPoints[i], &showSettings))
@@ -326,7 +326,7 @@ static void UpdateDrawFrame(void)
     }
     break;
     case KIRK_PATRICK_SEIDEL: {
-        GuiDrawText("Kirk Patrick Seidel Algorithm", {10, 10, 500, 50}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("Kirkpatrick-Seidel Algorithm", {10, 10, 300, 30}, TEXT_ALIGN_LEFT, BLACK);
     }
     break;
     }
