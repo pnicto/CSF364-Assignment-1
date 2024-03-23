@@ -119,6 +119,11 @@ const float toolbarHeight = 70;
  */
 std::vector<Vector2> dataPoints;
 /**
+ * @brief Indicates whether to visualize the algorithm one step at a time or play the full thing.
+ *
+ */
+bool visualizeStepByStep = true;
+/**
  * @brief A collection of points (x, y) obtained from a file before scaling
  *
  */
@@ -202,7 +207,7 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone() && !jm.isFinished())
+    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
     {
         jm.update();
         frameTimer.resetTimer(duration);
@@ -227,7 +232,7 @@ static void UpdateDrawFrame(void)
         }
         jm = JarvisMarch(dataPoints);
     }
-    
+
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -249,11 +254,17 @@ static void UpdateDrawFrame(void)
         previousAlgorithm = selectedAlgorithm;
     }
 
+    // disable the GuiButton when there are no points
+    if (dataPoints.size() == 0)
+        GuiDisable();
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
         showSettings = false;
     }
+    // enable the remaining GUI
+    if (dataPoints.size() == 0)
+        GuiEnable();
 
     if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 840), 10, 190, 50}, "Settings"))
     {
@@ -266,6 +277,28 @@ static void UpdateDrawFrame(void)
 
     settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
                           fileDataPoints, dataPoints);
+
+    if (showConvexHull)
+    {
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1000), 10, 310, 50},
+                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
+        {
+            visualizeStepByStep = !visualizeStepByStep;
+        }
+
+        if (visualizeStepByStep)
+        {
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1120), 10, 110, 50}, "Next"))
+            {
+                jm.update();
+            }
+
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1240), 10, 110, 50}, "Prev"))
+            {
+                jm.previous();
+            }
+        }
+    }
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
