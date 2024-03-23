@@ -25,18 +25,7 @@
  */
 class JarvisMarch
 {
-  public:
-    /**
-     * @brief Construct a new Jarvis March object
-     *
-     * @param points The set of points to be used to compute the convex hull.
-     */
-    JarvisMarch(std::vector<Vector2> points);
-    /**
-     * @brief Destroy the Jarvis March object
-     *
-     */
-    ~JarvisMarch();
+  private:
     /**
      * @brief Represents the possible states of the JarvisMarch object.
      *
@@ -73,34 +62,10 @@ class JarvisMarch
      */
     void changeCurrentState(State state);
     /**
-     * @brief Gets the next step of the JarvisMarch object.
-     *
-     */
-    void next();
-    /**
-     * @brief Gets the previous step of the JarvisMarch object.
-     *
-     */
-    void previous();
-    /**
-     * @brief Draws the JarvisMarch::currentStep of the JarvisMarch object.
-     *
-     */
-    void draw();
-    /**
      * @brief Represents the convex hull.
      *
      */
     std::vector<Vector2> convexHull;
-    /**
-     * @brief Checks if the JarvisMarch object has reached the last step in JarvisMarch::steps.
-     *
-     * @return true If the JarvisMarch object has reached the last step.
-     * @return false If the JarvisMarch object has not reached the last step.
-     */
-    bool isFinished();
-
-  private:
     /**
      * @brief Represents information about a step in the Jarvis March algorithm.
      *
@@ -216,6 +181,41 @@ class JarvisMarch
      *
      */
     void computeNextStep();
+
+  public:
+    /**
+     * @brief Construct a new Jarvis March object
+     *
+     * @param points The set of points to be used to compute the convex hull.
+     */
+    JarvisMarch(std::vector<Vector2> points);
+    /**
+     * @brief Destroy the Jarvis March object
+     *
+     */
+    ~JarvisMarch();
+    /**
+     * @brief Checks if the JarvisMarch object has reached the last step in JarvisMarch::steps.
+     *
+     * @return true If the JarvisMarch object has reached the last step.
+     * @return false If the JarvisMarch object has not reached the last step.
+     */
+    bool isFinished();
+    /**
+     * @brief Draws the JarvisMarch::currentStep of the JarvisMarch object.
+     *
+     */
+    void draw();
+    /**
+     * @brief Gets the next step of the JarvisMarch object.
+     *
+     */
+    void next();
+    /**
+     * @brief Gets the previous step of the JarvisMarch object.
+     *
+     */
+    void previous();
 };
 
 #endif // JARVIS_MARCH_H
