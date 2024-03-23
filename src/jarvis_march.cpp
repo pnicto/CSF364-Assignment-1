@@ -33,9 +33,6 @@ JarvisMarch::JarvisMarch(std::vector<Vector2> p)
 
 JarvisMarch::~JarvisMarch()
 {
-    points.clear();
-    convexHull.clear();
-    steps.clear();
 }
 
 void JarvisMarch::drawConvexHull()
