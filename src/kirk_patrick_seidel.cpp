@@ -91,9 +91,25 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
         pos++;
     }
 
+    Step step;
+    step.state = currentState;
+    step.type = PAIRS;
+    step.arr = S;
+    for (auto pair : pairs)
+    {
+        step.pairs.push_back(S[pair.first]);
+        step.pairs.push_back(S[pair.second]);
+    }
+
     // point that could not be paired is added to candidates
     if (n % 2)
+    {
         candidates.push_back(S[pos]);
+        step.x_m = 1;
+        step.p_k = S[pos];
+    }
+
+    steps.push_back(step);
 
     // calculate slopes
     std::vector<std::pair<std::pair<int, int>, float>> slopes;
@@ -114,10 +130,38 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
 
     float K = quick_select(only_slopes, k / 2 + 1);
 
+    Step step4;
+    step4.state = currentState;
+    step4.type = MEDIAN_SLOPE;
+    step4.arr = S;
+    for (auto pair : pairs)
+    {
+        step4.pairs.push_back(S[pair.first]);
+        step4.pairs.push_back(S[pair.second]);
+    }
+    step4.k = K;
+    for (int i = 0; i < only_slopes.size(); i++)
+    {
+        if (FloatEquals(only_slopes[i], K))
+        {
+            step4.p_k = S[pairs[i].first];
+            step4.p_m = S[pairs[i].second];
+            break;
+        }
+    }
+    steps.push_back(step4);
+
     // calculate intersections
     std::vector<float> intersections;
     for (auto point : S)
         intersections.push_back(point.y - (K * point.x));
+
+    Step step1;
+    step1.state = currentState;
+    step1.type = INTERCEPTS;
+    step1.arr = S;
+    step1.k = K;
+    steps.push_back(step1);
 
     Vector2 p_k, p_m;
     float m_int = -1 * std::numeric_limits<float>::infinity();
@@ -145,6 +189,16 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
             }
         }
     }
+
+    // found the winning point
+    Step step2;
+    step2.state = currentState;
+    step2.type = INTERCEPTS_FINAL;
+    step2.p_k = p_k;
+    step2.p_m = p_m;
+    step2.k = K;
+    step2.arr = S;
+    steps.push_back(step2);
 
     // step 8 in slides
     if (p_k.x <= L && p_m.x > L)
@@ -177,6 +231,13 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
         }
     }
 
+    // final candidates step
+    Step step3;
+    step3.state = currentState;
+    step3.type = ADD_TO_CANDIDATES;
+    step3.arr = candidates;
+    steps.push_back(step3);
+
     return upper_bridge(candidates, L);
 }
 
@@ -186,6 +247,15 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
     if (n <= 2)
     {
         sort(S.begin(), S.end(), &Kirk::compareVector2);
+        if (n == 2)
+        {
+            Step step2;
+            step2.state = currentState;
+            step2.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
+            step2.p_k = S[0];
+            step2.p_m = S[1];
+            steps.push_back(step2);
+        }
         return S;
     }
 
@@ -200,19 +270,22 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
 
     // drawing the median line is a step
     Step step;
+    step.state = currentState;
     step.type = LINE;
     step.x_m = x_mid;
+    step.arr = S;
     steps.push_back(step);
 
     std::vector<Vector2> pq = upper_bridge(S, x_mid);
     sort(pq.begin(), pq.end(), &Kirk::compareVector2); // O(1) cause constant size
 
     // drawing the bridge is a step
-    // step = nu;
-    // step.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
-    // step.p_k = pq[0];
-    // step.p_m = pq[1];
-    // steps.push_back(step);
+    Step step1;
+    step1.state = currentState;
+    step1.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
+    step1.p_k = pq[0];
+    step1.p_m = pq[1];
+    steps.push_back(step1);
 
     std::vector<Vector2> L, R, res, temp_res;
     for (auto v : S)
@@ -390,6 +463,11 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
         rr++;
     }
 
+    currentState = FINISH;
+    Step finalStep;
+    finalStep.state = currentState;
+    finalStep.type = OVER;
+    steps.push_back(finalStep);
     return res;
 }
 
@@ -413,47 +491,106 @@ void Kirk::draw()
     switch (steps[currentStep].type)
     {
     case LINE:
+        // only considering points in arr, color them green
+        for (Vector2 p : steps[currentStep].arr)
+            DrawCircleV(p, 5, GREEN);
+
+        // draw the median line
         DrawLineEx({steps[currentStep].x_m, 100}, {steps[currentStep].x_m, static_cast<float>(GetScreenHeight()) - 100},
                    2, RED);
         break;
 
     case PAIRS:
-        for (int i = 1; i < steps[currentStep].arr.size(); i++)
+        for (Vector2 &p : steps[currentStep].arr)
         {
-            DrawLineV(steps[currentStep].arr[i], steps[currentStep].arr[i - 1], YELLOW);
+            DrawCircleV(p, 5, GREEN);
         }
-        if (steps[currentStep].x_m != 0)
-            DrawCircleV(steps[currentStep].p_k, 5, DARKPURPLE);
+
+        // draw all pair lines with orange
+        for (int i = 1; i < steps[currentStep].pairs.size(); i += 2)
+        {
+            DrawLineV(steps[currentStep].pairs[i], steps[currentStep].pairs[i - 1], ORANGE);
+        }
+
+        // color the left out point purple
+        if (steps[currentStep].x_m > 0)
+            DrawCircleV(steps[currentStep].p_k, 5, PURPLE);
+        break;
+
+    case MEDIAN_SLOPE:
+        // color relevant points green
+        for (Vector2 &p : steps[currentStep].arr)
+        {
+            DrawCircleV(p, 5, GREEN);
+        }
+
+        // draw all pair lines with orange
+        for (int i = 1; i < steps[currentStep].pairs.size(); i += 2)
+        {
+            DrawLineV(steps[currentStep].pairs[i], steps[currentStep].pairs[i - 1], ORANGE);
+        }
+
+        // color the left out point purple
+        // if (steps[currentStep].x_m > 0)
+        //     DrawCircleV(steps[currentStep].p_k, 5, PURPLE);
+
+        // now draw the median slope line with pink
+
+        if (!Vector2Equals(steps[currentStep].p_k, steps[currentStep].p_m))
+        {
+            DrawLineEx(steps[currentStep].p_k, steps[currentStep].p_m, 3, PINK);
+        }
+        else
+            drawline(steps[currentStep].p_k, steps[currentStep].k, PINK);
+
         break;
 
     case INTERCEPTS:
+        // draw intercept lines with brown
+        for (Vector2 &p : steps[currentStep].arr)
+        {
+            DrawCircleV(p, 5, GREEN);
+            drawline(p, steps[currentStep].k, BROWN);
+        }
+        break;
+
+    case INTERCEPTS_FINAL:
+        // draw the winning intercept with brown
+        for (Vector2 &p : steps[currentStep].arr)
+        {
+            DrawCircleV(p, 5, GREEN);
+        }
         if (!Vector2Equals(steps[currentStep].p_k, steps[currentStep].p_m))
         {
             DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, BROWN);
         }
         else
-        {
-            // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
-        }
+            drawline(steps[currentStep].p_k, steps[currentStep].k, BROWN);
         break;
 
     case ADD_TO_CANDIDATES:
+        // show the candidates for the next recursive call
         for (Vector2 v : steps[currentStep].arr)
         {
-            DrawCircleV(v, 5, DARKPURPLE);
+            DrawCircleV(v, 5, PURPLE);
         }
         break;
 
     case UP_BRIDGE:
+        // draw the upper_bridge
         DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, LIME);
         break;
 
     case LOW_BRIDGE:
+        // draw the lower bridge
         DrawLine(steps[currentStep].p_k.x, -1 * steps[currentStep].p_k.y, steps[currentStep].p_m.x,
                  -1 * steps[currentStep].p_m.y, LIME);
         break;
+
+    case OVER:
+        break;
     }
-    // drawPrevSteps();
+    drawPrevSteps();
     EndDrawing();
 }
 
@@ -476,12 +613,14 @@ bool Kirk::isFinished()
 
 void Kirk::drawPrevSteps()
 {
-    switch (currentState)
+    switch (steps[currentStep].state)
     {
     case INIT:
         break;
 
     case UPPER_HULL:
+        // need to re-draw horizontal line and previous bridges
+
         break;
 
     case LOWER_HULL:
@@ -491,6 +630,25 @@ void Kirk::drawPrevSteps()
         break;
 
     case FINISH:
+
+        // draw the entire hull
+        for (int i = 1; i < hull.size(); i++)
+        {
+            DrawLineEx(hull[i], hull[i - 1], 2, BLUE);
+        }
+        if (hull.size() >= 2)
+            DrawLineEx(hull[0], hull.back(), 2, BLUE);
+
         break;
     }
+}
+
+// make more responsive !!!
+void Kirk::drawline(Vector2 p, float slope, Color c)
+{
+    float x1 = p.x - 500;
+    float y1 = p.y + (slope * -500);
+    float x2 = p.x + 500;
+    float y2 = p.y + (slope * 500);
+    DrawLine(x1, y1, x2, y2, c);
 }

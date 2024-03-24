@@ -16,9 +16,12 @@ class Kirk
         LINE,
         PAIRS,
         INTERCEPTS,
+        MEDIAN_SLOPE,
+        INTERCEPTS_FINAL,
         ADD_TO_CANDIDATES,
         UP_BRIDGE,
         LOW_BRIDGE,
+        OVER
     };
 
     enum State
@@ -38,6 +41,7 @@ class Kirk
     void previous();
     bool isFinished();
     void drawPrevSteps();
+    void drawline(Vector2 p, float slope, Color c);
     static bool compareVector2(Vector2 a, Vector2 b);
 
   private:
@@ -50,21 +54,27 @@ class Kirk
 
     std::vector<Vector2> points;
     std::vector<Vector2> hull;
+    std::vector<Vector2> upperHull;
+
     State currentState = State::INIT;
     miniState currentMiniState = miniState::LINE;
     float x_mid;
 
     struct Step
     {
+        State state;
         miniState type;
         std::vector<Vector2> arr;
-        std::vector<std::pair<int, int>> pairs;
-        float x_m;
+        std::vector<Vector2> pairs;
+        float x_m = 0, k = 0;
         Vector2 p_k, p_m;
     };
 
     std::vector<Step> steps;
     int currentStep = 0;
+
+    int currentUpperHullIndex = 0;
+    int currentLowerHullIndex = 0;
 };
 
 #endif // KIRK_PATRICK_SEIDEL_H
