@@ -55,6 +55,8 @@ class Kirk
     std::vector<Vector2> points;
     std::vector<Vector2> hull;
     std::vector<Vector2> upperHull;
+    std::vector<std::pair<Vector2, Vector2>> upperBridges;
+    std::vector<std::pair<Vector2, Vector2>> lowerBridges;
 
     State currentState = State::INIT;
     miniState currentMiniState = miniState::LINE;
@@ -66,15 +68,20 @@ class Kirk
         miniState type;
         std::vector<Vector2> arr;
         std::vector<Vector2> pairs;
-        float x_m = 0, k = 0;
         Vector2 p_k, p_m;
+        float x_m = 0, k = 0;
+        int hullLineIndex = 0;
+        int upperBridgeLineIndex = 0;
+        int lowerBridgeLineIndex = 0;
     };
 
     std::vector<Step> steps;
     int currentStep = 0;
-
-    int currentUpperHullIndex = 0;
-    int currentLowerHullIndex = 0;
+    int hullLineIndexHelper = 0;
+    // int uhIndexHelper = 0;
+    // int lhIndexHelper = 0;
+    // int ubIndexHelper = 0;
+    // int lbIndexHelper = 0;
 };
 
 #endif // KIRK_PATRICK_SEIDEL_H

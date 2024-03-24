@@ -95,6 +95,10 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     step.state = currentState;
     step.type = PAIRS;
     step.arr = S;
+    step.hullLineIndex = hullLineIndexHelper;
+    step.upperBridgeLineIndex = upperBridges.size() - 1;
+    step.lowerBridgeLineIndex = lowerBridges.size() - 1;
+
     for (auto pair : pairs)
     {
         step.pairs.push_back(S[pair.first]);
@@ -134,6 +138,9 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     step4.state = currentState;
     step4.type = MEDIAN_SLOPE;
     step4.arr = S;
+    step4.hullLineIndex = hullLineIndexHelper;
+    step4.upperBridgeLineIndex = upperBridges.size() - 1;
+    step4.lowerBridgeLineIndex = lowerBridges.size() - 1;
     for (auto pair : pairs)
     {
         step4.pairs.push_back(S[pair.first]);
@@ -161,6 +168,9 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     step1.type = INTERCEPTS;
     step1.arr = S;
     step1.k = K;
+    step1.upperBridgeLineIndex = upperBridges.size() - 1;
+    step1.lowerBridgeLineIndex = lowerBridges.size() - 1;
+    step1.hullLineIndex = hullLineIndexHelper;
     steps.push_back(step1);
 
     Vector2 p_k, p_m;
@@ -198,6 +208,9 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     step2.p_m = p_m;
     step2.k = K;
     step2.arr = S;
+    step2.upperBridgeLineIndex = upperBridges.size() - 1;
+    step2.lowerBridgeLineIndex = lowerBridges.size() - 1;
+    step2.hullLineIndex = hullLineIndexHelper;
     steps.push_back(step2);
 
     // step 8 in slides
@@ -236,6 +249,9 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     step3.state = currentState;
     step3.type = ADD_TO_CANDIDATES;
     step3.arr = candidates;
+    step3.upperBridgeLineIndex = upperBridges.size() - 1;
+    step3.lowerBridgeLineIndex = lowerBridges.size() - 1;
+    step3.hullLineIndex = hullLineIndexHelper;
     steps.push_back(step3);
 
     return upper_bridge(candidates, L);
@@ -254,6 +270,9 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
             step2.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
             step2.p_k = S[0];
             step2.p_m = S[1];
+            step2.upperBridgeLineIndex = upperBridges.size() - 1;
+            step2.lowerBridgeLineIndex = lowerBridges.size() - 1;
+            step2.hullLineIndex = hullLineIndexHelper;
             steps.push_back(step2);
         }
         return S;
@@ -274,10 +293,23 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
     step.type = LINE;
     step.x_m = x_mid;
     step.arr = S;
+    // step.hullLineIndex = hullLineIndexHelper;
+    step.upperBridgeLineIndex = upperBridges.size() - 1;
+    step.lowerBridgeLineIndex = lowerBridges.size() - 1;
     steps.push_back(step);
+    hullLineIndexHelper = steps.size() - 1;
 
     std::vector<Vector2> pq = upper_bridge(S, x_mid);
     sort(pq.begin(), pq.end(), &Kirk::compareVector2); // O(1) cause constant size
+
+    if (currentState == UPPER_HULL && pq.size() > 1)
+    {
+        upperBridges.push_back({pq[0], pq[1]});
+    }
+    else if (currentState == LOWER_HULL && pq.size() > 1)
+    {
+        lowerBridges.push_back({pq[0], pq[1]});
+    }
 
     // drawing the bridge is a step
     Step step1;
@@ -285,6 +317,9 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
     step1.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
     step1.p_k = pq[0];
     step1.p_m = pq[1];
+    step1.upperBridgeLineIndex = upperBridges.size() - 1;
+    step1.lowerBridgeLineIndex = lowerBridges.size() - 1;
+    step1.hullLineIndex = hullLineIndexHelper;
     steps.push_back(step1);
 
     std::vector<Vector2> L, R, res, temp_res;
@@ -349,10 +384,16 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
     std::vector<Vector2> uh, lh, res;
 
     currentState = UPPER_HULL;
+    hullLineIndexHelper = 0;
+
     uh = upper_hull(S);
+    upperHull = uh;
 
     currentState = LOWER_HULL;
+    hullLineIndexHelper = 0;
+
     lh = lower_hull(S);
+
     currentState = MERGE;
 
     // remove common points (with upper hull) from lower hull where x = x_max
@@ -475,6 +516,31 @@ Kirk::Kirk(std::vector<Vector2> p)
 {
     points = p;
     hull = convex_hull(p);
+    for (auto &p : lowerBridges)
+    {
+        p.first.y *= -1;
+        p.second.y *= -1;
+    }
+
+    for (auto &s : steps)
+    {
+        if (s.state == LOWER_HULL)
+        {
+            for (auto &p : s.pairs)
+            {
+                p.y = -1 * p.y;
+            }
+
+            for (auto &p : s.arr)
+            {
+                p.y = -1 * p.y;
+            }
+
+            s.p_k.y *= -1;
+            s.p_m.y *= -1;
+            s.k *= -1;
+        }
+    }
 }
 
 Kirk::~Kirk()
@@ -493,7 +559,7 @@ void Kirk::draw()
     case LINE:
         // only considering points in arr, color them green
         for (Vector2 p : steps[currentStep].arr)
-            DrawCircleV(p, 5, GREEN);
+            DrawCircleV(p, 5, RED);
 
         // draw the median line
         DrawLineEx({steps[currentStep].x_m, 100}, {steps[currentStep].x_m, static_cast<float>(GetScreenHeight()) - 100},
@@ -501,9 +567,10 @@ void Kirk::draw()
         break;
 
     case PAIRS:
+
         for (Vector2 &p : steps[currentStep].arr)
         {
-            DrawCircleV(p, 5, GREEN);
+            DrawCircleV(p, 5, RED);
         }
 
         // draw all pair lines with orange
@@ -521,7 +588,7 @@ void Kirk::draw()
         // color relevant points green
         for (Vector2 &p : steps[currentStep].arr)
         {
-            DrawCircleV(p, 5, GREEN);
+            DrawCircleV(p, 5, RED);
         }
 
         // draw all pair lines with orange
@@ -549,7 +616,7 @@ void Kirk::draw()
         // draw intercept lines with brown
         for (Vector2 &p : steps[currentStep].arr)
         {
-            DrawCircleV(p, 5, GREEN);
+            DrawCircleV(p, 5, RED);
             drawline(p, steps[currentStep].k, BROWN);
         }
         break;
@@ -558,7 +625,7 @@ void Kirk::draw()
         // draw the winning intercept with brown
         for (Vector2 &p : steps[currentStep].arr)
         {
-            DrawCircleV(p, 5, GREEN);
+            DrawCircleV(p, 5, RED);
         }
         if (!Vector2Equals(steps[currentStep].p_k, steps[currentStep].p_m))
         {
@@ -578,13 +645,13 @@ void Kirk::draw()
 
     case UP_BRIDGE:
         // draw the upper_bridge
-        DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, LIME);
+        DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, RED);
         break;
 
     case LOW_BRIDGE:
         // draw the lower bridge
         DrawLine(steps[currentStep].p_k.x, -1 * steps[currentStep].p_k.y, steps[currentStep].p_m.x,
-                 -1 * steps[currentStep].p_m.y, LIME);
+                 -1 * steps[currentStep].p_m.y, RED);
         break;
 
     case OVER:
@@ -613,17 +680,43 @@ bool Kirk::isFinished()
 
 void Kirk::drawPrevSteps()
 {
-    switch (steps[currentStep].state)
+    Step temp;
+    Step curr = steps[currentStep];
+    switch (curr.state)
     {
     case INIT:
         break;
 
     case UPPER_HULL:
         // need to re-draw horizontal line and previous bridges
+        if (curr.type != LINE)
+        {
+            temp = steps[curr.hullLineIndex];
+            if (temp.type == LINE)
+            {
+                DrawLineEx({temp.x_m, 100}, {temp.x_m, static_cast<float>(GetScreenHeight()) - 100}, 2, RED);
+            }
+        }
+        for (int i = 0; i <= curr.upperBridgeLineIndex; i++)
+            DrawLineEx(upperBridges[i].first, upperBridges[i].second, 2, BLUE);
 
         break;
 
     case LOWER_HULL:
+        for (int i = 1; i < upperHull.size(); i++)
+            DrawLineEx(upperHull[i], upperHull[i - 1], 2, BLUE);
+
+        if (curr.type != LINE)
+        {
+            temp = steps[curr.hullLineIndex];
+            if (temp.type == LINE)
+            {
+                DrawLineEx({temp.x_m, 100}, {temp.x_m, static_cast<float>(GetScreenHeight()) - 100}, 2, RED);
+            }
+        }
+        for (int i = 0; i <= curr.lowerBridgeLineIndex; i++)
+            DrawLineEx(lowerBridges[i].first, lowerBridges[i].second, 2, BLUE);
+
         break;
 
     case MERGE:
@@ -646,9 +739,9 @@ void Kirk::drawPrevSteps()
 // make more responsive !!!
 void Kirk::drawline(Vector2 p, float slope, Color c)
 {
-    float x1 = p.x - 500;
-    float y1 = p.y + (slope * -500);
-    float x2 = p.x + 500;
-    float y2 = p.y + (slope * 500);
+    float x1 = p.x - 400;
+    float y1 = p.y + (slope * -400);
+    float x2 = p.x + 400;
+    float y2 = p.y + (slope * 400);
     DrawLine(x1, y1, x2, y2, c);
 }
