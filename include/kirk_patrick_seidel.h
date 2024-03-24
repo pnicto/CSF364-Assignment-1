@@ -78,6 +78,7 @@ class Kirk
     std::vector<Step> steps;
     int currentStep = 0;
     int hullLineIndexHelper = 0;
+    float lim = 0.0001;
     // int uhIndexHelper = 0;
     // int lhIndexHelper = 0;
     // int ubIndexHelper = 0;

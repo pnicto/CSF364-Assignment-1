@@ -178,14 +178,14 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
 
     for (int i = 0; i < n; i++)
     {
-        if (intersections[i] - m_int > 0.0001)
+        if (intersections[i] - m_int > lim)
         {
             m_int = intersections[i];
             p_k.x = S[i].x;
             p_k.y = S[i].y;
             p_m = p_k;
         }
-        else if (abs(intersections[i] - m_int) <= 0.0001)
+        else if (abs(intersections[i] - m_int) <= lim)
         {
             if (S[i].x > p_m.x)
             {
@@ -515,6 +515,23 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
 Kirk::Kirk(std::vector<Vector2> p)
 {
     points = p;
+
+    float max_coordinate = -1 * std::numeric_limits<float>::infinity();
+    for (auto p : points)
+    {
+        max_coordinate = std::max(std::abs(p.x), std::max(std::abs(p.y), max_coordinate));
+    }
+    if (max_coordinate <= 1000)
+    {
+        lim = 0.0001;
+    }
+    else if (max_coordinate <= 5000)
+    {
+        lim = 0.001;
+    }
+    else
+        lim = 0.01;
+
     hull = convex_hull(p);
     for (auto &p : lowerBridges)
     {
