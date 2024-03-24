@@ -345,7 +345,18 @@ static void UpdateDrawFrame(void)
         }
 
         if (showConvexHull)
+        {
+            if (!kps.isFinished())
+            {
+
+                frameTimer.startTimer(0.5);
+            }
+            else
+            {
+                frameTimer.stopTimer();
+            }
             kps.draw();
+        }
     }
     break;
     }
