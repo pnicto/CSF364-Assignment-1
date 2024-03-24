@@ -7,6 +7,7 @@
 #define RAYGUI_IMPLEMENTATION
 
 #include "jarvis_march.h"
+#include "kirk_patrick_seidel.h"
 #include "raygui.h"
 #include "raylib.h"
 #include "timer.h"
@@ -81,6 +82,7 @@ bool visualizeStepByStep = true;
  *
  */
 JarvisMarch jm(dataPoints);
+Kirk kps(dataPoints);
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -114,6 +116,7 @@ int main()
     }
 
     jm = JarvisMarch(dataPoints);
+    kps = Kirk(dataPoints);
 
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
@@ -168,6 +171,7 @@ static void UpdateDrawFrame(void)
 
                 dataPoints.push_back(mousePos);
                 jm = JarvisMarch(dataPoints);
+                kps = Kirk(dataPoints);
                 done = false;
             }
         }
@@ -252,6 +256,13 @@ static void UpdateDrawFrame(void)
     break;
     case KIRK_PATRICK_SEIDEL: {
         GuiDrawText("Kirk Patrick Seidel Algorithm", {10, 10, 500, 50}, TEXT_ALIGN_LEFT, BLACK);
+        for (size_t i = 0; i < dataPoints.size(); i++)
+        {
+            DrawCircleV(dataPoints[i], 5, BLACK);
+        }
+
+        if (showConvexHull)
+            kps.draw();
     }
     break;
     }

@@ -1,22 +1,17 @@
 
 #include "kirk_patrick_seidel.h"
-#include <bits/stdc++.h>
-#include <iostream>
-#include <limits>
 
-using namespace std;
-
-bool compareVector2(Vector2 a, Vector2 b)
+bool Kirk::compareVector2(Vector2 a, Vector2 b)
 {
     if (a.x == b.x)
         return a.y < b.y;
     return a.x < b.x;
 }
 
-float median_of_medians(vector<float> arr)
+float Kirk::median_of_medians(std::vector<float> arr)
 {
     int n = arr.size();
-    vector<vector<float>> matrix(n / 5 + (n % 5 != 0));
+    std::vector<std::vector<float>> matrix(n / 5 + (n % 5 != 0));
     int i = 0, s = 0;
 
     while (i < n)
@@ -36,19 +31,19 @@ float median_of_medians(vector<float> arr)
         s++;
     }
 
-    for (vector<float> &V : matrix)
+    for (std::vector<float> &V : matrix)
         sort(V.begin(), V.end());
 
     return matrix[matrix.size() / 2][2];
 }
 
-float quick_select(vector<float> S, int rank)
+float Kirk::quick_select(std::vector<float> S, int rank)
 {
     if (S.size() < rank)
         return 0;
     float x = median_of_medians(S);
     int r = 0, dup = 0;
-    vector<float> L, R;
+    std::vector<float> L, R;
 
     for (float e : S)
     {
@@ -72,17 +67,17 @@ float quick_select(vector<float> S, int rank)
         return quick_select(R, rank - (r + dup));
 }
 
-vector<Vector2> upper_bridge(vector<Vector2> S, float L)
+std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
 {
     int n = S.size();
     if (n <= 2)
         return S;
 
-    vector<Vector2> candidates;
+    std::vector<Vector2> candidates;
 
     // make pairs
     int pos = 0;
-    vector<pair<int, int>> pairs;
+    std::vector<std::pair<int, int>> pairs;
     for (int i = 0; i < n / 2; i++)
     {
         int p_i = pos, p_j = n - 1 - pos;
@@ -101,12 +96,12 @@ vector<Vector2> upper_bridge(vector<Vector2> S, float L)
         candidates.push_back(S[pos]);
 
     // calculate slopes
-    vector<pair<pair<int, int>, float>> slopes;
-    vector<float> only_slopes;
+    std::vector<std::pair<std::pair<int, int>, float>> slopes;
+    std::vector<float> only_slopes;
     for (auto p : pairs)
     {
         if (S[p.first].x == S[p.second].x)
-            candidates.push_back(max(S[p.first], S[p.second], compareVector2));
+            candidates.push_back(std::max(S[p.first], S[p.second], &Kirk::compareVector2));
         else
         {
             slopes.push_back({p, (S[p.first].y - S[p.second].y) / (S[p.first].x - S[p.second].x)});
@@ -120,12 +115,12 @@ vector<Vector2> upper_bridge(vector<Vector2> S, float L)
     float K = quick_select(only_slopes, k / 2 + 1);
 
     // calculate intersections
-    vector<float> intersections;
+    std::vector<float> intersections;
     for (auto point : S)
         intersections.push_back(point.y - (K * point.x));
 
     Vector2 p_k, p_m;
-    float m_int = -1 * numeric_limits<float>::infinity();
+    float m_int = -1 * std::numeric_limits<float>::infinity();
 
     for (int i = 0; i < n; i++)
     {
@@ -185,28 +180,41 @@ vector<Vector2> upper_bridge(vector<Vector2> S, float L)
     return upper_bridge(candidates, L);
 }
 
-vector<Vector2> upper_hull(vector<Vector2> S)
+std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
 {
     int n = S.size();
     if (n <= 2)
     {
-        sort(S.begin(), S.end(), compareVector2);
+        sort(S.begin(), S.end(), &Kirk::compareVector2);
         return S;
     }
 
     // Get x_mid
-    vector<float> x_s;
+    std::vector<float> x_s;
     for (auto v : S)
         x_s.push_back(v.x);
     float x_mid = quick_select(x_s, n / 2 + 1);
-    float x__mid = quick_select(x_s, max(1, n / 2));
+    float x__mid = quick_select(x_s, std::max(1, n / 2));
     x_mid = (x_mid + x__mid) / 2;
     x_mid = x_mid - 0.001; // IMPORTANT
 
-    vector<Vector2> pq = upper_bridge(S, x_mid);
-    sort(pq.begin(), pq.end(), compareVector2); // O(1) cause constant size
+    // drawing the median line is a step
+    Step step;
+    step.type = LINE;
+    step.x_m = x_mid;
+    steps.push_back(step);
 
-    vector<Vector2> L, R, res, temp_res;
+    std::vector<Vector2> pq = upper_bridge(S, x_mid);
+    sort(pq.begin(), pq.end(), &Kirk::compareVector2); // O(1) cause constant size
+
+    // drawing the bridge is a step
+    // step = nu;
+    // step.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
+    // step.p_k = pq[0];
+    // step.p_m = pq[1];
+    // steps.push_back(step);
+
+    std::vector<Vector2> L, R, res, temp_res;
     for (auto v : S)
     {
         if (v.x < pq[0].x)
@@ -230,7 +238,7 @@ vector<Vector2> upper_hull(vector<Vector2> S)
     L.push_back(pq[0]);
     R.push_back(pq[1]);
 
-    sort(temp_res.begin(), temp_res.end(), compareVector2); // O(hlogh)
+    sort(temp_res.begin(), temp_res.end(), &Kirk::compareVector2); // O(hlogh)
 
     L = upper_hull(L);
     R = upper_hull(R);
@@ -249,9 +257,9 @@ vector<Vector2> upper_hull(vector<Vector2> S)
     return res;
 }
 
-vector<Vector2> lower_hull(vector<Vector2> &S) // same as upper hull with negative y co-ordinates
+std::vector<Vector2> Kirk::lower_hull(std::vector<Vector2> &S) // same as upper hull with negative y co-ordinates
 {
-    vector<Vector2> S_new, res;
+    std::vector<Vector2> S_new, res;
     for (auto v : S)
         S_new.push_back({v.x, -v.y});
 
@@ -261,13 +269,18 @@ vector<Vector2> lower_hull(vector<Vector2> &S) // same as upper hull with negati
     return res;
 }
 
-vector<Vector2> convex_hull(vector<Vector2> &S)
+std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
 {
     if (S.size() <= 2)
         return S;
-    vector<Vector2> uh, lh, res;
+    std::vector<Vector2> uh, lh, res;
+
+    currentState = UPPER_HULL;
     uh = upper_hull(S);
+
+    currentState = LOWER_HULL;
     lh = lower_hull(S);
+    currentState = MERGE;
 
     // remove common points (with upper hull) from lower hull where x = x_max
     int r = uh.size() - 1;
@@ -282,7 +295,7 @@ vector<Vector2> convex_hull(vector<Vector2> &S)
     int s = 0;
     while (s < lh.size() && s < uh.size() && lh[s].y > uh[s].y)
     {
-        swap(uh[s], lh[s]);
+        std::swap(uh[s], lh[s]);
         s++;
     }
 
@@ -291,14 +304,14 @@ vector<Vector2> convex_hull(vector<Vector2> &S)
     while (s <= lh.size() && s <= uh.size() && lh[lh.size() - s].x == uh[uh.size() - s].x &&
            lh[lh.size() - s].y > uh[uh.size() - s].y)
     {
-        swap(uh[uh.size() - s], lh[lh.size() - s]);
+        std::swap(uh[uh.size() - s], lh[lh.size() - s]);
         s++;
     }
 
     reverse(lh.begin(), lh.end()); // to make a chain in final result
 
-    float x_min = numeric_limits<float>::infinity();
-    float x_max = -1 * numeric_limits<float>::infinity();
+    float x_min = std::numeric_limits<float>::infinity();
+    float x_max = -1 * std::numeric_limits<float>::infinity();
     for (auto v : S)
     {
         if (v.x > x_max)
@@ -307,14 +320,14 @@ vector<Vector2> convex_hull(vector<Vector2> &S)
             x_min = v.x;
     }
 
-    vector<Vector2> temp_res; // stores points vertically co-linear at either ends
+    std::vector<Vector2> temp_res; // stores points vertically co-linear at either ends
 
     for (auto v : S)
     {
         if (v.x == x_max || v.x == x_min)
             temp_res.push_back(v);
     }
-    sort(temp_res.begin(), temp_res.end(), compareVector2);
+    sort(temp_res.begin(), temp_res.end(), &Kirk::compareVector2);
 
     // follwing block of code inserts into the result the points which are
     // vertically co-linear and between the first point in the upper hull and
@@ -380,14 +393,104 @@ vector<Vector2> convex_hull(vector<Vector2> &S)
     return res;
 }
 
-int main()
+Kirk::Kirk(std::vector<Vector2> p)
 {
-    vector<Vector2> P = {{1, 1}, {2, 2}, {2, 0}, {2, 4}, {3, 3}, {4, 2}};
-    vector<Vector2> res = convex_hull(P);
-    for (auto h : res)
+    points = p;
+    hull = convex_hull(p);
+}
+
+Kirk::~Kirk()
+{
+    points.clear();
+    hull.clear();
+    steps.clear();
+}
+
+void Kirk::draw()
+{
+    BeginDrawing();
+
+    switch (steps[currentStep].type)
     {
-        cout << "( " << h.x << ", " << h.y << " ) ,";
+    case LINE:
+        DrawLineEx({steps[currentStep].x_m, 100}, {steps[currentStep].x_m, static_cast<float>(GetScreenHeight()) - 100},
+                   2, RED);
+        break;
+
+    case PAIRS:
+        for (int i = 1; i < steps[currentStep].arr.size(); i++)
+        {
+            DrawLineV(steps[currentStep].arr[i], steps[currentStep].arr[i - 1], YELLOW);
+        }
+        if (steps[currentStep].x_m != 0)
+            DrawCircleV(steps[currentStep].p_k, 5, DARKPURPLE);
+        break;
+
+    case INTERCEPTS:
+        if (!Vector2Equals(steps[currentStep].p_k, steps[currentStep].p_m))
+        {
+            DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, BROWN);
+        }
+        else
+        {
+            // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
+        }
+        break;
+
+    case ADD_TO_CANDIDATES:
+        for (Vector2 v : steps[currentStep].arr)
+        {
+            DrawCircleV(v, 5, DARKPURPLE);
+        }
+        break;
+
+    case UP_BRIDGE:
+        DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, LIME);
+        break;
+
+    case LOW_BRIDGE:
+        DrawLine(steps[currentStep].p_k.x, -1 * steps[currentStep].p_k.y, steps[currentStep].p_m.x,
+                 -1 * steps[currentStep].p_m.y, LIME);
+        break;
     }
-    cout << endl;
-    return 0;
+    // drawPrevSteps();
+    EndDrawing();
+}
+
+void Kirk::update()
+{
+    if (currentStep < steps.size() - 1)
+        currentStep++;
+}
+
+void Kirk::previous()
+{
+    if (currentStep > 0)
+        currentStep--;
+}
+
+bool Kirk::isFinished()
+{
+    return currentStep >= steps.size() - 1;
+}
+
+void Kirk::drawPrevSteps()
+{
+    switch (currentState)
+    {
+    case INIT:
+        break;
+
+    case UPPER_HULL:
+        break;
+
+    case LOWER_HULL:
+        break;
+
+    case MERGE:
+        break;
+
+    case FINISH:
+        break;
+    }
 }
