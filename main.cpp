@@ -210,9 +210,16 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
+    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep && selectedAlgorithm == JARVIS_MARCH)
     {
         jm.update();
+        frameTimer.resetTimer(duration);
+    }
+
+    if (frameTimer.isTimerDone() && !kps.isFinished() && !visualizeStepByStep &&
+        selectedAlgorithm == KIRK_PATRICK_SEIDEL)
+    {
+        kps.update();
         frameTimer.resetTimer(duration);
     }
 
@@ -230,11 +237,11 @@ static void UpdateDrawFrame(void)
         {
             if (dataPoints.size() > 0)
             {
-                kps = Kirk(dataPoints);
                 dataPoints.pop_back();
             }
         }
         jm = JarvisMarch(dataPoints);
+        kps = Kirk(dataPoints);
     }
 
     //----------------------------------------------------------------------------------
@@ -254,6 +261,7 @@ static void UpdateDrawFrame(void)
         if (previousAlgorithm != selectedAlgorithm)
         {
             showConvexHull = false;
+            frameTimer.stopTimer();
         }
         previousAlgorithm = selectedAlgorithm;
     }
@@ -294,12 +302,12 @@ static void UpdateDrawFrame(void)
         {
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
             {
-                jm.update();
+                selectedAlgorithm == JARVIS_MARCH ? jm.update() : kps.update();
             }
 
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
             {
-                jm.previous();
+                selectedAlgorithm == JARVIS_MARCH ? jm.previous() : kps.previous();
             }
         }
     }
