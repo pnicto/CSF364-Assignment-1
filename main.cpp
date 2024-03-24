@@ -10,8 +10,10 @@
 #include "kirk_patrick_seidel.h"
 #include "raygui.h"
 #include "raylib.h"
+#include "settings.h"
 #include "timer.h"
 #include <iostream>
+#include <string>
 #include <vector>
 
 #if defined(PLATFORM_WEB)
@@ -56,17 +58,62 @@ int previousAlgorithm = selectedAlgorithm;
  * @brief Indicates whether the dropdown menu is open.
  *
  */
-int isDropdownOpen = false;
+bool isDropdownOpen = false;
 /**
  * @brief Indicates whether to display the convex hull.
  *
  */
 bool showConvexHull = false;
 /**
+ * @brief Indicates whether to display the settings modal.
+ *
+ */
+bool showSettings = false;
+/**
+ * @brief Specifies the position for the settings window
+ *
+ */
+Vector2 window_position = {10, 80};
+/**
+ * @brief Specifies the size of the settings window
+ *
+ */
+Vector2 window_size = {400, 400};
+/**
+ * @brief Specifies the size of the content to be displayed in the settings window
+ *
+ */
+Vector2 content_size = {600, 600};
+/**
+ * @brief Specifies the scale for drawing points
+ *
+ */
+float scale = 20.0f;
+/**
+ * @brief Specifies the file path from which points are loaded
+ *
+ */
+std::string filePath;
+/**
+ * @brief Specifies where the file path has been added or not
+ *
+ */
+bool isFilePathAdded = 0;
+/**
+ * @brief Specifies the number of points to be randomly generated
+ *
+ */
+float numberOfPoints = 10.0f;
+/**
+ * @brief Specifies the duration for the timer
+ *
+ */
+float duration = 0.01f;
+/**
  * @brief Height of the toolbar.
  *
  */
-const float toolbarHeight = 70;
+const float toolbarHeight = 50;
 /**
  * @brief A collection of points (x, y) to be used as test data
  *
@@ -78,11 +125,21 @@ std::vector<Vector2> dataPoints;
  */
 bool visualizeStepByStep = true;
 /**
+ * @brief A collection of points (x, y) obtained from a file before scaling
+ *
+ */
+std::vector<Vector2> fileDataPoints;
+/**
  * @brief Represents the JarvisMarch object.
  *
  */
 JarvisMarch jm(dataPoints);
 Kirk kps(dataPoints);
+/**
+ * @brief Represents the Settings object.
+ *
+ */
+Settings settings(&window_position, &window_size, &content_size, "Settings");
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -108,7 +165,6 @@ int main()
 
     float centerX = screenWidth / 2.0f;
     float centerY = (screenHeight + toolbarHeight) / 2.0f;
-    const float scale = 20.0f;
     for (auto &point : dataPoints)
     {
         point.x = centerX + point.x * scale;
@@ -124,7 +180,7 @@ int main()
     defaultFont = LoadFontEx("resources/JetBrainsMono-2.304/fonts/ttf/JetBrainsMono-Bold.ttf", 30, 0, 0);
 
     GuiSetFont(defaultFont);
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
     SetTextureFilter(defaultFont.texture, TEXTURE_FILTER_BILINEAR);
 
     //--------------------------------------------------------------------------------------
@@ -149,7 +205,6 @@ int main()
 
     return 0;
 }
-bool done = false;
 // Update and draw game frame
 static void UpdateDrawFrame(void)
 {
@@ -158,24 +213,30 @@ static void UpdateDrawFrame(void)
     if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
     {
         jm.update();
-        frameTimer.resetTimer(0.01);
+        frameTimer.resetTimer(duration);
     }
 
-    if (!showConvexHull)
+    if (!showConvexHull && !isDropdownOpen)
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetMousePosition();
-            if (mousePos.y > toolbarHeight)
+            if (mousePos.y > toolbarHeight && settings.checkPointValidity(mousePos, &showSettings))
             {
-
                 dataPoints.push_back(mousePos);
-                jm = JarvisMarch(dataPoints);
-                kps = Kirk(dataPoints);
-                done = false;
             }
         }
+        else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+        {
+            if (dataPoints.size() > 0)
+            {
+                kps = Kirk(dataPoints);
+                dataPoints.pop_back();
+            }
+        }
+        jm = JarvisMarch(dataPoints);
     }
+
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -186,8 +247,8 @@ static void UpdateDrawFrame(void)
 
     // Toolbar
     GuiLine(Rectangle{0, toolbarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
-    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 320), 10, 310, 50},
-                       "Jarvis March;Kirk Patrick Seidel", &selectedAlgorithm, isDropdownOpen))
+    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 260), 10, 250, 30},
+                       "Jarvis March;Kirkpatrick-Seidel", &selectedAlgorithm, isDropdownOpen))
     {
         isDropdownOpen = !isDropdownOpen;
         if (previousAlgorithm != selectedAlgorithm)
@@ -200,17 +261,30 @@ static void UpdateDrawFrame(void)
     // disable the GuiButton when there are no points
     if (dataPoints.size() == 0)
         GuiDisable();
-    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 640), 10, 310, 50}, "Toggle Convex Hull"))
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 480), 10, 210, 30}, "Toggle Convex Hull"))
     {
         showConvexHull = !showConvexHull;
+        showSettings = false;
     }
     // enable the remaining GUI
     if (dataPoints.size() == 0)
         GuiEnable();
 
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 590), 10, 100, 30}, "Settings"))
+    {
+        if (showConvexHull)
+        {
+            showConvexHull = !showConvexHull;
+        }
+        showSettings = !showSettings;
+    }
+
+    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
+                          fileDataPoints, dataPoints);
+
     if (showConvexHull)
     {
-        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1000), 10, 310, 50},
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
                       (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
         {
             visualizeStepByStep = !visualizeStepByStep;
@@ -218,12 +292,12 @@ static void UpdateDrawFrame(void)
 
         if (visualizeStepByStep)
         {
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1120), 10, 110, 50}, "Next"))
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
             {
                 jm.update();
             }
 
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1240), 10, 110, 50}, "Prev"))
+            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
             {
                 jm.previous();
             }
@@ -233,10 +307,11 @@ static void UpdateDrawFrame(void)
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
     case JARVIS_MARCH: {
-        GuiDrawText("Jarvis March Algorithm", {10, 10, 400, 50}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("Jarvis March Algorithm", {10, 10, 250, 30}, TEXT_ALIGN_LEFT, BLACK);
         for (size_t i = 0; i < dataPoints.size(); i++)
         {
-            DrawCircleV(dataPoints[i], 5, BLACK);
+            if (settings.checkPointValidity(dataPoints[i], &showSettings))
+                DrawCircleV(dataPoints[i], 5, BLACK);
         }
 
         if (showConvexHull)
@@ -255,7 +330,7 @@ static void UpdateDrawFrame(void)
     }
     break;
     case KIRK_PATRICK_SEIDEL: {
-        GuiDrawText("Kirk Patrick Seidel Algorithm", {10, 10, 500, 50}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("Kirkpatrick-Seidel Algorithm", {10, 10, 300, 30}, TEXT_ALIGN_LEFT, BLACK);
         for (size_t i = 0; i < dataPoints.size(); i++)
         {
             DrawCircleV(dataPoints[i], 5, BLACK);
