@@ -381,7 +381,14 @@ std::vector<Vector2> Kirk::lower_hull(std::vector<Vector2> &S) // same as upper 
 std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
 {
     if (S.size() <= 2)
+    {
+        currentState = FINISH;
+        Step finalStep;
+        finalStep.state = currentState;
+        finalStep.type = OVER;
+        steps.push_back(finalStep);
         return S;
+    }
     std::vector<Vector2> uh, lh, res;
 
     currentState = UPPER_HULL;

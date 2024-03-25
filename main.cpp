@@ -178,6 +178,12 @@ std::vector<Vector2> dataPoints;
  */
 bool visualizeStepByStep = true;
 /**
+ * @brief Helps check whether the step number has been changed manually (via the slider), in which case
+ * visualizeStepByStep made true.
+ *
+ */
+float lastStep = 0;
+/**
  * @brief A collection of points (x, y) obtained from a file before scaling
  *
  */
@@ -276,6 +282,7 @@ static void UpdateDrawFrame(void)
     {
         ch->next();
         frameTimer.resetTimer(duration);
+        lastStep = ch->getCurrentStep();
     }
 
     if (!showConvexHull && !isDropdownOpen)
@@ -355,6 +362,7 @@ static void UpdateDrawFrame(void)
         if (previousAlgorithm != selectedAlgorithm)
         {
             showConvexHull = false;
+            visualizeStepByStep = true;
             frameTimer.stopTimer();
         }
         previousAlgorithm = selectedAlgorithm;
@@ -403,13 +411,18 @@ static void UpdateDrawFrame(void)
 
         maxSteps = ch->getNumberOfSteps() - 1;
         currentStep = ch->getCurrentStep();
+        if (currentStep != lastStep)
+        {
+            visualizeStepByStep = true;
+        }
 
-        if (currentStep == 1)
+        if (currentStep == 0)
             GuiDisable();
         if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
         {
             ch->previous();
             currentStep = ch->getCurrentStep();
+            visualizeStepByStep = true;
         }
         GuiEnable();
 
@@ -419,21 +432,22 @@ static void UpdateDrawFrame(void)
         {
             ch->next();
             currentStep = ch->getCurrentStep();
+            visualizeStepByStep = true;
         }
         GuiEnable();
 
-        GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
-        GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep), maxSteps),
+        GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 0, maxSteps);
+        GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep + 1), maxSteps + 1),
                     {150 + (GetScreenWidth() - 450.0f) / 2, h, 150, 30}, TEXT_ALIGN_LEFT, BLACK);
         ch->setCurrentStep(currentStep);
 
         ch->showLegend(&showLegend, &legendWindowPosition, &legendWindowSize, &legendWindowMaximumSize,
                        &legendContentSize, &legendScroll, &moving, &resizing, &minimized, toolbarHeight,
                        bottomBarHeight, "Legend");
+        lastStep = currentStep;
     }
-
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          fileDataPoints, dataPoints);
+    settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded,
+                          &numberOfPoints, fileDataPoints, dataPoints);
     EndDrawing();
     //----------------------------------------------------------------------------------
 }
