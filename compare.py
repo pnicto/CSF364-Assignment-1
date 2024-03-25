@@ -32,6 +32,6 @@ def compare(a, b):
 a = readPoints(sys.argv[1])
 b = readPoints(sys.argv[2])
 
-print(
-    "The hull points are the same" if compare(a, b) else "The hull points are different"
-)
+if compare(a, b):
+    exit(0)
+exit(1)
