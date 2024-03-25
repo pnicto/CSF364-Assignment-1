@@ -26,6 +26,9 @@ class ConvexHullAlgorithm
     virtual int getNumberOfSteps() = 0;
     virtual int getCurrentStep() = 0;
     virtual void setCurrentStep(int stepIndex) = 0;
+    virtual void showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
+                            Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
+                            float toolbarHeight, float bottomBarHeight, const char *title) = 0;
 };
 
 #endif // CONVEX_HULL_H

@@ -1,5 +1,6 @@
 
 #include "kirk_patrick_seidel.h"
+#include "raygui.h"
 
 bool Kirk::compareVector2(Vector2 a, Vector2 b)
 {
@@ -730,13 +731,13 @@ void Kirk::drawPrevSteps()
             }
         }
         for (int i = 0; i <= curr.upperBridgeLineIndex; i++)
-            DrawLineEx(upperBridges[i].first, upperBridges[i].second, 2, BLUE);
+            DrawLineEx(upperBridges[i].first, upperBridges[i].second, 2, GREEN);
 
         break;
 
     case LOWER_HULL:
         for (int i = 1; i < upperHull.size(); i++)
-            DrawLineEx(upperHull[i], upperHull[i - 1], 2, BLUE);
+            DrawLineEx(upperHull[i], upperHull[i - 1], 2, GREEN);
 
         if (curr.type != LINE)
         {
@@ -747,7 +748,7 @@ void Kirk::drawPrevSteps()
             }
         }
         for (int i = 0; i <= curr.lowerBridgeLineIndex; i++)
-            DrawLineEx(lowerBridges[i].first, lowerBridges[i].second, 2, BLUE);
+            DrawLineEx(lowerBridges[i].first, lowerBridges[i].second, 2, GREEN);
 
         break;
 
@@ -759,10 +760,10 @@ void Kirk::drawPrevSteps()
         // draw the entire hull
         for (int i = 1; i < hull.size(); i++)
         {
-            DrawLineEx(hull[i], hull[i - 1], 2, BLUE);
+            DrawLineEx(hull[i], hull[i - 1], 2, GREEN);
         }
         if (hull.size() >= 2)
-            DrawLineEx(hull[0], hull.back(), 2, BLUE);
+            DrawLineEx(hull[0], hull.back(), 2, GREEN);
 
         break;
     }
@@ -791,4 +792,168 @@ int Kirk::getCurrentStep()
 void Kirk::setCurrentStep(int step)
 {
     currentStep = step;
+}
+
+void Kirk::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
+                      Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
+                      float toolbarHeight, float bottomBarHeight, const char *title)
+{
+    float statusBarHeight = 24.0f, closeButtonSize = 18.0f;
+    if (*showLegend)
+    {
+        int closeTitleSizeDeltaHalf = (statusBarHeight - closeButtonSize) / 2;
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !(*moving) && !(*resizing))
+        {
+            Vector2 mousePosition = GetMousePosition();
+
+            Rectangle titleCollisionRect = {(*windowPosition).x, (*windowPosition).y,
+                                            (*windowSize).x - (closeButtonSize + closeTitleSizeDeltaHalf),
+                                            statusBarHeight};
+            Rectangle resizeCollisionRect = {(*windowPosition).x + (*windowSize).x - 20.0f,
+                                             (*windowPosition).y + (*windowSize).y - 20.0f, 20.0f, 20.0f};
+
+            if (CheckCollisionPointRec(mousePosition, titleCollisionRect))
+            {
+                (*moving) = true;
+            }
+            else if (!(*minimized) && CheckCollisionPointRec(mousePosition, resizeCollisionRect))
+            {
+                (*resizing) = true;
+            }
+        }
+
+        if ((*moving))
+        {
+            Vector2 mouseDelta = GetMouseDelta();
+            (*windowPosition).x += mouseDelta.x;
+            (*windowPosition).y += mouseDelta.y;
+
+            if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+            {
+                (*moving) = false;
+
+                if ((*windowPosition).x < 0.0f)
+                    (*windowPosition).x = 10.0f;
+                else if ((*windowPosition).x > GetScreenWidth() - (*windowSize).x)
+                    (*windowPosition).x = GetScreenWidth() - (*windowSize).x - 10.0f;
+                if ((*windowPosition).y < toolbarHeight)
+                    (*windowPosition).y = toolbarHeight + 10;
+                else if ((*windowPosition).y > GetScreenHeight() - toolbarHeight - bottomBarHeight)
+                    (*windowPosition).y = GetScreenHeight() - bottomBarHeight - statusBarHeight - 10.0f;
+            }
+        }
+        else if ((*resizing))
+        {
+            Vector2 mouseDelta = GetMouseDelta();
+            (*windowSize).x += mouseDelta.x;
+            (*windowSize).y += mouseDelta.y;
+
+            if ((*windowSize).x < 100.0f)
+                (*windowSize).x = 100.0f;
+            else if ((*windowSize).x > GetScreenWidth() - 10.0f)
+                (*windowSize).x = GetScreenWidth() - 10.0f;
+            if ((*windowSize).y < 100.0f)
+                (*windowSize).y = 100.0f;
+            else if ((*windowSize).y > GetScreenHeight() - toolbarHeight - bottomBarHeight - 10.0f)
+                (*windowSize).y = GetScreenHeight() - toolbarHeight - bottomBarHeight - 10.0f;
+
+            if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+            {
+                (*resizing) = false;
+            }
+        }
+
+        if ((*minimized))
+        {
+            GuiStatusBar((Rectangle){(*windowPosition).x, (*windowPosition).y, (*windowSize).x, statusBarHeight},
+                         title);
+
+            if (GuiButton((Rectangle){(*windowPosition).x + (*windowSize).x - closeButtonSize - closeTitleSizeDeltaHalf,
+                                      (*windowPosition).y + closeTitleSizeDeltaHalf, closeButtonSize, closeButtonSize},
+                          "#120#"))
+            {
+                (*minimized) = false;
+                (*windowSize) = (*maxWindowSize);
+            }
+        }
+        else
+        {
+            (*minimized) = GuiWindowBox(
+                (Rectangle){(*windowPosition).x, (*windowPosition).y, (*windowSize).x, (*windowSize).y}, title);
+            if ((*minimized))
+            {
+                (*windowSize) = {(*maxWindowSize).x, statusBarHeight};
+            }
+
+            Rectangle scissor = {0};
+            GuiScrollPanel((Rectangle){(*windowPosition).x, (*windowPosition).y + statusBarHeight, (*windowSize).x,
+                                       (*windowSize).y - statusBarHeight},
+                           NULL, (Rectangle){(*windowPosition).x, (*windowSize).y, (*contentSize).x, (*contentSize).y},
+                           scroll, &scissor);
+
+            bool requireScissor = (*windowSize).x < (*contentSize).x || (*windowSize).y < (*contentSize).y;
+
+            if (requireScissor)
+            {
+                BeginScissorMode(scissor.x, scissor.y, scissor.width, scissor.height);
+            }
+
+            DrawCircleV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 50.0f + (*scroll).y}, 5,
+                        BLUE);
+            GuiLabel(
+                {(*windowPosition).x + 30.0f + (*scroll).x, (*windowPosition).y + 35.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Convex Hull Point");
+
+            DrawCircleV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 75.0f + (*scroll).y}, 5,
+                        PURPLE);
+            GuiLabel(
+                {(*windowPosition).x + 30.0f + (*scroll).x, (*windowPosition).y + 60.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Candidate Point");
+
+            DrawCircleV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 100.0f + (*scroll).y}, 5,
+                        RED);
+            GuiLabel(
+                {(*windowPosition).x + 30.0f + (*scroll).x, (*windowPosition).y + 85.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Current Check Points");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 125.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 125.0f + (*scroll).y}, GREEN);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 110.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Convex Hull Line");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 150.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 150.0f + (*scroll).y}, RED);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 135.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Median Line");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 175.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 175.0f + (*scroll).y}, PINK);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 160.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Median Slope Line");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 200.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 200.0f + (*scroll).y}, ORANGE);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 185.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Paired Point Line Segment");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y}, BROWN);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 210.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Intercept Line");
+
+            if (requireScissor)
+            {
+                EndScissorMode();
+            }
+
+            GuiDrawIcon(71, (*windowPosition).x + (*windowSize).x - 20, (*windowPosition).y + (*windowSize).y - 20, 1,
+                        WHITE);
+        }
+    }
 }

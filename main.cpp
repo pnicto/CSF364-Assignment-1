@@ -78,6 +78,11 @@ bool showConvexHull = false;
  */
 bool showSettings = false;
 /**
+ * @brief Indicates whether to display the legend modal.
+ *
+ */
+bool showLegend = false;
+/**
  * @brief Specifies the position for the settings window
  *
  */
@@ -92,6 +97,46 @@ Vector2 settingsWindowSize = {400, 400};
  *
  */
 Vector2 settingsContentSize = {600, 600};
+/**
+ * @brief Specifies the position for the legend window
+ *
+ */
+Vector2 legendWindowPosition = {10, 80};
+/**
+ * @brief Specifies the size of the legend window
+ *
+ */
+Vector2 legendWindowSize = {450, 200};
+/**
+ * @brief Specifies the maximum size of the legend window
+ *
+ */
+Vector2 legendWindowMaximumSize = {450, 200};
+/**
+ * @brief Specifies the size of the content to be displayed in the legend window
+ *
+ */
+Vector2 legendContentSize = {400, 250};
+/**
+ * @brief Scroll object associated with the legend window
+ *
+ */
+Vector2 legendScroll = {0, 0};
+/**
+ * @brief Specifies whether the legend window is currently being moved
+ *
+ */
+bool moving = false;
+/**
+ * @brief Specifies whether the legend window is currently being resized
+ *
+ */
+bool resizing = false;
+/**
+ * @brief Specifies whether the legend window is currently minimized
+ *
+ */
+bool minimized = false;
 /**
  * @brief Specifies the scale for drawing points
  *
@@ -261,6 +306,14 @@ static void UpdateDrawFrame(void)
         selectedAlgorithm == JARVIS_MARCH ? ch = new JarvisMarch(dataPoints) : ch = new Kirk(dataPoints);
     }
 
+    if (showConvexHull)
+    {
+        if (IsKeyPressed(KEY_L))
+        {
+            showLegend = !showLegend;
+        }
+    }
+
     //----------------------------------------------------------------------------------
 
     // Draw
@@ -325,6 +378,7 @@ static void UpdateDrawFrame(void)
     {
         showConvexHull = !showConvexHull;
         showSettings = false;
+        showLegend = false;
     }
     // enable the remaining GUI
     if (dataPoints.size() == 0)
@@ -386,9 +440,12 @@ static void UpdateDrawFrame(void)
         GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep + 1), maxSteps + 1),
                     {150 + (GetScreenWidth() - 450.0f) / 2, h, 150, 30}, TEXT_ALIGN_LEFT, BLACK);
         ch->setCurrentStep(currentStep);
+
+        ch->showLegend(&showLegend, &legendWindowPosition, &legendWindowSize, &legendWindowMaximumSize,
+                       &legendContentSize, &legendScroll, &moving, &resizing, &minimized, toolbarHeight,
+                       bottomBarHeight, "Legend");
         lastStep = currentStep;
     }
-
     settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded,
                           &numberOfPoints, fileDataPoints, dataPoints);
     EndDrawing();
