@@ -138,11 +138,10 @@ bool visualizeStepByStep = true;
  */
 std::vector<Vector2> fileDataPoints;
 /**
- * @brief Represents the JarvisMarch object.
+ * @brief Represents the ConvexHullAlgorithm object.
  *
  */
-JarvisMarch jm(dataPoints);
-Kirk kps(dataPoints);
+ConvexHullAlgorithm *ch;
 /**
  * @brief Represents the Settings object.
  *
@@ -188,9 +187,6 @@ int main()
         point.y = centerY + point.y * scale;
     }
 
-    jm = JarvisMarch(dataPoints);
-    kps = Kirk(dataPoints);
-
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
     // load defaultFont
@@ -227,16 +223,9 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep && selectedAlgorithm == JARVIS_MARCH)
+    if (frameTimer.isTimerDone() && !ch->isFinished() && !visualizeStepByStep)
     {
-        jm.next();
-        frameTimer.resetTimer(duration);
-    }
-
-    if (frameTimer.isTimerDone() && !kps.isFinished() && !visualizeStepByStep &&
-        selectedAlgorithm == KIRK_PATRICK_SEIDEL)
-    {
-        kps.update();
+        ch->next();
         frameTimer.resetTimer(duration);
     }
 
@@ -258,8 +247,7 @@ static void UpdateDrawFrame(void)
                 dataPoints.pop_back();
             }
         }
-        jm = JarvisMarch(dataPoints);
-        kps = Kirk(dataPoints);
+        selectedAlgorithm == JARVIS_MARCH ? ch = new JarvisMarch(dataPoints) : ch = new Kirk(dataPoints);
     }
 
     //----------------------------------------------------------------------------------
@@ -274,49 +262,32 @@ static void UpdateDrawFrame(void)
     {
     case JARVIS_MARCH: {
         GuiDrawText("Jarvis March Algorithm", {10, 10, 250, 30}, TEXT_ALIGN_LEFT, BLACK);
-        for (size_t i = 0; i < dataPoints.size(); i++)
-        {
-            if (settings.checkPointValidity(dataPoints[i], &showSettings))
-                DrawCircleV(dataPoints[i], 5, BLACK);
-        }
-
-        if (showConvexHull)
-        {
-            if (!jm.isFinished())
-            {
-
-                frameTimer.startTimer(0.5);
-            }
-            else
-            {
-                frameTimer.stopTimer();
-            }
-            jm.draw();
-        }
     }
     break;
     case KIRK_PATRICK_SEIDEL: {
         GuiDrawText("Kirkpatrick-Seidel Algorithm", {10, 10, 300, 30}, TEXT_ALIGN_LEFT, BLACK);
-        for (size_t i = 0; i < dataPoints.size(); i++)
-        {
-            DrawCircleV(dataPoints[i], 5, BLACK);
-        }
-
-        if (showConvexHull)
-        {
-            if (!kps.isFinished())
-            {
-
-                frameTimer.startTimer(0.5);
-            }
-            else
-            {
-                frameTimer.stopTimer();
-            }
-            kps.draw();
-        }
     }
     break;
+    }
+
+    for (size_t i = 0; i < dataPoints.size(); i++)
+    {
+        if (settings.checkPointValidity(dataPoints[i], &showSettings))
+            DrawCircleV(dataPoints[i], 5, BLACK);
+    }
+
+    if (showConvexHull)
+    {
+        if (!ch->isFinished())
+        {
+
+            frameTimer.startTimer(0.5);
+        }
+        else
+        {
+            frameTimer.stopTimer();
+        }
+        ch->draw();
     }
 
     // Toolbar
@@ -378,35 +349,20 @@ static void UpdateDrawFrame(void)
 
         if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
         {
-            selectedAlgorithm == JARVIS_MARCH ? jm.previous() : kps.previous();
+            ch->previous();
         }
 
         if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
         {
-            selectedAlgorithm == JARVIS_MARCH ? jm.next() : kps.update();
+            ch->next();
         }
 
-        if (selectedAlgorithm == JARVIS_MARCH)
-        {
-            maxSteps = jm.getNumberOfSteps() - 1;
-            currentStep = jm.getCurrentStep();
-        }
-        else
-        {
-            maxSteps = kps.getNumberOfSteps() - 1;
-            currentStep = kps.getCurrentStep();
-        }
+        maxSteps = ch->getNumberOfSteps() - 1;
+        currentStep = ch->getCurrentStep();
 
         GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
 
-        if (selectedAlgorithm == JARVIS_MARCH)
-        {
-            jm.setCurrentStep(currentStep);
-        }
-        else
-        {
-            kps.setCurrentStep(currentStep);
-        }
+        ch->setCurrentStep(currentStep);
     }
     EndDrawing();
     //----------------------------------------------------------------------------------
