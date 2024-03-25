@@ -147,7 +147,7 @@ ConvexHullAlgorithm *ch;
  *
  */
 Settings settings(&window_position, &window_size, &content_size, "Settings");
-const float bottomBarHeight = 70;
+const float bottomBarHeight = 60;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
