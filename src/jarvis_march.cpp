@@ -61,7 +61,7 @@ JarvisMarch::Orientation JarvisMarch::orientation(Vector2 p, Vector2 q, Vector2 
 void JarvisMarch::draw()
 {
 
-    BeginDrawing();
+    // BeginDrawing();
     if (!isFinished())
     {
         DrawCircleV(points[steps[currentStep].nextPointIndex], 5, BLUE);
@@ -70,19 +70,34 @@ void JarvisMarch::draw()
         DrawLineV(points[steps[currentStep].currentPointIndex], points[steps[currentStep].candidatePointIndex], RED);
     }
     drawConvexHull();
-    EndDrawing();
+    // EndDrawing();
 }
 
 void JarvisMarch::next()
 {
     if (currentStep < steps.size() - 1)
+    {
         currentStep++;
+        TraceLog(LOG_INFO, "Current step: %d", currentStep);
+    }
 }
 
 void JarvisMarch::previous()
 {
     if (currentStep > 0)
         currentStep--;
+}
+
+int JarvisMarch::getNumberOfSteps()
+{
+
+    return steps.size();
+}
+
+int JarvisMarch::getCurrentStep()
+{
+    TraceLog(LOG_INFO, "Current step: %d", currentStep);
+    return currentStep;
 }
 
 bool JarvisMarch::isFinished()
@@ -121,4 +136,9 @@ void JarvisMarch::computeConvexHull()
 
     convexHull.push_back(convexHull[0]);
     steps.push_back((struct StepInfo){current, next, 0, convexHull});
+}
+
+void JarvisMarch::setCurrentStep(int step)
+{
+    currentStep = step;
 }

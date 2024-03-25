@@ -160,6 +160,9 @@ class JarvisMarch
      *
      */
     void previous();
+    int getNumberOfSteps();
+    int getCurrentStep();
+    void setCurrentStep(int step);
 };
 
 #endif // JARVIS_MARCH_H

@@ -148,6 +148,7 @@ Kirk kps(dataPoints);
  *
  */
 Settings settings(&window_position, &window_size, &content_size, "Settings");
+const float bottomBarHeight = 70;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -244,7 +245,8 @@ static void UpdateDrawFrame(void)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetMousePosition();
-            if (mousePos.y > toolbarHeight && settings.checkPointValidity(mousePos, &showSettings))
+            if (mousePos.y > toolbarHeight && mousePos.y < GetScreenHeight() - bottomBarHeight &&
+                settings.checkPointValidity(mousePos, &showSettings))
             {
                 dataPoints.push_back(mousePos);
             }
@@ -313,19 +315,6 @@ static void UpdateDrawFrame(void)
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
-
-        if (visualizeStepByStep)
-        {
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
-            {
-                selectedAlgorithm == JARVIS_MARCH ? jm.next() : kps.update();
-            }
-
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
-            {
-                selectedAlgorithm == JARVIS_MARCH ? jm.previous() : kps.previous();
-            }
-        }
     }
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
@@ -377,6 +366,48 @@ static void UpdateDrawFrame(void)
     break;
     }
 
+    // Draw bottom bar
+    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
+
+    if (showConvexHull)
+    {
+        int maxSteps;
+        float currentStep;
+
+        float h = GetScreenHeight() - bottomBarHeight + 15;
+
+        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
+        {
+            selectedAlgorithm == JARVIS_MARCH ? jm.previous() : kps.previous();
+        }
+
+        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
+        {
+            selectedAlgorithm == JARVIS_MARCH ? jm.next() : kps.update();
+        }
+
+        if (selectedAlgorithm == JARVIS_MARCH)
+        {
+            maxSteps = jm.getNumberOfSteps() - 1;
+            currentStep = jm.getCurrentStep();
+        }
+        else
+        {
+            maxSteps = kps.getNumberOfSteps() - 1;
+            currentStep = kps.getCurrentStep();
+        }
+
+        GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
+
+        if (selectedAlgorithm == JARVIS_MARCH)
+        {
+            jm.setCurrentStep(currentStep);
+        }
+        else
+        {
+            kps.setCurrentStep(currentStep);
+        }
+    }
     EndDrawing();
     //----------------------------------------------------------------------------------
 }

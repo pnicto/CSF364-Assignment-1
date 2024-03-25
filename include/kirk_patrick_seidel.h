@@ -43,6 +43,9 @@ class Kirk
     void drawPrevSteps();
     void drawline(Vector2 p, float slope, Color c);
     static bool compareVector2(Vector2 a, Vector2 b);
+    int getNumberOfSteps();
+    int getCurrentStep();
+    void setCurrentStep(int step);
 
   private:
     float median_of_medians(std::vector<float> arr);

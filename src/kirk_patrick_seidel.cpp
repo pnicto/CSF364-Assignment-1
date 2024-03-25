@@ -569,7 +569,7 @@ Kirk::~Kirk()
 
 void Kirk::draw()
 {
-    BeginDrawing();
+    // BeginDrawing();
 
     switch (steps[currentStep].type)
     {
@@ -675,11 +675,12 @@ void Kirk::draw()
         break;
     }
     drawPrevSteps();
-    EndDrawing();
+    // EndDrawing();
 }
 
 void Kirk::update()
 {
+
     if (currentStep < steps.size() - 1)
         currentStep++;
 }
@@ -761,4 +762,19 @@ void Kirk::drawline(Vector2 p, float slope, Color c)
     float x2 = p.x + 400;
     float y2 = p.y + (slope * 400);
     DrawLine(x1, y1, x2, y2, c);
+}
+
+int Kirk::getNumberOfSteps()
+{
+    return steps.size();
+}
+
+int Kirk::getCurrentStep()
+{
+    return currentStep;
+}
+
+void Kirk::setCurrentStep(int step)
+{
+    currentStep = step;
 }
