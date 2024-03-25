@@ -78,7 +78,6 @@ void JarvisMarch::next()
     if (currentStep < steps.size() - 1)
     {
         currentStep++;
-        TraceLog(LOG_INFO, "Current step: %d", currentStep);
     }
 }
 
@@ -96,7 +95,6 @@ int JarvisMarch::getNumberOfSteps()
 
 int JarvisMarch::getCurrentStep()
 {
-    TraceLog(LOG_INFO, "Current step: %d", currentStep);
     return currentStep;
 }
 
