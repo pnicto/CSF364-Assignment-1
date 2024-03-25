@@ -516,6 +516,13 @@ Kirk::Kirk(std::vector<Vector2> p)
 {
     points = p;
 
+    if (points.size() != 0)
+        computeConvexHull();
+}
+
+void Kirk::computeConvexHull()
+{
+
     float max_coordinate = -1 * std::numeric_limits<float>::infinity();
     for (auto p : points)
     {
@@ -532,7 +539,7 @@ Kirk::Kirk(std::vector<Vector2> p)
     else
         lim = 0.01;
 
-    hull = convex_hull(p);
+    hull = convex_hull(points);
     for (auto &p : lowerBridges)
     {
         p.first.y *= -1;
@@ -678,7 +685,7 @@ void Kirk::draw()
     // EndDrawing();
 }
 
-void Kirk::update()
+void Kirk::next()
 {
 
     if (currentStep < steps.size() - 1)
