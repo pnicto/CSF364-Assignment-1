@@ -402,5 +402,11 @@ int main()
     {
         cout << "(" << h.x << ", " << h.y << ")" << endl;
     }
+    const std::string outputFilePath = "./kpsout.txt";
+    std::ofstream ostream(outputFilePath);
+    for (auto &point : res)
+    {
+        ostream << openParenthesis << point.x << separator << point.y << closeParenthesis << endl;
+    }
     return 0;
 }
