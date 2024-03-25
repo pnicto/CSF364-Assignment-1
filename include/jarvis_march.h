@@ -176,6 +176,13 @@ class JarvisMarch : public ConvexHullAlgorithm
      * @param step The step to set.
      */
     void setCurrentStep(int step);
+    /**
+     * @brief Show the legend for the visualization of the JarvisMarch computation.
+     *
+     */
+    void showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
+                    Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
+                    float toolbarHeight, float bottomBarHeight, const char *title);
 };
 
 #endif // JARVIS_MARCH_H

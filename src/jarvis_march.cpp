@@ -4,6 +4,7 @@
  *
  */
 #include "jarvis_march.h"
+#include "raygui.h"
 
 JarvisMarch::JarvisMarch(std::vector<Vector2> p)
 {
@@ -139,4 +140,120 @@ void JarvisMarch::computeConvexHull()
 void JarvisMarch::setCurrentStep(int step)
 {
     currentStep = step;
+}
+
+void JarvisMarch::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
+                             Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
+                             float toolbarHeight, float bottomBarHeight, const char *title)
+{
+    float statusBarHeight = 24.0f, closeButtonSize = 18.0f;
+    if (*showLegend)
+    {
+        int closeTitleSizeDeltaHalf = (statusBarHeight - closeButtonSize) / 2;
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !(*moving) && !(*resizing))
+        {
+            Vector2 mousePosition = GetMousePosition();
+
+            Rectangle titleCollisionRect = {(*windowPosition).x, (*windowPosition).y,
+                                            (*windowSize).x - (closeButtonSize + closeTitleSizeDeltaHalf),
+                                            statusBarHeight};
+            Rectangle resizeCollisionRect = {(*windowPosition).x + (*windowSize).x - 20.0f,
+                                             (*windowPosition).y + (*windowSize).y - 20.0f, 20.0f, 20.0f};
+
+            if (CheckCollisionPointRec(mousePosition, titleCollisionRect))
+            {
+                (*moving) = true;
+            }
+            else if (!(*minimized) && CheckCollisionPointRec(mousePosition, resizeCollisionRect))
+            {
+                (*resizing) = true;
+            }
+        }
+
+        if ((*moving))
+        {
+            Vector2 mouseDelta = GetMouseDelta();
+            (*windowPosition).x += mouseDelta.x;
+            (*windowPosition).y += mouseDelta.y;
+
+            if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+            {
+                (*moving) = false;
+
+                if ((*windowPosition).x < 0.0f)
+                    (*windowPosition).x = 10.0f;
+                else if ((*windowPosition).x > GetScreenWidth() - (*windowSize).x)
+                    (*windowPosition).x = GetScreenWidth() - (*windowSize).x - 10.0f;
+                if ((*windowPosition).y < toolbarHeight)
+                    (*windowPosition).y = toolbarHeight + 10;
+                else if ((*windowPosition).y > GetScreenHeight() - toolbarHeight - bottomBarHeight)
+                    (*windowPosition).y = GetScreenHeight() - bottomBarHeight - statusBarHeight - 10.0f;
+            }
+        }
+        else if ((*resizing))
+        {
+            Vector2 mouseDelta = GetMouseDelta();
+            (*windowSize).x += mouseDelta.x;
+            (*windowSize).y += mouseDelta.y;
+
+            if ((*windowSize).x < 100.0f)
+                (*windowSize).x = 100.0f;
+            else if ((*windowSize).x > GetScreenWidth() - 10.0f)
+                (*windowSize).x = GetScreenWidth() - 10.0f;
+            if ((*windowSize).y < 100.0f)
+                (*windowSize).y = 100.0f;
+            else if ((*windowSize).y > GetScreenHeight() - toolbarHeight - bottomBarHeight - 10.0f)
+                (*windowSize).y = GetScreenHeight() - toolbarHeight - bottomBarHeight - 10.0f;
+
+            if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+            {
+                (*resizing) = false;
+            }
+        }
+
+        if ((*minimized))
+        {
+            GuiStatusBar((Rectangle){(*windowPosition).x, (*windowPosition).y, (*windowSize).x, statusBarHeight},
+                         title);
+
+            if (GuiButton((Rectangle){(*windowPosition).x + (*windowSize).x - closeButtonSize - closeTitleSizeDeltaHalf,
+                                      (*windowPosition).y + closeTitleSizeDeltaHalf, closeButtonSize, closeButtonSize},
+                          "#120#"))
+            {
+                (*minimized) = false;
+                (*windowSize) = (*maxWindowSize);
+            }
+        }
+        else
+        {
+            (*minimized) = GuiWindowBox(
+                (Rectangle){(*windowPosition).x, (*windowPosition).y, (*windowSize).x, (*windowSize).y}, title);
+            if ((*minimized))
+            {
+                (*windowSize) = {(*maxWindowSize).x, statusBarHeight};
+            }
+
+            Rectangle scissor = {0};
+            GuiScrollPanel((Rectangle){(*windowPosition).x, (*windowPosition).y + statusBarHeight, (*windowSize).x,
+                                       (*windowSize).y - statusBarHeight},
+                           NULL, (Rectangle){(*windowPosition).x, (*windowSize).y, (*contentSize).x, (*contentSize).y},
+                           scroll, &scissor);
+
+            bool requireScissor = (*windowSize).x < (*contentSize).x || (*windowSize).y < (*contentSize).y;
+
+            if (requireScissor)
+            {
+                BeginScissorMode(scissor.x, scissor.y, scissor.width, scissor.height);
+            }
+
+            if (requireScissor)
+            {
+                EndScissorMode();
+            }
+
+            GuiDrawIcon(71, (*windowPosition).x + (*windowSize).x - 20, (*windowPosition).y + (*windowSize).y - 20, 1,
+                        WHITE);
+        }
+    }
 }
