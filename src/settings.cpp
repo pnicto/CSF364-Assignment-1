@@ -182,7 +182,7 @@ void Settings::drawRandomPointGenerationComponent(Vector2 padding, Vector2 compo
         while (i < (int)(*numberOfPoints))
         {
             int x = rand() % GetScreenWidth(), y = rand() % GetScreenHeight();
-            if (y > (int)toolbarHeight + 10 && y < GetScreenWidth() - 10 && x > 10 && x < GetScreenWidth() - 10)
+            if (y > (int)toolbarHeight + 10 && y < GetScreenHeight() - 100 && x > 10 && x < GetScreenWidth() - 10)
             {
                 dataPoints.push_back({static_cast<float>(x), static_cast<float>(y)});
                 i++;

@@ -138,16 +138,20 @@ bool visualizeStepByStep = true;
  */
 std::vector<Vector2> fileDataPoints;
 /**
- * @brief Represents the JarvisMarch object.
+ * @brief Represents the ConvexHullAlgorithm object.
  *
  */
-JarvisMarch jm(dataPoints);
-Kirk kps(dataPoints);
+ConvexHullAlgorithm *ch;
 /**
  * @brief Represents the Settings object.
  *
  */
 Settings settings(&window_position, &window_size, &content_size, "Settings");
+/**
+ * @brief Height of the bottom bar.
+ *
+ */
+const float bottomBarHeight = 60;
 
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
@@ -187,9 +191,6 @@ int main()
         point.y = centerY + point.y * scale;
     }
 
-    jm = JarvisMarch(dataPoints);
-    kps = Kirk(dataPoints);
-
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
     // load defaultFont
@@ -226,16 +227,9 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep && selectedAlgorithm == JARVIS_MARCH)
+    if (frameTimer.isTimerDone() && !ch->isFinished() && !visualizeStepByStep)
     {
-        jm.next();
-        frameTimer.resetTimer(duration);
-    }
-
-    if (frameTimer.isTimerDone() && !kps.isFinished() && !visualizeStepByStep &&
-        selectedAlgorithm == KIRK_PATRICK_SEIDEL)
-    {
-        kps.update();
+        ch->next();
         frameTimer.resetTimer(duration);
     }
 
@@ -244,7 +238,8 @@ static void UpdateDrawFrame(void)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             Vector2 mousePos = GetMousePosition();
-            if (mousePos.y > toolbarHeight && settings.checkPointValidity(mousePos, &showSettings))
+            if (mousePos.y > toolbarHeight && mousePos.y < GetScreenHeight() - bottomBarHeight &&
+                settings.checkPointValidity(mousePos, &showSettings))
             {
                 dataPoints.push_back(mousePos);
             }
@@ -256,8 +251,7 @@ static void UpdateDrawFrame(void)
                 dataPoints.pop_back();
             }
         }
-        jm = JarvisMarch(dataPoints);
-        kps = Kirk(dataPoints);
+        selectedAlgorithm == JARVIS_MARCH ? ch = new JarvisMarch(dataPoints) : ch = new Kirk(dataPoints);
     }
 
     //----------------------------------------------------------------------------------
@@ -267,6 +261,38 @@ static void UpdateDrawFrame(void)
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
+
+    switch (static_cast<Algorithms>(selectedAlgorithm))
+    {
+    case JARVIS_MARCH: {
+        GuiDrawText("Jarvis March Algorithm", {10, 10, 250, 30}, TEXT_ALIGN_LEFT, BLACK);
+    }
+    break;
+    case KIRK_PATRICK_SEIDEL: {
+        GuiDrawText("Kirkpatrick-Seidel Algorithm", {10, 10, 300, 30}, TEXT_ALIGN_LEFT, BLACK);
+    }
+    break;
+    }
+
+    for (size_t i = 0; i < dataPoints.size(); i++)
+    {
+        if (settings.checkPointValidity(dataPoints[i], &showSettings))
+            DrawCircleV(dataPoints[i], 5, BLACK);
+    }
+
+    if (showConvexHull)
+    {
+        if (!ch->isFinished())
+        {
+
+            frameTimer.startTimer(0.5);
+        }
+        else
+        {
+            frameTimer.stopTimer();
+        }
+        ch->draw();
+    }
 
     // Toolbar
     GuiLine(Rectangle{0, toolbarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
@@ -313,70 +339,44 @@ static void UpdateDrawFrame(void)
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
-
-        if (visualizeStepByStep)
-        {
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
-            {
-                selectedAlgorithm == JARVIS_MARCH ? jm.next() : kps.update();
-            }
-
-            if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
-            {
-                selectedAlgorithm == JARVIS_MARCH ? jm.previous() : kps.previous();
-            }
-        }
     }
 
-    switch (static_cast<Algorithms>(selectedAlgorithm))
+    // Draw bottom bar
+    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
+
+    if (showConvexHull)
     {
-    case JARVIS_MARCH: {
-        GuiDrawText("Jarvis March Algorithm", {10, 10, 250, 30}, TEXT_ALIGN_LEFT, BLACK);
-        for (size_t i = 0; i < dataPoints.size(); i++)
-        {
-            if (settings.checkPointValidity(dataPoints[i], &showSettings))
-                DrawCircleV(dataPoints[i], 5, BLACK);
-        }
+        int maxSteps;
+        float currentStep;
 
-        if (showConvexHull)
-        {
-            if (!jm.isFinished())
-            {
+        float h = GetScreenHeight() - bottomBarHeight + 15;
 
-                frameTimer.startTimer(0.5);
-            }
-            else
-            {
-                frameTimer.stopTimer();
-            }
-            jm.draw();
+        maxSteps = ch->getNumberOfSteps() - 1;
+        currentStep = ch->getCurrentStep();
+
+        if (currentStep == 1)
+            GuiDisable();
+        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
+        {
+            ch->previous();
+            currentStep = ch->getCurrentStep();
         }
+        GuiEnable();
+
+        if (currentStep >= maxSteps)
+            GuiDisable();
+        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
+        {
+            ch->next();
+            currentStep = ch->getCurrentStep();
+        }
+        GuiEnable();
+
+        GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
+        GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep), maxSteps),
+                    {150 + (GetScreenWidth() - 450.0f) / 2, h, 150, 30}, TEXT_ALIGN_LEFT, BLACK);
+        ch->setCurrentStep(currentStep);
     }
-    break;
-    case KIRK_PATRICK_SEIDEL: {
-        GuiDrawText("Kirkpatrick-Seidel Algorithm", {10, 10, 300, 30}, TEXT_ALIGN_LEFT, BLACK);
-        for (size_t i = 0; i < dataPoints.size(); i++)
-        {
-            DrawCircleV(dataPoints[i], 5, BLACK);
-        }
-
-        if (showConvexHull)
-        {
-            if (!kps.isFinished())
-            {
-
-                frameTimer.startTimer(0.5);
-            }
-            else
-            {
-                frameTimer.stopTimer();
-            }
-            kps.draw();
-        }
-    }
-    break;
-    }
-
     EndDrawing();
     //----------------------------------------------------------------------------------
 }

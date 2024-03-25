@@ -516,6 +516,13 @@ Kirk::Kirk(std::vector<Vector2> p)
 {
     points = p;
 
+    if (points.size() != 0)
+        computeConvexHull();
+}
+
+void Kirk::computeConvexHull()
+{
+
     float max_coordinate = -1 * std::numeric_limits<float>::infinity();
     for (auto p : points)
     {
@@ -532,7 +539,7 @@ Kirk::Kirk(std::vector<Vector2> p)
     else
         lim = 0.01;
 
-    hull = convex_hull(p);
+    hull = convex_hull(points);
     for (auto &p : lowerBridges)
     {
         p.first.y *= -1;
@@ -569,7 +576,7 @@ Kirk::~Kirk()
 
 void Kirk::draw()
 {
-    BeginDrawing();
+    // BeginDrawing();
 
     switch (steps[currentStep].type)
     {
@@ -675,11 +682,12 @@ void Kirk::draw()
         break;
     }
     drawPrevSteps();
-    EndDrawing();
+    // EndDrawing();
 }
 
-void Kirk::update()
+void Kirk::next()
 {
+
     if (currentStep < steps.size() - 1)
         currentStep++;
 }
@@ -761,4 +769,19 @@ void Kirk::drawline(Vector2 p, float slope, Color c)
     float x2 = p.x + 400;
     float y2 = p.y + (slope * 400);
     DrawLine(x1, y1, x2, y2, c);
+}
+
+int Kirk::getNumberOfSteps()
+{
+    return steps.size();
+}
+
+int Kirk::getCurrentStep()
+{
+    return currentStep;
+}
+
+void Kirk::setCurrentStep(int step)
+{
+    currentStep = step;
 }

@@ -1,14 +1,9 @@
 #ifndef KIRK_PATRICK_SEIDEL_H
 #define KIRK_PATRICK_SEIDEL_H
 
-#include "raylib.h"
-#include "raymath.h"
-#include <algorithm>
-#include <iostream>
-#include <limits>
-#include <vector>
+#include "convex_hull.h"
 
-class Kirk
+class Kirk : public ConvexHullAlgorithm
 {
   public:
     enum miniState
@@ -37,12 +32,15 @@ class Kirk
     ~Kirk();
 
     void draw();
-    void update();
+    void next();
     void previous();
     bool isFinished();
     void drawPrevSteps();
     void drawline(Vector2 p, float slope, Color c);
     static bool compareVector2(Vector2 a, Vector2 b);
+    int getNumberOfSteps();
+    int getCurrentStep();
+    void setCurrentStep(int step);
 
   private:
     float median_of_medians(std::vector<float> arr);
@@ -51,6 +49,7 @@ class Kirk
     std::vector<Vector2> upper_hull(std::vector<Vector2> S);
     std::vector<Vector2> lower_hull(std::vector<Vector2> &S);
     std::vector<Vector2> convex_hull(std::vector<Vector2> &S);
+    void computeConvexHull();
 
     std::vector<Vector2> points;
     std::vector<Vector2> hull;

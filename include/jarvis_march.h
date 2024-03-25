@@ -8,9 +8,7 @@
 #ifndef JARVIS_MARCH_H
 #define JARVIS_MARCH_H
 
-#include "raylib.h"
-#include <iostream>
-#include <vector>
+#include "convex_hull.h"
 
 /**
  * @brief Represents the JarvisMarch class, implementing the Jarvis March algorithm for computing the convex hull of a
@@ -23,7 +21,7 @@
  * 3. Call the draw() method to draw the current step of the convex hull computation process.
  *
  */
-class JarvisMarch
+class JarvisMarch : public ConvexHullAlgorithm
 {
   private:
     /**
@@ -160,6 +158,24 @@ class JarvisMarch
      *
      */
     void previous();
+    /**
+     * @brief Get the number of steps in the convex hull computation process.
+     *
+     * @return int The number of steps.
+     */
+    int getNumberOfSteps();
+    /**
+     * @brief Get the current step in the convex hull computation process.
+     *
+     * @return int The current step.
+     */
+    int getCurrentStep();
+    /**
+     * @brief Set the current step in the convex hull computation process.
+     *
+     * @param step The step to set.
+     */
+    void setCurrentStep(int step);
 };
 
 #endif // JARVIS_MARCH_H
