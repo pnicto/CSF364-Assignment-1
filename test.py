@@ -1,6 +1,4 @@
 from scipy.spatial import ConvexHull
-import numpy as np
-rng = np.random.default_rng()
 points = []
 f = open("in.txt", "r")
 for x in f:
