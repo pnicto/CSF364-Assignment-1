@@ -276,7 +276,6 @@ static void UpdateDrawFrame(void)
 
     for (size_t i = 0; i < dataPoints.size(); i++)
     {
-        if (settings.checkPointValidity(dataPoints[i], &showSettings))
             DrawCircleV(dataPoints[i], 5, BLACK);
     }
 
@@ -308,6 +307,9 @@ static void UpdateDrawFrame(void)
         previousAlgorithm = selectedAlgorithm;
     }
 
+    // Draw bottom bar
+    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
+
     // disable the GuiButton when there are no points
     if (dataPoints.size() == 0)
         GuiDisable();
@@ -329,9 +331,6 @@ static void UpdateDrawFrame(void)
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          fileDataPoints, dataPoints);
-
     if (showConvexHull)
     {
         if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
@@ -340,9 +339,6 @@ static void UpdateDrawFrame(void)
             visualizeStepByStep = !visualizeStepByStep;
         }
     }
-
-    // Draw bottom bar
-    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
 
     if (showConvexHull)
     {
@@ -377,6 +373,9 @@ static void UpdateDrawFrame(void)
                     {150 + (GetScreenWidth() - 450.0f) / 2, h, 150, 30}, TEXT_ALIGN_LEFT, BLACK);
         ch->setCurrentStep(currentStep);
     }
+
+    settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
+                          fileDataPoints, dataPoints);
     EndDrawing();
     //----------------------------------------------------------------------------------
 }

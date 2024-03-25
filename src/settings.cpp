@@ -28,8 +28,8 @@ Settings::~Settings()
 {
 }
 
-void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scale, float *duration,
-                            std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
+void Settings::showSettings(bool *showSettings, float toolbarHeight, float bottomBarHeight, float *scale,
+                            float *duration, std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
                             std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints)
 {
     if (*showSettings)
@@ -73,8 +73,8 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                     window_position.x = GetScreenWidth() - window_size.x - 10;
                 if (window_position.y < toolbarHeight)
                     window_position.y = toolbarHeight + 10;
-                else if (window_position.y > GetScreenHeight() - toolbarHeight)
-                    window_position.y = GetScreenHeight() - RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT - 10;
+                else if (window_position.y > GetScreenHeight() - toolbarHeight - bottomBarHeight)
+                    window_position.y = GetScreenHeight() - bottomBarHeight - RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT - 10;
             }
         }
         else if (resizing)
@@ -89,8 +89,8 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
                 window_size.x = GetScreenWidth();
             if (window_size.y < 100)
                 window_size.y = 100;
-            else if (window_size.y > GetScreenHeight())
-                window_size.y = GetScreenHeight();
+            else if (window_size.y > GetScreenHeight() - toolbarHeight - bottomBarHeight)
+                window_size.y = GetScreenHeight() - toolbarHeight - bottomBarHeight;
 
             if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
             {
@@ -137,14 +137,14 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
             }
 
             drawRandomPointGenerationComponent({20.0f, 50.0f}, {window_position.x, window_position.y}, {500.0f, 200.0f},
-                                               &scroll, toolbarHeight, numberOfPoints, dataPoints);
+                                               &scroll, toolbarHeight, bottomBarHeight, numberOfPoints, dataPoints);
 
             drawScaleComponent({20.0f, 50.0f}, {window_position.x, window_position.y + 150.0f}, {500.0f, 100.0f},
                                &scroll, scale);
 
             drawFileInputComponent({20.0f, 50.0f}, {window_position.x, window_position.y + 250.0f}, {500.0f, 200.0f},
-                                   &scroll, isFilePathAdded, filePath, fileDataPoints, dataPoints, toolbarHeight, scale,
-                                   scissor);
+                                   &scroll, isFilePathAdded, filePath, fileDataPoints, dataPoints, toolbarHeight,
+                                   bottomBarHeight, scale, scissor);
 
             drawTimestepComponent({20.0f, 50.0f}, {window_position.x, window_position.y + 450.0f}, {500.0f, 100.0f},
                                   &scroll, duration);
@@ -160,8 +160,8 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float *scal
 }
 
 void Settings::drawRandomPointGenerationComponent(Vector2 padding, Vector2 component_position, Vector2 component_size,
-                                                  Vector2 *scroll, float toolbarHeight, float *numberOfPoints,
-                                                  std::vector<Vector2> &dataPoints)
+                                                  Vector2 *scroll, float toolbarHeight, float bottomBarHeight,
+                                                  float *numberOfPoints, std::vector<Vector2> &dataPoints)
 {
     GuiLabel((Rectangle){component_position.x + padding.x + (*scroll).x, component_position.y + padding.y + (*scroll).y,
                          component_size.x, (0.125f) * component_size.y},
@@ -182,7 +182,8 @@ void Settings::drawRandomPointGenerationComponent(Vector2 padding, Vector2 compo
         while (i < (int)(*numberOfPoints))
         {
             int x = rand() % GetScreenWidth(), y = rand() % GetScreenHeight();
-            if (y > (int)toolbarHeight + 10 && y < GetScreenHeight() - 100 && x > 10 && x < GetScreenWidth() - 10)
+            if (y > (int)toolbarHeight + 10 && y < GetScreenHeight() - bottomBarHeight - 10 && x > 10 &&
+                x < GetScreenWidth() - 10)
             {
                 dataPoints.push_back({static_cast<float>(x), static_cast<float>(y)});
                 i++;
@@ -213,7 +214,7 @@ void Settings::drawScaleComponent(Vector2 padding, Vector2 component_position, V
 void Settings::drawFileInputComponent(Vector2 padding, Vector2 component_position, Vector2 component_size,
                                       Vector2 *scroll, bool *isFilePathAdded, std::string &filePath,
                                       std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints,
-                                      float toolbarHeight, float *scale, Rectangle scissor)
+                                      float toolbarHeight, float bottomBarHeight, float *scale, Rectangle scissor)
 {
     if (*isFilePathAdded == 0)
     {
@@ -233,7 +234,7 @@ void Settings::drawFileInputComponent(Vector2 padding, Vector2 component_positio
             float xCoord = std::max((component_position.x + padding.x + (*scroll).x), scissor.x),
                   yCoord = std::max((component_position.y + padding.y + ((0.25f) * component_size.y) + (*scroll).y),
                                     scissor.y),
-                  xGap = std::max(0.0f, padding.x + (*scroll).x), yGap = std::min(0.0f, 300.0f + (*scroll).y);
+                  xGap = std::max(0.0f, padding.x + (*scroll).x), yGap = std::min(0.0f, 325.0f + (*scroll).y);
 
             if (CheckCollisionPointRec(
                     position,
@@ -254,7 +255,7 @@ void Settings::drawFileInputComponent(Vector2 padding, Vector2 component_positio
                     fileDataPoints.push_back({x, y});
                 }
 
-                computeScale(fileDataPoints, scale, toolbarHeight);
+                computeScale(fileDataPoints, scale, toolbarHeight, bottomBarHeight);
             }
 
             UnloadDroppedFiles(droppedFile);
@@ -321,7 +322,8 @@ void Settings::drawTimestepComponent(Vector2 padding, Vector2 component_position
               NULL, TextFormat("%0.2f", *duration), duration, 0.01f, 0.50f);
 }
 
-void Settings::computeScale(std::vector<Vector2> &fileDataPoints, float *scale, float toolbarHeight)
+void Settings::computeScale(std::vector<Vector2> &fileDataPoints, float *scale, float toolbarHeight,
+                            float bottomBarHeight)
 {
     if (fileDataPoints.size() > 0)
     {
@@ -337,7 +339,8 @@ void Settings::computeScale(std::vector<Vector2> &fileDataPoints, float *scale, 
 
         float computedScale = 50.0f;
         while ((largestX - smallestX) * computedScale > (static_cast<float>(GetScreenWidth()) - 50.0f) ||
-               (largestY - smallestY) * computedScale > (static_cast<float>(GetScreenHeight()) - toolbarHeight - 50.0f))
+               (largestY - smallestY) * computedScale >
+                   (static_cast<float>(GetScreenHeight()) - toolbarHeight - bottomBarHeight - 50.0f))
         {
             computedScale -= 0.1f;
         }
