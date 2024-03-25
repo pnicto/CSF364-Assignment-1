@@ -9,14 +9,6 @@
 
 Settings::Settings(Vector2 *position, Vector2 *size, Vector2 *contentSz, const char *titleString)
 {
-#if !defined(RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT)
-#define RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT 24
-#endif
-
-#if !defined(RAYGUI_WINDOW_CLOSEBUTTON_SIZE)
-#define RAYGUI_WINDOW_CLOSEBUTTON_SIZE 18
-#endif
-
     windowPosition = *position;
     windowSize = *size;
     maxWindowSize = *size;
@@ -32,20 +24,20 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
                             float *duration, std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
                             std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints)
 {
+    float statusBarHeight = 24.0f, closeButtonSize = 18.0f;
     if (*showSettings)
     {
-        int closeTitleSizeDeltaHalf = (RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT - RAYGUI_WINDOW_CLOSEBUTTON_SIZE) / 2;
+        int closeTitleSizeDeltaHalf = (statusBarHeight - closeButtonSize) / 2;
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !moving && !resizing)
         {
             Vector2 mousePosition = GetMousePosition();
 
             Rectangle titleCollisionRect = {windowPosition.x, windowPosition.y,
-                                              windowSize.x -
-                                                  (RAYGUI_WINDOW_CLOSEBUTTON_SIZE + closeTitleSizeDeltaHalf),
-                                              RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT};
+                                            windowSize.x - (closeButtonSize + closeTitleSizeDeltaHalf),
+                                            statusBarHeight};
             Rectangle resizeCollisionRect = {windowPosition.x + windowSize.x - 20.0f,
-                                               windowPosition.y + windowSize.y - 20.0f, 20.0f, 20.0f};
+                                             windowPosition.y + windowSize.y - 20.0f, 20.0f, 20.0f};
 
             if (CheckCollisionPointRec(mousePosition, titleCollisionRect))
             {
@@ -74,7 +66,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
                 if (windowPosition.y < toolbarHeight)
                     windowPosition.y = toolbarHeight + 10.0f;
                 else if (windowPosition.y > GetScreenHeight() - toolbarHeight - bottomBarHeight)
-                    windowPosition.y = GetScreenHeight() - bottomBarHeight - RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT - 10.0f;
+                    windowPosition.y = GetScreenHeight() - bottomBarHeight - statusBarHeight - 10.0f;
             }
         }
         else if (resizing)
@@ -101,13 +93,13 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
         if (minimized)
         {
             GuiStatusBar(
-                (Rectangle){windowPosition.x, windowPosition.y, windowSize.x, RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT},
+                (Rectangle){windowPosition.x, windowPosition.y, windowSize.x, statusBarHeight},
                 title);
 
-            if (GuiButton((Rectangle){windowPosition.x + windowSize.x - RAYGUI_WINDOW_CLOSEBUTTON_SIZE -
+            if (GuiButton((Rectangle){windowPosition.x + windowSize.x - closeButtonSize -
                                           closeTitleSizeDeltaHalf,
-                                      windowPosition.y + closeTitleSizeDeltaHalf, RAYGUI_WINDOW_CLOSEBUTTON_SIZE,
-                                      RAYGUI_WINDOW_CLOSEBUTTON_SIZE},
+                                      windowPosition.y + closeTitleSizeDeltaHalf, closeButtonSize,
+                                      closeButtonSize},
                           "#120#"))
             {
                 minimized = false;
@@ -120,12 +112,12 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
                 GuiWindowBox((Rectangle){windowPosition.x, windowPosition.y, windowSize.x, windowSize.y}, title);
             if (minimized)
             {
-                windowSize = {maxWindowSize.x, RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT};
+                windowSize = {maxWindowSize.x, statusBarHeight};
             }
 
             Rectangle scissor = {0};
-            GuiScrollPanel((Rectangle){windowPosition.x, windowPosition.y + RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT,
-                                       windowSize.x, windowSize.y - RAYGUI_WINDOWBOX_STATUSBAR_HEIGHT},
+            GuiScrollPanel((Rectangle){windowPosition.x, windowPosition.y + statusBarHeight,
+                                       windowSize.x, windowSize.y - statusBarHeight},
                            NULL, (Rectangle){windowPosition.x, windowSize.y, contentSize.x, contentSize.y}, &scroll,
                            &scissor);
 
@@ -139,8 +131,8 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
             drawRandomPointGenerationComponent({20.0f, 50.0f}, {windowPosition.x, windowPosition.y}, {500.0f, 200.0f},
                                                &scroll, toolbarHeight, bottomBarHeight, numberOfPoints, dataPoints);
 
-            drawScaleComponent({20.0f, 50.0f}, {windowPosition.x, windowPosition.y + 150.0f}, {500.0f, 100.0f},
-                               &scroll, scale);
+            drawScaleComponent({20.0f, 50.0f}, {windowPosition.x, windowPosition.y + 150.0f}, {500.0f, 100.0f}, &scroll,
+                               scale);
 
             drawFileInputComponent({20.0f, 50.0f}, {windowPosition.x, windowPosition.y + 250.0f}, {500.0f, 200.0f},
                                    &scroll, isFilePathAdded, filePath, fileDataPoints, dataPoints, toolbarHeight,
@@ -206,8 +198,8 @@ void Settings::drawScaleComponent(Vector2 padding, Vector2 componentPosition, Ve
                          componentSize.x, (0.125f) * componentSize.y},
              "Scale");
     GuiSlider((Rectangle){componentPosition.x + padding.x + (*scroll).x,
-                          componentPosition.y + padding.y + (0.375f) * componentSize.y + (*scroll).y,
-                          componentSize.x, (0.25f) * componentSize.y},
+                          componentPosition.y + padding.y + (0.375f) * componentSize.y + (*scroll).y, componentSize.x,
+                          (0.25f) * componentSize.y},
               NULL, TextFormat("%0.1f", *scale), scale, 0.1f, 50.0f);
 }
 
@@ -310,15 +302,15 @@ void Settings::drawFileInputComponent(Vector2 padding, Vector2 componentPosition
     }
 }
 
-void Settings::drawTimestepComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize,
-                                     Vector2 *scroll, float *duration)
+void Settings::drawTimestepComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize, Vector2 *scroll,
+                                     float *duration)
 {
     GuiLabel((Rectangle){componentPosition.x + padding.x + (*scroll).x, componentPosition.y + padding.y + (*scroll).y,
                          componentSize.x, (0.125f) * componentSize.y},
              "Timestep");
     GuiSlider((Rectangle){componentPosition.x + padding.x + (*scroll).x,
-                          componentPosition.y + padding.y + (0.375f) * componentSize.y + (*scroll).y,
-                          componentSize.x, (0.25f) * componentSize.y},
+                          componentPosition.y + padding.y + (0.375f) * componentSize.y + (*scroll).y, componentSize.x,
+                          (0.25f) * componentSize.y},
               NULL, TextFormat("%0.2f", *duration), duration, 0.01f, 0.50f);
 }
 

@@ -81,17 +81,17 @@ bool showSettings = false;
  * @brief Specifies the position for the settings window
  *
  */
-Vector2 windowPosition = {10, 80};
+Vector2 settingsWindowPosition = {10, 80};
 /**
  * @brief Specifies the size of the settings window
  *
  */
-Vector2 windowSize = {400, 400};
+Vector2 settingsWindowSize = {400, 400};
 /**
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
-Vector2 contentSize = {600, 600};
+Vector2 settingsContentSize = {600, 600};
 /**
  * @brief Specifies the scale for drawing points
  *
@@ -146,7 +146,7 @@ ConvexHullAlgorithm *ch;
  * @brief Represents the Settings object.
  *
  */
-Settings settings(&windowPosition, &windowSize, &contentSize, "Settings");
+Settings settings(&settingsWindowPosition, &settingsWindowSize, &settingsContentSize, "Settings");
 /**
  * @brief Height of the bottom bar.
  *
@@ -276,7 +276,7 @@ static void UpdateDrawFrame(void)
 
     for (size_t i = 0; i < dataPoints.size(); i++)
     {
-            DrawCircleV(dataPoints[i], 5, BLACK);
+        DrawCircleV(dataPoints[i], 5, BLACK);
     }
 
     if (showConvexHull)
@@ -374,8 +374,8 @@ static void UpdateDrawFrame(void)
         ch->setCurrentStep(currentStep);
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          fileDataPoints, dataPoints);
+    settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded,
+                          &numberOfPoints, fileDataPoints, dataPoints);
     EndDrawing();
     //----------------------------------------------------------------------------------
 }
