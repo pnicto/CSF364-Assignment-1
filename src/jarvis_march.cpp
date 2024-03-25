@@ -105,7 +105,7 @@ bool JarvisMarch::isFinished()
 
 void JarvisMarch::computeConvexHull()
 {
-    if (n < 4)
+    if (n < 3)
     {
         convexHull = points;
         return;
