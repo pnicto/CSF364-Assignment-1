@@ -13,6 +13,7 @@
 #include "settings.h"
 #include "timer.h"
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -192,7 +193,7 @@ std::vector<Vector2> fileDataPoints;
  * @brief Represents the ConvexHullAlgorithm object.
  *
  */
-ConvexHullAlgorithm *ch;
+std::unique_ptr<ConvexHullAlgorithm> ch;
 /**
  * @brief Represents the Settings object.
  *
@@ -303,7 +304,8 @@ static void UpdateDrawFrame(void)
                 dataPoints.pop_back();
             }
         }
-        selectedAlgorithm == JARVIS_MARCH ? ch = new JarvisMarch(dataPoints) : ch = new Kirk(dataPoints);
+        selectedAlgorithm == JARVIS_MARCH ? ch = std::make_unique<JarvisMarch>(dataPoints)
+                                          : ch = std::make_unique<Kirk>(dataPoints);
     }
 
     if (showConvexHull)
