@@ -351,18 +351,26 @@ static void UpdateDrawFrame(void)
 
         float h = GetScreenHeight() - bottomBarHeight + 15;
 
+        maxSteps = ch->getNumberOfSteps() - 1;
+        currentStep = ch->getCurrentStep();
+
+        if (currentStep == 1)
+            GuiDisable();
         if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
         {
             ch->previous();
+            currentStep = ch->getCurrentStep();
         }
+        GuiEnable();
 
+        if (currentStep >= maxSteps)
+            GuiDisable();
         if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
         {
             ch->next();
+            currentStep = ch->getCurrentStep();
         }
-
-        maxSteps = ch->getNumberOfSteps() - 1;
-        currentStep = ch->getCurrentStep();
+        GuiEnable();
 
         GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
         GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep), maxSteps),
