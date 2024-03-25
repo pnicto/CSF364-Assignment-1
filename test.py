@@ -3,7 +3,7 @@ points = []
 inFile = open("in.txt", "r")
 for x in inFile:
     coords = x.split(',')
-    points.append(((int(coords[0][1:])), int(coords[1][:-2])))
+    points.append(((float(coords[0][1:])), float(coords[1][:-2])))
 
 hull = ConvexHull(points)
 outFile = open("pyout.txt", "w")

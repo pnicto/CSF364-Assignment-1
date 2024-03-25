@@ -6,7 +6,7 @@ using namespace std;
 
 struct Vector2
 {
-    int x, y;
+    float x, y;
 };
 
 int orientation(Vector2 p, Vector2 q, Vector2 r)
@@ -205,7 +205,7 @@ int main()
     vector<Vector2> points;
     const std::string inputFilePath = "./in.txt";
     std::ifstream istream(inputFilePath);
-    int x, y;
+    float x, y;
     char openParenthesis = '(', closeParenthesis = ')', separator = ',';
     while (istream >> openParenthesis >> x >> separator >> y >> closeParenthesis)
     {
