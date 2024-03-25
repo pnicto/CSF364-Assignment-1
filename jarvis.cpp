@@ -203,8 +203,8 @@ int main()
     //     {98, 80}, {98, 95}, {99, 4},  {99, 14}, {99, 19}, {99, 24}, {99, 40},
     //     {99, 42}, {99, 43}, {99, 44}, {99, 52}, {99, 79}, {99, 81}, {99, 84}};
     vector<Vector2> points;
-    const std::string filePath = "./in.txt";
-    std::ifstream istream(filePath);
+    const std::string inputFilePath = "./in.txt";
+    std::ifstream istream(inputFilePath);
     int x, y;
     char openParenthesis = '(', closeParenthesis = ')', separator = ',';
     while (istream >> openParenthesis >> x >> separator >> y >> closeParenthesis)
@@ -215,5 +215,11 @@ int main()
     for (auto &point : result)
     {
         cout << "(" << point.x << ", " << point.y << ")" << endl;
+    }
+    const std::string outputFilePath = "./jarvisout.txt";
+    std::ofstream ostream(outputFilePath);
+    for (auto &point : result)
+    {
+        ostream << openParenthesis << point.x << separator << point.y << closeParenthesis << endl;
     }
 }
