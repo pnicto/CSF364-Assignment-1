@@ -81,17 +81,17 @@ bool showSettings = false;
  * @brief Specifies the position for the settings window
  *
  */
-Vector2 window_position = {10, 80};
+Vector2 settingsWindowPosition = {10, 80};
 /**
  * @brief Specifies the size of the settings window
  *
  */
-Vector2 window_size = {400, 400};
+Vector2 settingsWindowSize = {400, 400};
 /**
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
-Vector2 content_size = {600, 600};
+Vector2 settingsContentSize = {600, 600};
 /**
  * @brief Specifies the scale for drawing points
  *
@@ -152,7 +152,7 @@ ConvexHullAlgorithm *ch;
  * @brief Represents the Settings object.
  *
  */
-Settings settings(&window_position, &window_size, &content_size, "Settings");
+Settings settings(&settingsWindowPosition, &settingsWindowSize, &settingsContentSize, "Settings");
 /**
  * @brief Height of the bottom bar.
  *
@@ -283,8 +283,7 @@ static void UpdateDrawFrame(void)
 
     for (size_t i = 0; i < dataPoints.size(); i++)
     {
-        if (settings.checkPointValidity(dataPoints[i], &showSettings))
-            DrawCircleV(dataPoints[i], 5, BLACK);
+        DrawCircleV(dataPoints[i], 5, BLACK);
     }
 
     if (showConvexHull)
@@ -316,6 +315,9 @@ static void UpdateDrawFrame(void)
         previousAlgorithm = selectedAlgorithm;
     }
 
+    // Draw bottom bar
+    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
+
     // disable the GuiButton when there are no points
     if (dataPoints.size() == 0)
         GuiDisable();
@@ -337,9 +339,6 @@ static void UpdateDrawFrame(void)
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          fileDataPoints, dataPoints);
-
     if (showConvexHull)
     {
         if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
@@ -348,9 +347,6 @@ static void UpdateDrawFrame(void)
             visualizeStepByStep = !visualizeStepByStep;
         }
     }
-
-    // Draw bottom bar
-    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
 
     if (showConvexHull)
     {
@@ -392,6 +388,9 @@ static void UpdateDrawFrame(void)
         ch->setCurrentStep(currentStep);
         lastStep = currentStep;
     }
+
+    settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded,
+                          &numberOfPoints, fileDataPoints, dataPoints);
     EndDrawing();
     //----------------------------------------------------------------------------------
 }
