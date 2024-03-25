@@ -270,53 +270,6 @@ static void UpdateDrawFrame(void)
 
     ClearBackground(RAYWHITE);
 
-    // Toolbar
-    GuiLine(Rectangle{0, toolbarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
-    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 260), 10, 250, 30},
-                       "Jarvis March;Kirkpatrick-Seidel", &selectedAlgorithm, isDropdownOpen))
-    {
-        isDropdownOpen = !isDropdownOpen;
-        if (previousAlgorithm != selectedAlgorithm)
-        {
-            showConvexHull = false;
-            frameTimer.stopTimer();
-        }
-        previousAlgorithm = selectedAlgorithm;
-    }
-
-    // disable the GuiButton when there are no points
-    if (dataPoints.size() == 0)
-        GuiDisable();
-    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 480), 10, 210, 30}, "Toggle Convex Hull"))
-    {
-        showConvexHull = !showConvexHull;
-        showSettings = false;
-    }
-    // enable the remaining GUI
-    if (dataPoints.size() == 0)
-        GuiEnable();
-
-    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 590), 10, 100, 30}, "Settings"))
-    {
-        if (showConvexHull)
-        {
-            showConvexHull = !showConvexHull;
-        }
-        showSettings = !showSettings;
-    }
-
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          fileDataPoints, dataPoints);
-
-    if (showConvexHull)
-    {
-        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
-                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
-        {
-            visualizeStepByStep = !visualizeStepByStep;
-        }
-    }
-
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
     case JARVIS_MARCH: {
@@ -364,6 +317,53 @@ static void UpdateDrawFrame(void)
         }
     }
     break;
+    }
+
+    // Toolbar
+    GuiLine(Rectangle{0, toolbarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
+    if (GuiDropdownBox(Rectangle{static_cast<float>(GetScreenWidth() - 260), 10, 250, 30},
+                       "Jarvis March;Kirkpatrick-Seidel", &selectedAlgorithm, isDropdownOpen))
+    {
+        isDropdownOpen = !isDropdownOpen;
+        if (previousAlgorithm != selectedAlgorithm)
+        {
+            showConvexHull = false;
+            frameTimer.stopTimer();
+        }
+        previousAlgorithm = selectedAlgorithm;
+    }
+
+    // disable the GuiButton when there are no points
+    if (dataPoints.size() == 0)
+        GuiDisable();
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 480), 10, 210, 30}, "Toggle Convex Hull"))
+    {
+        showConvexHull = !showConvexHull;
+        showSettings = false;
+    }
+    // enable the remaining GUI
+    if (dataPoints.size() == 0)
+        GuiEnable();
+
+    if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 590), 10, 100, 30}, "Settings"))
+    {
+        if (showConvexHull)
+        {
+            showConvexHull = !showConvexHull;
+        }
+        showSettings = !showSettings;
+    }
+
+    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
+                          fileDataPoints, dataPoints);
+
+    if (showConvexHull)
+    {
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
+                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
+        {
+            visualizeStepByStep = !visualizeStepByStep;
+        }
     }
 
     // Draw bottom bar
