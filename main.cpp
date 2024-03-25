@@ -147,6 +147,10 @@ ConvexHullAlgorithm *ch;
  *
  */
 Settings settings(&window_position, &window_size, &content_size, "Settings");
+/**
+ * @brief Height of the bottom bar.
+ *
+ */
 const float bottomBarHeight = 60;
 
 //----------------------------------------------------------------------------------
