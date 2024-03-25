@@ -9,6 +9,7 @@ JarvisMarch::JarvisMarch(std::vector<Vector2> p)
 {
     n = p.size();
     points = p;
+    currentStep = 0;
     if (n != 0)
     {
         computeConvexHull();
@@ -108,6 +109,7 @@ void JarvisMarch::computeConvexHull()
     if (n < 3)
     {
         convexHull = points;
+        steps.push_back((struct StepInfo){0, 0, 0, convexHull});
         return;
     }
 
