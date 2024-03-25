@@ -19,7 +19,15 @@
 #if defined(PLATFORM_WEB)
 #include "emscripten/emscripten.h"
 // use js to get the body height and width
+/**
+ * @brief EM JS object that gets the browser window's inner width.
+ *
+ */
 EM_JS(int, getDocumentBodyWidth, (), { return window.innerWidth; });
+/**
+ * @brief EM JS object that gets the browser window's inner height.
+ *
+ */
 EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
 #endif
 
@@ -144,7 +152,15 @@ Settings settings(&window_position, &window_size, &content_size, "Settings");
 //----------------------------------------------------------------------------------
 // Local Functions Declaration
 //----------------------------------------------------------------------------------
-static void UpdateDrawFrame(void); // Update and draw one frame
+/**
+ * @brief Updates and draws the frame.
+ *
+ */
+static void UpdateDrawFrame(void);
+/**
+ * @brief Represents a timer for controlling frame updates.
+ *
+ */
 Timer frameTimer;
 
 //----------------------------------------------------------------------------------
@@ -212,7 +228,7 @@ static void UpdateDrawFrame(void)
     //----------------------------------------------------------------------------------
     if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep && selectedAlgorithm == JARVIS_MARCH)
     {
-        jm.update();
+        jm.next();
         frameTimer.resetTimer(duration);
     }
 
@@ -302,7 +318,7 @@ static void UpdateDrawFrame(void)
         {
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
             {
-                selectedAlgorithm == JARVIS_MARCH ? jm.update() : kps.update();
+                selectedAlgorithm == JARVIS_MARCH ? jm.next() : kps.update();
             }
 
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
