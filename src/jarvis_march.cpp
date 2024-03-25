@@ -65,7 +65,7 @@ void JarvisMarch::draw()
     // BeginDrawing();
     if (!isFinished())
     {
-        DrawCircleV(points[steps[currentStep].nextPointIndex], 5, BLUE);
+        DrawCircleV(points[steps[currentStep].nextPointIndex], 5, ORANGE);
         DrawCircleV(points[steps[currentStep].candidatePointIndex], 5, PURPLE);
         DrawLineV(points[steps[currentStep].currentPointIndex], points[steps[currentStep].nextPointIndex], BLACK);
         DrawLineV(points[steps[currentStep].currentPointIndex], points[steps[currentStep].candidatePointIndex], RED);
@@ -246,6 +246,42 @@ void JarvisMarch::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 
             {
                 BeginScissorMode(scissor.x, scissor.y, scissor.width, scissor.height);
             }
+
+            DrawCircleV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 50.0f + (*scroll).y}, 5,
+                        BLUE);
+            GuiLabel(
+                {(*windowPosition).x + 30.0f + (*scroll).x, (*windowPosition).y + 35.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Convex Hull Point");
+
+            DrawCircleV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 75.0f + (*scroll).y}, 5,
+                        ORANGE);
+            GuiLabel(
+                {(*windowPosition).x + 30.0f + (*scroll).x, (*windowPosition).y + 60.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Candidate Point");
+
+            DrawCircleV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 100.0f + (*scroll).y}, 5,
+                        PURPLE);
+            GuiLabel(
+                {(*windowPosition).x + 30.0f + (*scroll).x, (*windowPosition).y + 85.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Current Check Point");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 125.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 125.0f + (*scroll).y}, GREEN);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 110.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Convex Hull Line");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 150.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 150.0f + (*scroll).y}, BLACK);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 135.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Candidate Hull Line");
+
+            DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 175.0f + (*scroll).y},
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 175.0f + (*scroll).y}, RED);
+            GuiLabel(
+                {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 160.0f + (*scroll).y, 300.0f, 30.0f},
+                " - Current Check Line");
 
             if (requireScissor)
             {

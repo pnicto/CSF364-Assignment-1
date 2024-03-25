@@ -106,17 +106,17 @@ Vector2 legendWindowPosition = {10, 80};
  * @brief Specifies the size of the legend window
  *
  */
-Vector2 legendWindowSize = {350, 300};
+Vector2 legendWindowSize = {450, 200};
 /**
  * @brief Specifies the maximum size of the legend window
  *
  */
-Vector2 legendWindowMaximumSize = {300, 300};
+Vector2 legendWindowMaximumSize = {450, 200};
 /**
  * @brief Specifies the size of the content to be displayed in the legend window
  *
  */
-Vector2 legendContentSize = {300, 600};
+Vector2 legendContentSize = {400, 250};
 /**
  * @brief Scroll object associated with the legend window
  *
