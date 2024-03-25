@@ -160,8 +160,23 @@ class JarvisMarch
      *
      */
     void previous();
+    /**
+     * @brief Get the number of steps in the convex hull computation process.
+     *
+     * @return int The number of steps.
+     */
     int getNumberOfSteps();
+    /**
+     * @brief Get the current step in the convex hull computation process.
+     *
+     * @return int The current step.
+     */
     int getCurrentStep();
+    /**
+     * @brief Set the current step in the convex hull computation process.
+     *
+     * @param step The step to set.
+     */
     void setCurrentStep(int step);
 };
 
