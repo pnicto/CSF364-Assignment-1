@@ -7,6 +7,7 @@
 #define RAYGUI_IMPLEMENTATION
 
 #include "jarvis_march.h"
+#include "kirk_patrick_seidel.h"
 #include "raygui.h"
 #include "raylib.h"
 #include "settings.h"
@@ -141,6 +142,7 @@ std::vector<Vector2> fileDataPoints;
  *
  */
 JarvisMarch jm(dataPoints);
+Kirk kps(dataPoints);
 /**
  * @brief Represents the Settings object.
  *
@@ -186,6 +188,7 @@ int main()
     }
 
     jm = JarvisMarch(dataPoints);
+    kps = Kirk(dataPoints);
 
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
@@ -223,9 +226,16 @@ static void UpdateDrawFrame(void)
 {
     // Update
     //----------------------------------------------------------------------------------
-    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep)
+    if (frameTimer.isTimerDone() && !jm.isFinished() && !visualizeStepByStep && selectedAlgorithm == JARVIS_MARCH)
     {
         jm.next();
+        frameTimer.resetTimer(duration);
+    }
+
+    if (frameTimer.isTimerDone() && !kps.isFinished() && !visualizeStepByStep &&
+        selectedAlgorithm == KIRK_PATRICK_SEIDEL)
+    {
+        kps.update();
         frameTimer.resetTimer(duration);
     }
 
@@ -247,6 +257,7 @@ static void UpdateDrawFrame(void)
             }
         }
         jm = JarvisMarch(dataPoints);
+        kps = Kirk(dataPoints);
     }
 
     //----------------------------------------------------------------------------------
@@ -266,6 +277,7 @@ static void UpdateDrawFrame(void)
         if (previousAlgorithm != selectedAlgorithm)
         {
             showConvexHull = false;
+            frameTimer.stopTimer();
         }
         previousAlgorithm = selectedAlgorithm;
     }
@@ -306,12 +318,12 @@ static void UpdateDrawFrame(void)
         {
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 890), 10, 70, 30}, "Next"))
             {
-                jm.next();
+                selectedAlgorithm == JARVIS_MARCH ? jm.next() : kps.update();
             }
 
             if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 70, 30}, "Prev"))
             {
-                jm.previous();
+                selectedAlgorithm == JARVIS_MARCH ? jm.previous() : kps.previous();
             }
         }
     }
@@ -343,6 +355,24 @@ static void UpdateDrawFrame(void)
     break;
     case KIRK_PATRICK_SEIDEL: {
         GuiDrawText("Kirkpatrick-Seidel Algorithm", {10, 10, 300, 30}, TEXT_ALIGN_LEFT, BLACK);
+        for (size_t i = 0; i < dataPoints.size(); i++)
+        {
+            DrawCircleV(dataPoints[i], 5, BLACK);
+        }
+
+        if (showConvexHull)
+        {
+            if (!kps.isFinished())
+            {
+
+                frameTimer.startTimer(0.5);
+            }
+            else
+            {
+                frameTimer.stopTimer();
+            }
+            kps.draw();
+        }
     }
     break;
     }
