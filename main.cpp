@@ -361,7 +361,8 @@ static void UpdateDrawFrame(void)
         currentStep = ch->getCurrentStep();
 
         GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
-
+        GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep), maxSteps),
+                    {150 + (GetScreenWidth() - 450.0f) / 2, h, 150, 30}, TEXT_ALIGN_LEFT, BLACK);
         ch->setCurrentStep(currentStep);
     }
     EndDrawing();
