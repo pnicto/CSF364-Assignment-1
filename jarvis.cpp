@@ -212,14 +212,11 @@ int main()
         points.push_back({x, y});
     }
     auto result = computeConvexHull(points);
-    for (auto &point : result)
-    {
-        cout << "(" << point.x << ", " << point.y << ")" << endl;
-    }
     const std::string outputFilePath = "./jarvisout.txt";
     std::ofstream ostream(outputFilePath);
     for (auto &point : result)
     {
+        cout << "(" << point.x << ", " << point.y << ")" << endl;
         ostream << openParenthesis << point.x << separator << point.y << closeParenthesis << endl;
     }
 }
