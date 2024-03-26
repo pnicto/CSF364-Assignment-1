@@ -70,7 +70,7 @@ float Kirk::quick_select(std::vector<float> S, int rank)
     dup--;
     r = L.size() + 1;
 
-    if (r == rank || r < rank && (r + dup) >= rank)
+    if (r == rank || (r < rank && (r + dup) >= rank))
         return x;
     else if (r > rank)
         return quick_select(L, rank);
@@ -485,7 +485,7 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
     // add upper hull to result
     for (auto v : uh)
     {
-        if (res.size() == 0 || res.size() > 0 && !Vector2Equals(res.back(), v))
+        if (res.size() == 0 || (res.size() > 0 && !Vector2Equals(res.back(), v)))
             res.push_back(v);
     }
 
@@ -511,7 +511,7 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
     // add lower hull to the result
     for (auto v : lh)
     {
-        if (res.size() == 0 || res.size() > 0 && !Vector2Equals(res.back(), v))
+        if (res.size() == 0 || (res.size() > 0 && !Vector2Equals(res.back(), v)))
             res.push_back(v);
     }
 

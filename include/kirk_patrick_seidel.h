@@ -62,8 +62,6 @@ class Kirk : public ConvexHullAlgorithm
     std::vector<std::pair<Vector2, Vector2>> lowerBridges;
 
     State currentState = State::INIT;
-    miniState currentMiniState = miniState::LINE;
-    float x_mid;
 
     struct Step
     {
@@ -81,11 +79,6 @@ class Kirk : public ConvexHullAlgorithm
     std::vector<Step> steps;
     int currentStep = 0;
     int hullLineIndexHelper = 0;
-    // float lim = 0.0001;
-    // int uhIndexHelper = 0;
-    // int lhIndexHelper = 0;
-    // int ubIndexHelper = 0;
-    // int lbIndexHelper = 0;
 };
 
 #endif // KIRK_PATRICK_SEIDEL_H
