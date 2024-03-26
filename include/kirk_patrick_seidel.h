@@ -36,7 +36,7 @@ class Kirk : public ConvexHullAlgorithm
     void previous();
     bool isFinished();
     void drawPrevSteps();
-    void drawline(Vector2 p, float slope, Color c);
+    void drawline(Vector2 p, float slope, float x_mid, Color c);
     static bool compareVector2(Vector2 a, Vector2 b);
     static inline float calculateLim(float a, float b);
     int getNumberOfSteps();

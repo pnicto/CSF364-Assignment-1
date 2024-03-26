@@ -177,6 +177,7 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     Step step1;
     step1.state = currentState;
     step1.type = INTERCEPTS;
+    step1.x_m = L;
     step1.arr = S;
     step1.k = K;
     step1.upperBridgeLineIndex = upperBridges.size() - 1;
@@ -215,6 +216,7 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     Step step2;
     step2.state = currentState;
     step2.type = INTERCEPTS_FINAL;
+    step2.x_m = L;
     step2.p_k = p_k;
     step2.p_m = p_m;
     step2.k = K;
@@ -604,7 +606,7 @@ void Kirk::draw()
             DrawCircleV(p, 5, RED);
 
         // draw the median line
-        DrawLineEx({steps[currentStep].x_m, 100}, {steps[currentStep].x_m, static_cast<float>(GetScreenHeight()) - 100},
+        DrawLineEx({steps[currentStep].x_m, 70}, {steps[currentStep].x_m, static_cast<float>(GetScreenHeight()) - 70},
                    2, RED);
         break;
 
@@ -650,31 +652,31 @@ void Kirk::draw()
             DrawLineEx(steps[currentStep].p_k, steps[currentStep].p_m, 3, PINK);
         }
         else
-            drawline(steps[currentStep].p_k, steps[currentStep].k, PINK);
+            drawline(steps[currentStep].p_k, steps[currentStep].k, steps[currentStep].x_m, PINK);
 
         break;
 
     case INTERCEPTS:
-        // draw intercept lines with brown
+        // draw intercept lines with SKYBLUE
         for (Vector2 &p : steps[currentStep].arr)
         {
             DrawCircleV(p, 5, RED);
-            drawline(p, steps[currentStep].k, BROWN);
+            drawline(p, steps[currentStep].k, steps[currentStep].x_m, SKYBLUE);
         }
         break;
 
     case INTERCEPTS_FINAL:
-        // draw the winning intercept with brown
+        // draw the winning intercept with SKYBLUE
         for (Vector2 &p : steps[currentStep].arr)
         {
             DrawCircleV(p, 5, RED);
         }
         if (!Vector2Equals(steps[currentStep].p_k, steps[currentStep].p_m))
         {
-            DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, BROWN);
+            DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, SKYBLUE);
         }
         else
-            drawline(steps[currentStep].p_k, steps[currentStep].k, BROWN);
+            drawline(steps[currentStep].p_k, steps[currentStep].k, steps[currentStep].x_m, SKYBLUE);
         break;
 
     case ADD_TO_CANDIDATES:
@@ -737,7 +739,7 @@ void Kirk::drawPrevSteps()
             temp = steps[curr.hullLineIndex];
             if (temp.type == LINE)
             {
-                DrawLineEx({temp.x_m, 100}, {temp.x_m, static_cast<float>(GetScreenHeight()) - 100}, 2, RED);
+                DrawLineEx({temp.x_m, 70}, {temp.x_m, static_cast<float>(GetScreenHeight()) - 70}, 2, RED);
             }
         }
         for (int i = 0; i <= curr.upperBridgeLineIndex; i++)
@@ -758,7 +760,7 @@ void Kirk::drawPrevSteps()
             temp = steps[curr.hullLineIndex];
             if (temp.type == LINE)
             {
-                DrawLineEx({temp.x_m, 100}, {temp.x_m, static_cast<float>(GetScreenHeight()) - 100}, 2, RED);
+                DrawLineEx({temp.x_m, 70}, {temp.x_m, static_cast<float>(GetScreenHeight()) - 70}, 2, RED);
             }
         }
         for (int i = 0; i <= curr.lowerBridgeLineIndex; i++)
@@ -790,13 +792,24 @@ void Kirk::drawPrevSteps()
 }
 
 // make more responsive !!!
-void Kirk::drawline(Vector2 p, float slope, Color c)
+void Kirk::drawline(Vector2 p, float slope, float x_mid, Color c)
 {
-    float x1 = p.x - 400;
-    float y1 = p.y + (slope * -400);
-    float x2 = p.x + 400;
-    float y2 = p.y + (slope * 400);
-    DrawLine(x1, y1, x2, y2, c);
+    // Calculate the y-coordinate of the intersection point
+    float y_intersect = p.y + slope * (x_mid - p.x);
+
+    if (y_intersect < 70)
+    {
+        y_intersect = 70;
+        x_mid = p.x + (y_intersect - p.y) / slope;
+    }
+    else if (y_intersect > GetScreenHeight() - 70)
+    {
+        y_intersect = GetScreenHeight() - 70;
+        x_mid = p.x + (y_intersect - p.y) / slope;
+    }
+
+    // Draw the line
+    DrawLineV(p, {x_mid, y_intersect}, c);
 }
 
 int Kirk::getNumberOfSteps()
@@ -962,7 +975,7 @@ void Kirk::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *window
                 " - Paired Point Line Segment");
 
             DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y},
-                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y}, BROWN);
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y}, SKYBLUE);
             GuiLabel(
                 {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 210.0f + (*scroll).y, 300.0f, 30.0f},
                 " - Intercept Line");
