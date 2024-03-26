@@ -94,6 +94,18 @@ class ConvexHullAlgorithm
     /**
      * @brief Show the legend for the visualization of the ConvexHullAlgorithm computation.
      *
+     * @param showLegend The variable used to indicate if the legend is to be displayed
+     * @param windowPosition The position of the legend window on the screen
+     * @param windowSize The size of the legend window
+     * @param maxWindowSize The size of the legend window in the maximized state
+     * @param contentSize The size of the content window inside the legend window
+     * @param scroll The object used to keep track of current position after scrolling
+     * @param moving The variable used to indicate if the floating window is moving
+     * @param resizing The variable used to indicate if the floating window is resizing
+     * @param minimized The variable used to indicate if the floating window is minimized
+     * @param toolbarHeight The height of the toolbar
+     * @param bottomBarHeight The height of the bottomBar
+     * @param title The title for the floating window
      */
     virtual void showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
                             Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
