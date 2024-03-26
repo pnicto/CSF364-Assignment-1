@@ -11,7 +11,7 @@ bool Kirk::compareVector2(Vector2 a, Vector2 b)
 
 float Kirk::calculateLim(float a, float b)
 {
-    float m = std::max(a, b);
+    float m = std::max(std::abs(a), std::abs(b));
     if (m <= 500)
         return 0.0001;
     else if (m <= 5000)
