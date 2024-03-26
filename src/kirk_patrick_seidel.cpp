@@ -9,6 +9,16 @@ bool Kirk::compareVector2(Vector2 a, Vector2 b)
     return a.x < b.x;
 }
 
+float Kirk::calculateLim(float a, float b)
+{
+    float m = std::max(a, b);
+    if (m <= 500)
+        return 0.0001;
+    else if (m <= 5000)
+        return 0.001;
+    return 0.01;
+}
+
 float Kirk::median_of_medians(std::vector<float> arr)
 {
     int n = arr.size();
@@ -179,14 +189,14 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
 
     for (int i = 0; i < n; i++)
     {
-        if (intersections[i] - m_int > lim)
+        if (intersections[i] - m_int > calculateLim(intersections[i], m_int))
         {
             m_int = intersections[i];
             p_k.x = S[i].x;
             p_k.y = S[i].y;
             p_m = p_k;
         }
-        else if (abs(intersections[i] - m_int) <= lim)
+        else if (abs(intersections[i] - m_int) <= calculateLim(intersections[i], m_int))
         {
             if (S[i].x > p_m.x)
             {
@@ -531,21 +541,21 @@ Kirk::Kirk(std::vector<Vector2> p)
 void Kirk::computeConvexHull()
 {
 
-    float max_coordinate = -1 * std::numeric_limits<float>::infinity();
-    for (auto p : points)
-    {
-        max_coordinate = std::max(std::abs(p.x), std::max(std::abs(p.y), max_coordinate));
-    }
-    if (max_coordinate <= 1000)
-    {
-        lim = 0.0001;
-    }
-    else if (max_coordinate <= 5000)
-    {
-        lim = 0.001;
-    }
-    else
-        lim = 0.01;
+    // float max_coordinate = -1 * std::numeric_limits<float>::infinity();
+    // for (auto p : points)
+    // {
+    //     max_coordinate = std::max(std::abs(p.x), std::max(std::abs(p.y), max_coordinate));
+    // }
+    // if (max_coordinate <= 1000)
+    // {
+    //     lim = 0.0001;
+    // }
+    // else if (max_coordinate <= 5000)
+    // {
+    //     lim = 0.001;
+    // }
+    // else
+    //     lim = 0.01;
 
     hull = convex_hull(points);
     for (auto &p : lowerBridges)

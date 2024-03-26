@@ -38,6 +38,7 @@ class Kirk : public ConvexHullAlgorithm
     void drawPrevSteps();
     void drawline(Vector2 p, float slope, Color c);
     static bool compareVector2(Vector2 a, Vector2 b);
+    static inline float calculateLim(float a, float b);
     int getNumberOfSteps();
     int getCurrentStep();
     void setCurrentStep(int step);
@@ -80,7 +81,7 @@ class Kirk : public ConvexHullAlgorithm
     std::vector<Step> steps;
     int currentStep = 0;
     int hullLineIndexHelper = 0;
-    float lim = 0.0001;
+    // float lim = 0.0001;
     // int uhIndexHelper = 0;
     // int lhIndexHelper = 0;
     // int ubIndexHelper = 0;
