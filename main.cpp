@@ -423,7 +423,7 @@ static void UpdateDrawFrame(void)
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
-        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 1030), 10, 210, 30}, "Export Hull"))
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 150, 30}, "Export Hull"))
         {
             std::vector<Vector2> hull = ch->exportHull();
             std::string hullString;
