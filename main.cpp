@@ -419,7 +419,8 @@ static void UpdateDrawFrame(void)
     if (showConvexHull)
     {
         if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
-                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
+                      (visualizeStepByStep) ? "Play automatically" : "Play step by step") ||
+            IsKeyPressed(KEY_SPACE))
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
@@ -454,7 +455,7 @@ static void UpdateDrawFrame(void)
 
         if (currentStep == 0)
             GuiDisable();
-        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
+        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev") || IsKeyPressed(KEY_LEFT))
         {
             ch->previous();
             currentStep = ch->getCurrentStep();
@@ -464,7 +465,7 @@ static void UpdateDrawFrame(void)
 
         if (currentStep >= maxSteps)
             GuiDisable();
-        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
+        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next") || IsKeyPressed(KEY_RIGHT))
         {
             ch->next();
             currentStep = ch->getCurrentStep();
