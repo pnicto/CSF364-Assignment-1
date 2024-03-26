@@ -326,7 +326,7 @@ static void UpdateDrawFrame(void)
             }
         }
         selectedAlgorithm == JARVIS_MARCH ? ch = std::make_unique<JarvisMarch>(dataPoints)
-                                          : ch = std::make_unique<Kirk>(dataPoints);
+                                          : ch = std::make_unique<KirkpatrickSeidel>(dataPoints);
     }
 
     if (showConvexHull)
