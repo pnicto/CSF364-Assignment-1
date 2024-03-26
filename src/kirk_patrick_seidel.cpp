@@ -1,15 +1,19 @@
-
+/**
+ * @file kirk_patrick_seidel.cpp
+ * @brief Contains the implementation of the KirkpatrickSeidel class.
+ *
+ */
 #include "kirk_patrick_seidel.h"
 #include "raygui.h"
 
-bool Kirk::compareVector2(Vector2 a, Vector2 b)
+bool KirkpatrickSeidel::compareVector2(Vector2 a, Vector2 b)
 {
     if (a.x == b.x)
         return a.y < b.y;
     return a.x < b.x;
 }
 
-float Kirk::calculateLim(float a, float b)
+float KirkpatrickSeidel::calculateLim(float a, float b)
 {
     float m = std::max(std::abs(a), std::abs(b));
     if (m <= 500)
@@ -19,7 +23,7 @@ float Kirk::calculateLim(float a, float b)
     return 0.01;
 }
 
-float Kirk::median_of_medians(std::vector<float> arr)
+float KirkpatrickSeidel::median_of_medians(std::vector<float> arr)
 {
     int n = arr.size();
     std::vector<std::vector<float>> matrix(n / 5 + (n % 5 != 0));
@@ -48,7 +52,7 @@ float Kirk::median_of_medians(std::vector<float> arr)
     return matrix[matrix.size() / 2][2];
 }
 
-float Kirk::quick_select(std::vector<float> S, int rank)
+float KirkpatrickSeidel::quick_select(std::vector<float> S, int rank)
 {
     if (S.size() < rank)
         return 0;
@@ -78,7 +82,7 @@ float Kirk::quick_select(std::vector<float> S, int rank)
         return quick_select(R, rank - (r + dup));
 }
 
-std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
+std::vector<Vector2> KirkpatrickSeidel::upper_bridge(std::vector<Vector2> S, float L)
 {
     int n = S.size();
     if (n <= 2)
@@ -132,7 +136,7 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     for (auto p : pairs)
     {
         if (S[p.first].x == S[p.second].x)
-            candidates.push_back(std::max(S[p.first], S[p.second], &Kirk::compareVector2));
+            candidates.push_back(std::max(S[p.first], S[p.second], &KirkpatrickSeidel::compareVector2));
         else
         {
             slopes.push_back({p, (S[p.first].y - S[p.second].y) / (S[p.first].x - S[p.second].x)});
@@ -270,12 +274,12 @@ std::vector<Vector2> Kirk::upper_bridge(std::vector<Vector2> S, float L)
     return upper_bridge(candidates, L);
 }
 
-std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
+std::vector<Vector2> KirkpatrickSeidel::upper_hull(std::vector<Vector2> S)
 {
     int n = S.size();
     if (n <= 2)
     {
-        sort(S.begin(), S.end(), &Kirk::compareVector2);
+        sort(S.begin(), S.end(), &KirkpatrickSeidel::compareVector2);
         if (n == 2)
         {
             Step step2;
@@ -313,7 +317,7 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
     hullLineIndexHelper = steps.size() - 1;
 
     std::vector<Vector2> pq = upper_bridge(S, x_mid);
-    sort(pq.begin(), pq.end(), &Kirk::compareVector2); // O(1) cause constant size
+    sort(pq.begin(), pq.end(), &KirkpatrickSeidel::compareVector2); // O(1) cause constant size
 
     if (currentState == UPPER_HULL && pq.size() > 1)
     {
@@ -359,7 +363,7 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
     L.push_back(pq[0]);
     R.push_back(pq[1]);
 
-    sort(temp_res.begin(), temp_res.end(), &Kirk::compareVector2); // O(hlogh)
+    sort(temp_res.begin(), temp_res.end(), &KirkpatrickSeidel::compareVector2); // O(hlogh)
 
     L = upper_hull(L);
     R = upper_hull(R);
@@ -378,7 +382,8 @@ std::vector<Vector2> Kirk::upper_hull(std::vector<Vector2> S)
     return res;
 }
 
-std::vector<Vector2> Kirk::lower_hull(std::vector<Vector2> &S) // same as upper hull with negative y co-ordinates
+std::vector<Vector2> KirkpatrickSeidel::lower_hull(
+    std::vector<Vector2> &S) // same as upper hull with negative y co-ordinates
 {
     std::vector<Vector2> S_new, res;
     for (auto v : S)
@@ -390,7 +395,7 @@ std::vector<Vector2> Kirk::lower_hull(std::vector<Vector2> &S) // same as upper 
     return res;
 }
 
-std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
+std::vector<Vector2> KirkpatrickSeidel::convex_hull(std::vector<Vector2> &S)
 {
     if (S.size() <= 2)
     {
@@ -461,7 +466,7 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
         if (v.x == x_max || v.x == x_min)
             temp_res.push_back(v);
     }
-    sort(temp_res.begin(), temp_res.end(), &Kirk::compareVector2);
+    sort(temp_res.begin(), temp_res.end(), &KirkpatrickSeidel::compareVector2);
 
     // follwing block of code inserts into the result the points which are
     // vertically co-linear and between the first point in the upper hull and
@@ -532,7 +537,7 @@ std::vector<Vector2> Kirk::convex_hull(std::vector<Vector2> &S)
     return res;
 }
 
-Kirk::Kirk(std::vector<Vector2> p)
+KirkpatrickSeidel::KirkpatrickSeidel(std::vector<Vector2> p)
 {
     points = p;
 
@@ -540,7 +545,7 @@ Kirk::Kirk(std::vector<Vector2> p)
         computeConvexHull();
 }
 
-void Kirk::computeConvexHull()
+void KirkpatrickSeidel::computeConvexHull()
 {
 
     // float max_coordinate = -1 * std::numeric_limits<float>::infinity();
@@ -587,14 +592,14 @@ void Kirk::computeConvexHull()
     }
 }
 
-Kirk::~Kirk()
+KirkpatrickSeidel::~KirkpatrickSeidel()
 {
     points.clear();
     hull.clear();
     steps.clear();
 }
 
-void Kirk::draw()
+void KirkpatrickSeidel::draw()
 {
     // BeginDrawing();
 
@@ -705,25 +710,25 @@ void Kirk::draw()
     // EndDrawing();
 }
 
-void Kirk::next()
+void KirkpatrickSeidel::next()
 {
 
     if (currentStep < steps.size() - 1)
         currentStep++;
 }
 
-void Kirk::previous()
+void KirkpatrickSeidel::previous()
 {
     if (currentStep > 0)
         currentStep--;
 }
 
-bool Kirk::isFinished()
+bool KirkpatrickSeidel::isFinished()
 {
     return currentStep >= steps.size() - 1;
 }
 
-void Kirk::drawPrevSteps()
+void KirkpatrickSeidel::drawPrevSteps()
 {
     Step temp;
     Step curr = steps[currentStep];
@@ -792,7 +797,7 @@ void Kirk::drawPrevSteps()
 }
 
 // make more responsive !!!
-void Kirk::drawline(Vector2 p, float slope, float x_mid, Color c)
+void KirkpatrickSeidel::drawline(Vector2 p, float slope, float x_mid, Color c)
 {
     // Calculate the y-coordinate of the intersection point
     float y_intersect = p.y + slope * (x_mid - p.x);
@@ -812,24 +817,25 @@ void Kirk::drawline(Vector2 p, float slope, float x_mid, Color c)
     DrawLineV(p, {x_mid, y_intersect}, c);
 }
 
-int Kirk::getNumberOfSteps()
+int KirkpatrickSeidel::getNumberOfSteps()
 {
     return steps.size();
 }
 
-int Kirk::getCurrentStep()
+int KirkpatrickSeidel::getCurrentStep()
 {
     return currentStep;
 }
 
-void Kirk::setCurrentStep(int step)
+void KirkpatrickSeidel::setCurrentStep(int step)
 {
     currentStep = step;
 }
 
-void Kirk::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
-                      Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
-                      float toolbarHeight, float bottomBarHeight, const char *title)
+void KirkpatrickSeidel::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize,
+                                   Vector2 *maxWindowSize, Vector2 *contentSize, Vector2 *scroll, bool *moving,
+                                   bool *resizing, bool *minimized, float toolbarHeight, float bottomBarHeight,
+                                   const char *title)
 {
     float statusBarHeight = 24.0f, closeButtonSize = 18.0f;
     if (*showLegend)
