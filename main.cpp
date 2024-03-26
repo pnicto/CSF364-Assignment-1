@@ -30,6 +30,22 @@ EM_JS(int, getDocumentBodyWidth, (), { return window.innerWidth; });
  *
  */
 EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
+/**
+ * @brief EM JS object that creates a text file from the points in the convex hull and offers it for download
+ *
+ */
+EM_JS(void, createFileDownload, (const char *data, int dataLength), {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(UTF8ToString(data, dataLength)));
+    element.setAttribute('download', 'hull.txt');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+});
 #endif
 
 //----------------------------------------------------------------------------------
@@ -144,6 +160,11 @@ bool minimized = false;
  */
 float scale = 20.0f;
 /**
+ * @brief Specify the new center values by which points are shifted to fit on screen
+ *
+ */
+float centerX, centerY;
+/**
  * @brief Specifies the file path from which points are loaded
  *
  */
@@ -235,8 +256,8 @@ int main()
     screenHeight = getDocumentBodyHeight();
 #endif
 
-    float centerX = screenWidth / 2.0f;
-    float centerY = (screenHeight + toolbarHeight) / 2.0f;
+    centerX = screenWidth / 2.0f;
+    centerY = (screenHeight + toolbarHeight) / 2.0f;
     for (auto &point : dataPoints)
     {
         point.x = centerX + point.x * scale;
@@ -402,6 +423,17 @@ static void UpdateDrawFrame(void)
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 150, 30}, "Export Hull"))
+        {
+            std::vector<Vector2> hull = ch->exportHull();
+            std::string hullString;
+            for (auto point : hull)
+            {
+                hullString.append("(" + std::to_string((point.x - 25.0f) / scale + centerX) + "," +
+                                  std::to_string((point.y - 25.0f - toolbarHeight) / scale + centerY) + ")\n");
+            }
+            createFileDownload(hullString.c_str(), hullString.size());
+        }
     }
 
     if (showConvexHull)
@@ -449,7 +481,7 @@ static void UpdateDrawFrame(void)
         lastStep = currentStep;
     }
     settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded,
-                          &numberOfPoints, fileDataPoints, dataPoints);
+                          &numberOfPoints, fileDataPoints, dataPoints, centerX, centerY);
     EndDrawing();
     //----------------------------------------------------------------------------------
 }

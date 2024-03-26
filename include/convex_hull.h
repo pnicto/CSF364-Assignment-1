@@ -110,6 +110,12 @@ class ConvexHullAlgorithm
     virtual void showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
                             Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
                             float toolbarHeight, float bottomBarHeight, const char *title) = 0;
+    /**
+     * @brief Get all the points on the final convex hull.
+     *
+     * @return std::vector<Vector2> All the points on the convex hull.
+     */
+    virtual std::vector<Vector2> exportHull() = 0;
 };
 
 #endif // CONVEX_HULL_H

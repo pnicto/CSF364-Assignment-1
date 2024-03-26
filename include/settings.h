@@ -14,7 +14,8 @@ class Settings
     ~Settings();
     void showSettings(bool *showSettings, float toolbarHeight, float bottomBarHeight, float *scale, float *duration,
                       std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
-                      std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints);
+                      std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints, float &centerX,
+                      float &centerY);
     bool checkPointValidity(Vector2 p, bool *showSettings);
 
   private:
@@ -36,7 +37,7 @@ class Settings
     void drawFileInputComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize, Vector2 *scroll,
                                 bool *isFilePathAdded, std::string &filePath, std::vector<Vector2> &fileDataPoints,
                                 std::vector<Vector2> &dataPoints, float toolbarHeight, float bottomBarHeight,
-                                float *scale, Rectangle scissor);
+                                float *scale, Rectangle scissor, float &centerX, float &centerY);
     void drawTimestepComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize, Vector2 *scroll,
                                float *duration);
     void computeScale(std::vector<Vector2> &fileDataPoints, float *scale, float toolbarHeight, float bottomBarHeight);
