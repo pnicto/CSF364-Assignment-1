@@ -353,6 +353,28 @@ static void UpdateDrawFrame(void)
 
     ClearBackground(RAYWHITE);
 
+    if (dataPoints.size() == 0)
+    {
+        float x = static_cast<float>(GetScreenWidth() * 30) / 100;
+        float y = static_cast<float>(GetScreenHeight() * 25) / 100;
+
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+        GuiDrawText("How to use the GUI", {x, y, 700, 30}, TEXT_ALIGN_CENTER, BLACK);
+        GuiDrawText("- Left Click anywhere on the canvas to add points", {x, y + 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- Right Click anywhere on the canvas to remove last added point", {x, y + 2 * 40, 800, 30},
+                    TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- Visit the settings window for more options", {x, y + 3 * 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When NOT visualizing press C to clear the canvas", {x, y + 4 * 40, 800, 30}, TEXT_ALIGN_LEFT,
+                    BLACK);
+        GuiDrawText("- When visualizing press L to see the legend", {x, y + 5 * 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When visualizing press Space to toggle the visualization mode", {x, y + 6 * 40, 800, 30},
+                    TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When visualizing press Left or Right arrows keys\n\n  to go back and forth between steps",
+                    {x, (y + 7.50f * 40), 800, 80}, TEXT_ALIGN_LEFT, BLACK);
+
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+    }
+
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
     case JARVIS_MARCH: {
