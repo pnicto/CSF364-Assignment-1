@@ -144,6 +144,11 @@ void JarvisMarch::setCurrentStep(int step)
     currentStep = step;
 }
 
+std::vector<Vector2> JarvisMarch::exportHull()
+{
+    return convexHull;
+}
+
 void JarvisMarch::showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
                              Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
                              float toolbarHeight, float bottomBarHeight, const char *title)

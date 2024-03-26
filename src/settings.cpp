@@ -22,7 +22,8 @@ Settings::~Settings()
 
 void Settings::showSettings(bool *showSettings, float toolbarHeight, float bottomBarHeight, float *scale,
                             float *duration, std::string &filePath, bool *isFilePathAdded, float *numberOfPoints,
-                            std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints)
+                            std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints, float &centerX,
+                            float &centerY)
 {
     float statusBarHeight = 24.0f, closeButtonSize = 18.0f;
     if (*showSettings)
@@ -92,14 +93,10 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
 
         if (minimized)
         {
-            GuiStatusBar(
-                (Rectangle){windowPosition.x, windowPosition.y, windowSize.x, statusBarHeight},
-                title);
+            GuiStatusBar((Rectangle){windowPosition.x, windowPosition.y, windowSize.x, statusBarHeight}, title);
 
-            if (GuiButton((Rectangle){windowPosition.x + windowSize.x - closeButtonSize -
-                                          closeTitleSizeDeltaHalf,
-                                      windowPosition.y + closeTitleSizeDeltaHalf, closeButtonSize,
-                                      closeButtonSize},
+            if (GuiButton((Rectangle){windowPosition.x + windowSize.x - closeButtonSize - closeTitleSizeDeltaHalf,
+                                      windowPosition.y + closeTitleSizeDeltaHalf, closeButtonSize, closeButtonSize},
                           "#120#"))
             {
                 minimized = false;
@@ -116,8 +113,8 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
             }
 
             Rectangle scissor = {0};
-            GuiScrollPanel((Rectangle){windowPosition.x, windowPosition.y + statusBarHeight,
-                                       windowSize.x, windowSize.y - statusBarHeight},
+            GuiScrollPanel((Rectangle){windowPosition.x, windowPosition.y + statusBarHeight, windowSize.x,
+                                       windowSize.y - statusBarHeight},
                            NULL, (Rectangle){windowPosition.x, windowSize.y, contentSize.x, contentSize.y}, &scroll,
                            &scissor);
 
@@ -136,7 +133,7 @@ void Settings::showSettings(bool *showSettings, float toolbarHeight, float botto
 
             drawFileInputComponent({20.0f, 50.0f}, {windowPosition.x, windowPosition.y + 250.0f}, {500.0f, 200.0f},
                                    &scroll, isFilePathAdded, filePath, fileDataPoints, dataPoints, toolbarHeight,
-                                   bottomBarHeight, scale, scissor);
+                                   bottomBarHeight, scale, scissor, centerX, centerY);
 
             drawTimestepComponent({20.0f, 50.0f}, {windowPosition.x, windowPosition.y + 450.0f}, {500.0f, 100.0f},
                                   &scroll, duration);
@@ -206,7 +203,8 @@ void Settings::drawScaleComponent(Vector2 padding, Vector2 componentPosition, Ve
 void Settings::drawFileInputComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize,
                                       Vector2 *scroll, bool *isFilePathAdded, std::string &filePath,
                                       std::vector<Vector2> &fileDataPoints, std::vector<Vector2> &dataPoints,
-                                      float toolbarHeight, float bottomBarHeight, float *scale, Rectangle scissor)
+                                      float toolbarHeight, float bottomBarHeight, float *scale, Rectangle scissor,
+                                      float &centerX, float &centerY)
 {
     if (*isFilePathAdded == 0)
     {
@@ -280,8 +278,8 @@ void Settings::drawFileInputComponent(Vector2 padding, Vector2 componentPosition
                     smallestX = std::min(smallestX, point.x);
                     smallestY = std::min(smallestY, point.y);
                 }
-                float centerX = smallestX;
-                float centerY = smallestY;
+                centerX = smallestX;
+                centerY = smallestY;
 
                 for (auto &point : fileDataPoints)
                 {

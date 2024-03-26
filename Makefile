@@ -462,7 +462,7 @@ clean:	clean_shell_$(PLATFORM_SHELL)
 
 clean_shell_sh:
     # remove desktop build files
-	@rm -rf $(OUTPUT_DIR)
+	@rm -rf $(OUTPUT_DIR) docs
 
 # Set specific target variable
 clean_shell_cmd: SHELL=cmd
