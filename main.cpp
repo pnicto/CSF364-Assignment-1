@@ -432,16 +432,14 @@ static void UpdateDrawFrame(void)
                 hullString.append("(" + std::to_string((point.x - 25.0f) / scale + centerX) + "," +
                                   std::to_string((point.y - 25.0f - toolbarHeight) / scale + centerY) + ")\n");
             }
+
 #if defined(PLATFORM_WEB)
             createFileDownload(hullString.c_str(), hullString.size());
 #else
             SaveFileText("hull.txt", const_cast<char *>(hullString.c_str()));
 #endif
         }
-    }
 
-    if (showConvexHull)
-    {
         int maxSteps;
         float currentStep;
 
