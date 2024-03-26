@@ -741,7 +741,11 @@ void Kirk::drawPrevSteps()
             }
         }
         for (int i = 0; i <= curr.upperBridgeLineIndex; i++)
+        {
             DrawLineEx(upperBridges[i].first, upperBridges[i].second, 2, GREEN);
+            DrawCircleV(upperBridges[i].first, 5, BLUE);
+            DrawCircleV(upperBridges[i].second, 5, BLUE);
+        }
 
         break;
 
@@ -758,7 +762,11 @@ void Kirk::drawPrevSteps()
             }
         }
         for (int i = 0; i <= curr.lowerBridgeLineIndex; i++)
+        {
             DrawLineEx(lowerBridges[i].first, lowerBridges[i].second, 2, GREEN);
+            DrawCircleV(lowerBridges[i].first, 5, BLUE);
+            DrawCircleV(lowerBridges[i].second, 5, BLUE);
+        }
 
         break;
 
@@ -768,9 +776,11 @@ void Kirk::drawPrevSteps()
     case FINISH:
 
         // draw the entire hull
+        DrawCircleV(hull[0], 5, BLUE);
         for (int i = 1; i < hull.size(); i++)
         {
             DrawLineEx(hull[i], hull[i - 1], 2, GREEN);
+            DrawCircleV(hull[i], 5, BLUE);
         }
         if (hull.size() >= 2)
             DrawLineEx(hull[0], hull.back(), 2, GREEN);
