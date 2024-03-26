@@ -44,6 +44,12 @@ class Kirk : public ConvexHullAlgorithm
     void showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
                     Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
                     float toolbarHeight, float bottomBarHeight, const char *title);
+    /**
+     * @brief Get all the points on the final convex hull.
+     *
+     * @return std::vector<Vector2> All the points on the convex hull.
+     */
+    std::vector<Vector2> exportHull();
 
   private:
     float median_of_medians(std::vector<float> arr);
