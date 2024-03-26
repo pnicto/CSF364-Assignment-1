@@ -101,7 +101,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      * @param x_mid The middle vertical line (x=x_mid)
      * @param c The color
      */
-    void drawline(Vector2 p, float slope, float x_mid, Color c);
+    void drawLine(Vector2 p, float slope, float x_mid, Color c);
     /**
      * @brief Comparator function for Vector2
      *
@@ -170,7 +170,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      * @param arr The input array
      * @return float The pivot
      */
-    float median_of_medians(std::vector<float> arr);
+    float medianOfMedians(std::vector<float> arr);
     /**
      * @brief Selects element of given rank from a given unsorted array in O(n) time
      *
@@ -178,7 +178,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      * @param rank The given rank
      * @return float Selected element
      */
-    float quick_select(std::vector<float> S, int rank);
+    float quickSelect(std::vector<float> S, int rank);
     /**
      * @brief Calculates upper bridge for given set of points
      *
@@ -186,28 +186,28 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      * @param L The middle vertical line
      * @return std::vector<Vector2> Points on the upper bridge
      */
-    std::vector<Vector2> upper_bridge(std::vector<Vector2> S, float L);
+    std::vector<Vector2> upperBridge(std::vector<Vector2> S, float L);
     /**
      * @brief Calculates upper hull for a given set of points
      *
      * @param S Given set of points
      * @return std::vector<Vector2> Points on the upper hull
      */
-    std::vector<Vector2> upper_hull(std::vector<Vector2> S);
+    std::vector<Vector2> upperHull(std::vector<Vector2> S);
     /**
      * @brief Calculates lower hull for a given set of points
      *
      * @param S Given set of points
      * @return std::vector<Vector2> Points on the lower hull
      */
-    std::vector<Vector2> lower_hull(std::vector<Vector2> &S);
+    std::vector<Vector2> lowerHull(std::vector<Vector2> &S);
     /**
      * @brief Calculates the convex hull for a given set of points
      *
      * @param S Given set of points
      * @return std::vector<Vector2> Points on the convex hull
      */
-    std::vector<Vector2> convex_hull(std::vector<Vector2> &S);
+    std::vector<Vector2> convexHull(std::vector<Vector2> &S);
     /**
      * @brief Helper function used in the constructor to aid visulaization
      *
@@ -225,10 +225,10 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      */
     std::vector<Vector2> hull;
     /**
-     * @brief The calculated upper hull
+     * @brief The calculated upper hull for visualization
      *
      */
-    std::vector<Vector2> upperHull;
+    std::vector<Vector2> upperHullV;
     /**
      * @brief Array of all calculated upper bridges
      *

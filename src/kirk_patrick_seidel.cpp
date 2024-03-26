@@ -23,7 +23,7 @@ float KirkpatrickSeidel::calculateLim(float a, float b)
     return 0.01;
 }
 
-float KirkpatrickSeidel::median_of_medians(std::vector<float> arr)
+float KirkpatrickSeidel::medianOfMedians(std::vector<float> arr)
 {
     int n = arr.size();
     std::vector<std::vector<float>> matrix(n / 5 + (n % 5 != 0));
@@ -52,11 +52,11 @@ float KirkpatrickSeidel::median_of_medians(std::vector<float> arr)
     return matrix[matrix.size() / 2][2];
 }
 
-float KirkpatrickSeidel::quick_select(std::vector<float> S, int rank)
+float KirkpatrickSeidel::quickSelect(std::vector<float> S, int rank)
 {
     if (S.size() < rank)
         return 0;
-    float x = median_of_medians(S);
+    float x = medianOfMedians(S);
     int r = 0, dup = 0;
     std::vector<float> L, R;
 
@@ -77,12 +77,12 @@ float KirkpatrickSeidel::quick_select(std::vector<float> S, int rank)
     if (r == rank || (r < rank && (r + dup) >= rank))
         return x;
     else if (r > rank)
-        return quick_select(L, rank);
+        return quickSelect(L, rank);
     else
-        return quick_select(R, rank - (r + dup));
+        return quickSelect(R, rank - (r + dup));
 }
 
-std::vector<Vector2> KirkpatrickSeidel::upper_bridge(std::vector<Vector2> S, float L)
+std::vector<Vector2> KirkpatrickSeidel::upperBridge(std::vector<Vector2> S, float L)
 {
     int n = S.size();
     if (n <= 2)
@@ -147,7 +147,7 @@ std::vector<Vector2> KirkpatrickSeidel::upper_bridge(std::vector<Vector2> S, flo
     // get median slope
     int k = slopes.size();
 
-    float K = quick_select(only_slopes, k / 2 + 1);
+    float K = quickSelect(only_slopes, k / 2 + 1);
 
     Step step4;
     step4.state = currentState;
@@ -271,10 +271,10 @@ std::vector<Vector2> KirkpatrickSeidel::upper_bridge(std::vector<Vector2> S, flo
     step3.hullLineIndex = hullLineIndexHelper;
     steps.push_back(step3);
 
-    return upper_bridge(candidates, L);
+    return upperBridge(candidates, L);
 }
 
-std::vector<Vector2> KirkpatrickSeidel::upper_hull(std::vector<Vector2> S)
+std::vector<Vector2> KirkpatrickSeidel::upperHull(std::vector<Vector2> S)
 {
     int n = S.size();
     if (n <= 2)
@@ -299,8 +299,8 @@ std::vector<Vector2> KirkpatrickSeidel::upper_hull(std::vector<Vector2> S)
     std::vector<float> x_s;
     for (auto v : S)
         x_s.push_back(v.x);
-    float x_mid = quick_select(x_s, n / 2 + 1);
-    float x__mid = quick_select(x_s, std::max(1, n / 2));
+    float x_mid = quickSelect(x_s, n / 2 + 1);
+    float x__mid = quickSelect(x_s, std::max(1, n / 2));
     x_mid = (x_mid + x__mid) / 2;
     x_mid = x_mid - 0.001; // IMPORTANT
 
@@ -316,7 +316,7 @@ std::vector<Vector2> KirkpatrickSeidel::upper_hull(std::vector<Vector2> S)
     steps.push_back(step);
     hullLineIndexHelper = steps.size() - 1;
 
-    std::vector<Vector2> pq = upper_bridge(S, x_mid);
+    std::vector<Vector2> pq = upperBridge(S, x_mid);
     sort(pq.begin(), pq.end(), &KirkpatrickSeidel::compareVector2); // O(1) cause constant size
 
     if (currentState == UPPER_HULL && pq.size() > 1)
@@ -365,8 +365,8 @@ std::vector<Vector2> KirkpatrickSeidel::upper_hull(std::vector<Vector2> S)
 
     sort(temp_res.begin(), temp_res.end(), &KirkpatrickSeidel::compareVector2); // O(hlogh)
 
-    L = upper_hull(L);
-    R = upper_hull(R);
+    L = upperHull(L);
+    R = upperHull(R);
 
     for (auto v : L)
         res.push_back(v);
@@ -382,20 +382,20 @@ std::vector<Vector2> KirkpatrickSeidel::upper_hull(std::vector<Vector2> S)
     return res;
 }
 
-std::vector<Vector2> KirkpatrickSeidel::lower_hull(
+std::vector<Vector2> KirkpatrickSeidel::lowerHull(
     std::vector<Vector2> &S) // same as upper hull with negative y co-ordinates
 {
     std::vector<Vector2> S_new, res;
     for (auto v : S)
         S_new.push_back({v.x, -v.y});
 
-    res = upper_hull(S_new);
+    res = upperHull(S_new);
     for (auto &v : res)
         v.y = -v.y;
     return res;
 }
 
-std::vector<Vector2> KirkpatrickSeidel::convex_hull(std::vector<Vector2> &S)
+std::vector<Vector2> KirkpatrickSeidel::convexHull(std::vector<Vector2> &S)
 {
     if (S.size() <= 2)
     {
@@ -411,13 +411,13 @@ std::vector<Vector2> KirkpatrickSeidel::convex_hull(std::vector<Vector2> &S)
     currentState = UPPER_HULL;
     hullLineIndexHelper = 0;
 
-    uh = upper_hull(S);
-    upperHull = uh;
+    uh = upperHull(S);
+    upperHullV = uh;
 
     currentState = LOWER_HULL;
     hullLineIndexHelper = 0;
 
-    lh = lower_hull(S);
+    lh = lowerHull(S);
 
     currentState = MERGE;
 
@@ -547,24 +547,7 @@ KirkpatrickSeidel::KirkpatrickSeidel(std::vector<Vector2> p)
 
 void KirkpatrickSeidel::computeConvexHull()
 {
-
-    // float max_coordinate = -1 * std::numeric_limits<float>::infinity();
-    // for (auto p : points)
-    // {
-    //     max_coordinate = std::max(std::abs(p.x), std::max(std::abs(p.y), max_coordinate));
-    // }
-    // if (max_coordinate <= 1000)
-    // {
-    //     lim = 0.0001;
-    // }
-    // else if (max_coordinate <= 5000)
-    // {
-    //     lim = 0.001;
-    // }
-    // else
-    //     lim = 0.01;
-
-    hull = convex_hull(points);
+    hull = convexHull(points);
     for (auto &p : lowerBridges)
     {
         p.first.y *= -1;
@@ -602,11 +585,13 @@ KirkpatrickSeidel::~KirkpatrickSeidel()
 void KirkpatrickSeidel::draw()
 {
     // BeginDrawing();
-
+    if (steps[currentStep].state == LOWER_HULL)
+        for (auto p : upperHullV)
+            DrawCircleV(p, 5, BLUE);
     switch (steps[currentStep].type)
     {
     case LINE:
-        // only considering points in arr, color them green
+        // only considering points in arr, color them red
         for (Vector2 p : steps[currentStep].arr)
             DrawCircleV(p, 5, RED);
 
@@ -634,7 +619,7 @@ void KirkpatrickSeidel::draw()
         break;
 
     case MEDIAN_SLOPE:
-        // color relevant points green
+        // color relevant points red
         for (Vector2 &p : steps[currentStep].arr)
         {
             DrawCircleV(p, 5, RED);
@@ -657,31 +642,31 @@ void KirkpatrickSeidel::draw()
             DrawLineEx(steps[currentStep].p_k, steps[currentStep].p_m, 3, PINK);
         }
         else
-            drawline(steps[currentStep].p_k, steps[currentStep].k, steps[currentStep].x_m, PINK);
+            drawLine(steps[currentStep].p_k, steps[currentStep].k, steps[currentStep].x_m, PINK);
 
         break;
 
     case INTERCEPTS:
-        // draw intercept lines with SKYBLUE
+        // draw intercept lines with VIOLET
         for (Vector2 &p : steps[currentStep].arr)
         {
             DrawCircleV(p, 5, RED);
-            drawline(p, steps[currentStep].k, steps[currentStep].x_m, SKYBLUE);
+            drawLine(p, steps[currentStep].k, steps[currentStep].x_m, VIOLET);
         }
         break;
 
     case INTERCEPTS_FINAL:
-        // draw the winning intercept with SKYBLUE
+        // draw the winning intercept with VIOLET
         for (Vector2 &p : steps[currentStep].arr)
         {
             DrawCircleV(p, 5, RED);
         }
         if (!Vector2Equals(steps[currentStep].p_k, steps[currentStep].p_m))
         {
-            DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, SKYBLUE);
+            DrawLineV(steps[currentStep].p_k, steps[currentStep].p_m, VIOLET);
         }
         else
-            drawline(steps[currentStep].p_k, steps[currentStep].k, steps[currentStep].x_m, SKYBLUE);
+            drawLine(steps[currentStep].p_k, steps[currentStep].k, steps[currentStep].x_m, VIOLET);
         break;
 
     case ADD_TO_CANDIDATES:
@@ -757,8 +742,8 @@ void KirkpatrickSeidel::drawPrevSteps()
         break;
 
     case LOWER_HULL:
-        for (int i = 1; i < upperHull.size(); i++)
-            DrawLineEx(upperHull[i], upperHull[i - 1], 2, GREEN);
+        for (int i = 1; i < upperHullV.size(); i++)
+            DrawLineEx(upperHullV[i], upperHullV[i - 1], 2, GREEN);
 
         if (curr.type != LINE)
         {
@@ -797,7 +782,7 @@ void KirkpatrickSeidel::drawPrevSteps()
 }
 
 // make more responsive !!!
-void KirkpatrickSeidel::drawline(Vector2 p, float slope, float x_mid, Color c)
+void KirkpatrickSeidel::drawLine(Vector2 p, float slope, float x_mid, Color c)
 {
     // Calculate the y-coordinate of the intersection point
     float y_intersect = p.y + slope * (x_mid - p.x);
@@ -986,7 +971,7 @@ void KirkpatrickSeidel::showLegend(bool *showLegend, Vector2 *windowPosition, Ve
                 " - Paired Point Line Segment");
 
             DrawLineV({(*windowPosition).x + 20.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y},
-                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y}, SKYBLUE);
+                      {(*windowPosition).x + 80.0f + (*scroll).x, (*windowPosition).y + 225.0f + (*scroll).y}, VIOLET);
             GuiLabel(
                 {(*windowPosition).x + 90.0f + (*scroll).x, (*windowPosition).y + 210.0f + (*scroll).y, 300.0f, 30.0f},
                 " - Intercept Line");
