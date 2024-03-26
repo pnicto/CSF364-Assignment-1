@@ -329,6 +329,14 @@ static void UpdateDrawFrame(void)
                                           : ch = std::make_unique<KirkpatrickSeidel>(dataPoints);
     }
 
+    if (!showConvexHull)
+    {
+        if (IsKeyPressed(KEY_C))
+        {
+            dataPoints.clear();
+        }
+    }
+
     if (showConvexHull)
     {
         if (IsKeyPressed(KEY_L))
