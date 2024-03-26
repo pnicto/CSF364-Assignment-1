@@ -88,7 +88,7 @@ class ConvexHullAlgorithm
     /**
      * @brief Sets the current step to the specified value.
      *
-     * @param step The step to set.
+     * @param stepIndex The step to set.
      */
     virtual void setCurrentStep(int stepIndex) = 0;
     /**
