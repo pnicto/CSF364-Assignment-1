@@ -25,7 +25,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
 {
   public:
     /**
-     * @brief Represents the sub/mini state during a step in the algorithm
+     * @brief Represents the sub/mini state during a step in the algorithm.
      *
      */
     enum miniState
@@ -42,7 +42,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     };
 
     /**
-     * @brief Represents the state during a step in the algorithm
+     * @brief Represents the state during a step in the algorithm.
      *
      */
     enum State
@@ -55,80 +55,80 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     };
 
     /**
-     * @brief Construct a new Kirkpatrick Seidel object
+     * @brief Construct a new Kirkpatrick Seidel object.
      *
-     * @param p Set of input points
+     * @param p Set of input points.
      */
     KirkpatrickSeidel(std::vector<Vector2> p);
     /**
-     * @brief Destroy the Kirkpatrick Seidel object
+     * @brief Destroy the Kirkpatrick Seidel object.
      *
      */
     ~KirkpatrickSeidel();
 
     /**
-     * @brief Draws the KirkpatrickSeidel::currentStep of the KirkpatrickSeidel object
+     * @brief Draws the KirkpatrickSeidel::currentStep of the KirkpatrickSeidel object.
      *
      */
     void draw();
     /**
-     * @brief Gets the next step of the KirkpatrickSeidel object
+     * @brief Gets the next step of the KirkpatrickSeidel object.
      *
      */
     void next();
     /**
-     * @brief Gets the previous step of the KirkpatrickSeidel object
+     * @brief Gets the previous step of the KirkpatrickSeidel object.
      *
      */
     void previous();
     /**
-     * @brief Checks if the KirkpatrickSeidel object has reached the last step in KirkpatrickSeidel::steps
+     * @brief Checks if the KirkpatrickSeidel object has reached the last step in KirkpatrickSeidel::steps.
      *
-     * @return true If the KirkpatrickSeidel has reached the last step
-     * @return false If the KirkpatrickSeidel object has not reached the last step
+     * @return true If the KirkpatrickSeidel has reached the last step.
+     * @return false If the KirkpatrickSeidel object has not reached the last step.
      */
     bool isFinished();
     /**
-     * @brief Draws the previous relevant steps for currentStep
+     * @brief Draws the previous relevant steps for currentStep.
      *
      */
     void drawPrevSteps();
     /**
-     * @brief Draws a line from a given point with a given slope till it intersects x = x_mid
+     * @brief Draws a line from a given point with a given slope till it intersects x = x_mid.
      *
-     * @param p The given point
-     * @param slope The given slope
-     * @param x_mid The middle vertical line (x=x_mid)
-     * @param c The color
+     * @param p The given point.
+     * @param slope The given slope.
+     * @param x_mid The middle vertical line (x=x_mid).
+     * @param c The color.
      */
-    void drawline(Vector2 p, float slope, float x_mid, Color c);
+    void drawLine(Vector2 p, float slope, float x_mid, Color c);
     /**
-     * @brief Comparator function for Vector2
+     * @brief Comparator function for Vector2.
      *
-     * @param a Vector2 operand
-     * @param b Vector2 operand
-     * @return true if (a < b)
-     * @return false otherwise
+     * @param a Vector2 operand.
+     * @param b Vector2 operand.
+     * @return true if (a < b).
+     * @return false otherwise.
      */
     static bool compareVector2(Vector2 a, Vector2 b);
     /**
-     * @brief Calculates an error threshold for float comparisons
+     * @brief Calculates an error threshold for float comparisons.
      *
-     * @param a The float operand
-     * @param b The float operand
-     * @return float threshold
+     * @param a The float operand.
+     * @param b The float operand.
+     * @return float threshold.
      */
     static inline float calculateLim(float a, float b);
     /**
-     * @brief Get the Number Of Steps in the convex hull computation
+     * @brief Get the Number Of Steps in the convex hull computation.
      *
-     * @return int number of steps
+     * @return int number of steps.
      */
     int getNumberOfSteps();
     /**
-     * @brief Get the Current Step that is being drawn
+     * @brief Get the Current Step that is being drawn.
      *
-     * @return int The current step
+     * @return int The current step.
      */
     int getCurrentStep();
     /**
@@ -140,18 +140,18 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     /**
      * @brief Show the legend for the visualization of the KirkPatrickSeidel computation.
      *
-     * @param showLegend The variable used to indicate if the legend is to be displayed
-     * @param windowPosition The position of the legend window on the screen
-     * @param windowSize The size of the legend window
-     * @param maxWindowSize The size of the legend window in the maximized state
-     * @param contentSize The size of the content window inside the legend window
-     * @param scroll The object used to keep track of current position after scrolling
-     * @param moving The variable used to indicate if the floating window is moving
-     * @param resizing The variable used to indicate if the floating window is resizing
-     * @param minimized The variable used to indicate if the floating window is minimized
-     * @param toolbarHeight The height of the toolbar
-     * @param bottomBarHeight The height of the bottomBar
-     * @param title The title for the floating window
+     * @param showLegend The variable used to indicate if the legend is to be displayed.
+     * @param windowPosition The position of the legend window on the screen.
+     * @param windowSize The size of the legend window.
+     * @param maxWindowSize The size of the legend window in the maximized state.
+     * @param contentSize The size of the content window inside the legend window.
+     * @param scroll The object used to keep track of current position after scrolling.
+     * @param moving The variable used to indicate if the floating window is moving.
+     * @param resizing The variable used to indicate if the floating window is resizing.
+     * @param minimized The variable used to indicate if the floating window is minimized.
+     * @param toolbarHeight The height of the toolbar.
+     * @param bottomBarHeight The height of the bottomBar.
+     * @param title The title for the floating window.
      */
     void showLegend(bool *showLegend, Vector2 *windowPosition, Vector2 *windowSize, Vector2 *maxWindowSize,
                     Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
@@ -165,51 +165,52 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
 
   private:
     /**
-     * @brief Helper for KirkpatrickSeidel::quick_select(), finds a pivot point
+     * @brief Helper for KirkpatrickSeidel::quick_select(), finds a pivot point.
      *
-     * @param arr The input array
-     * @return float The pivot
+     * @param arr The input array.
+     * @return float The pivot.
      */
-    float median_of_medians(std::vector<float> arr);
+    float medianOfMedians(std::vector<float> arr);
     /**
-     * @brief Selects element of given rank from a given unsorted array in O(n) time
+     * @brief Selects element of given rank from a given unsorted array in O(n) time.
      *
-     * @param S The given array
-     * @param rank The given rank
-     * @return float Selected element
+     * @param S The given array.
+     * @param rank The given rank.
+     * @return float Selected element.
      */
-    float quick_select(std::vector<float> S, int rank);
+    float quickSelect(std::vector<float> S, int rank);
     /**
-     * @brief Calculates upper bridge for given set of points
+     * @brief Calculates upper bridge for given set of points.
      *
-     * @param S Given set of points
-     * @param L The middle vertical line
-     * @return std::vector<Vector2> Points on the upper bridge
+     * @param S Given set of points.
+     * @param L The middle vertical line.
+     * @return std::vector<Vector2> Points on the upper bridge.
      */
-    std::vector<Vector2> upper_bridge(std::vector<Vector2> S, float L);
+    std::vector<Vector2> upperBridge(std::vector<Vector2> S, float L);
     /**
-     * @brief Calculates upper hull for a given set of points
+     * @brief Calculates upper hull for a given set of points.
      *
-     * @param S Given set of points
-     * @return std::vector<Vector2> Points on the upper hull
+     * @param S Given set of points.
+     * @return std::vector<Vector2> Points on the upper hull.
      */
-    std::vector<Vector2> upper_hull(std::vector<Vector2> S);
+    std::vector<Vector2> upperHull(std::vector<Vector2> S);
     /**
-     * @brief Calculates lower hull for a given set of points
+     * @brief Calculates lower hull for a given set of points by inverting their y co-ordinates and calling
+     * KirkpatrickSeidel::upperHull() on them. Returns the result after inverting the y co-ordinates again.
      *
-     * @param S Given set of points
-     * @return std::vector<Vector2> Points on the lower hull
+     * @param S Given set of points.
+     * @return std::vector<Vector2> Points on the lower hull.
      */
-    std::vector<Vector2> lower_hull(std::vector<Vector2> &S);
+    std::vector<Vector2> lowerHull(std::vector<Vector2> &S);
     /**
-     * @brief Calculates the convex hull for a given set of points
+     * @brief Calculates the convex hull for a given set of points.
      *
-     * @param S Given set of points
-     * @return std::vector<Vector2> Points on the convex hull
+     * @param S Given set of points.
+     * @return std::vector<Vector2> Points on the convex hull.
      */
-    std::vector<Vector2> convex_hull(std::vector<Vector2> &S);
+    std::vector<Vector2> convexHull(std::vector<Vector2> &S);
     /**
-     * @brief Helper function used in the constructor to aid visulaization
+     * @brief Helper function used in the constructor to aid visualization.
      *
      */
     void computeConvexHull();
@@ -220,102 +221,102 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      */
     std::vector<Vector2> points;
     /**
-     * @brief The calculated convex hull
+     * @brief The calculated convex hull.
      *
      */
     std::vector<Vector2> hull;
     /**
-     * @brief The calculated upper hull
+     * @brief The calculated upper hull for visualization.
      *
      */
-    std::vector<Vector2> upperHull;
+    std::vector<Vector2> upperHullV;
     /**
-     * @brief Array of all calculated upper bridges
+     * @brief Array of all calculated upper bridges.
      *
      */
     std::vector<std::pair<Vector2, Vector2>> upperBridges;
     /**
-     * @brief Array of all calculated lower bridges
+     * @brief Array of all calculated lower bridges.
      *
      */
     std::vector<std::pair<Vector2, Vector2>> lowerBridges;
 
     /**
-     * @brief Holds the current state during a step in the algorithm
+     * @brief Holds the current state during a step in the algorithm.
      *
      */
     State currentState = State::INIT;
 
     /**
-     * @brief Holds the informations about a step in KirkpatrickSeidel algorithm
+     * @brief Holds the informations about a step in KirkpatrickSeidel algorithm.
      *
      */
     struct Step
     {
         /**
-         * @brief State of the step
+         * @brief State of the step.
          *
          */
         State state;
         /**
-         * @brief Mini/Sub State of the step
+         * @brief Mini/Sub State of the step.
          *
          */
         miniState type;
         /**
-         * @brief Holds various values depending upon the State and miniState
+         * @brief Holds various values depending upon the State and miniState.
          *
          */
         std::vector<Vector2> arr;
         /**
-         * @brief Holds pairs of points formed during pairing step
+         * @brief Holds pairs of points formed during pairing step.
          *
          */
         std::vector<Vector2> pairs;
         /**
-         * @brief Points that form the median slope pair
+         * @brief Points that form the median slope pair.
          *
          */
         Vector2 p_k, p_m;
         /**
-         * @brief x co-ordinate of the middle vertical line
+         * @brief x co-ordinate of the middle vertical line.
          *
          */
         float x_m = 0;
         /**
-         * @brief Slope
+         * @brief Slope.
          *
          */
         float k = 0;
         /**
-         * @brief Index of the latest step with miniState LINE
+         * @brief Index of the latest step with miniState LINE.
          *
          */
         int hullLineIndex = 0;
         /**
-         * @brief Index upto which upperBridgeLine needs to be drawn for the current step
+         * @brief Index upto which upperBridgeLine needs to be drawn for the current step.
          *
          */
         int upperBridgeLineIndex = 0;
         /**
-         * @brief Index upto which lowerBridgeLine needs to be drawn for the current step
+         * @brief Index upto which lowerBridgeLine needs to be drawn for the current step.
          *
          */
         int lowerBridgeLineIndex = 0;
     };
 
     /**
-     * @brief Holds steps in the computation of convex hull
+     * @brief Holds steps in the computation of convex hull.
      *
      */
     std::vector<Step> steps;
     /**
-     * @brief The current step in the visualization process
+     * @brief The current step in the visualization process.
      *
      */
     int currentStep = 0;
     /**
-     * @brief Helper variable to calculate upperBridgeLine for a Step object
+     * @brief Helper variable to calculate upperBridgeLine for a Step object.
      *
      */
     int hullLineIndexHelper = 0;
