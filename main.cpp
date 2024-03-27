@@ -90,12 +90,12 @@ bool isDropdownOpen = false;
  */
 bool showConvexHull = false;
 /**
- * @brief Indicates whether to display the settings modal.
+ * @brief Indicates whether to display the settings window.
  *
  */
 bool showSettings = false;
 /**
- * @brief Indicates whether to display the legend modal.
+ * @brief Indicates whether to display the legend window.
  *
  */
 bool showLegend = false;
@@ -160,10 +160,15 @@ bool minimized = false;
  */
 float scale = 20.0f;
 /**
- * @brief Specify the new center values by which points are shifted to fit on screen
+ * @brief Specifies the new center X value by which points are shifted to fit on screen
  *
  */
-float centerX, centerY;
+float centerX;
+/**
+ * @brief Specifies the new center Y value by which points are shifted to fit on screen
+ *
+ */
+float centerY;
 /**
  * @brief Specifies the file path from which points are loaded
  *
@@ -185,28 +190,28 @@ float numberOfPoints = 10.0f;
  */
 float duration = 0.01f;
 /**
- * @brief Height of the toolbar.
+ * @brief The height of the toolbar.
  *
  */
 const float toolbarHeight = 50;
 /**
- * @brief A collection of points (x, y) to be used as test data
+ * @brief The collection of points (x, y) to be displayed and used as the input for the convex hull algorithms.
  *
  */
 std::vector<Vector2> dataPoints;
 /**
- * @brief Indicates whether to visualize the algorithm one step at a time or play the full thing.
+ * @brief Indicates whether to visualize the algorithm one step at a time. If false, it is played automatically.
  *
  */
 bool visualizeStepByStep = true;
 /**
  * @brief Helps check whether the step number has been changed manually (via the slider), in which case
- * visualizeStepByStep made true.
+ * visualizeStepByStep is made true.
  *
  */
 float lastStep = 0;
 /**
- * @brief A collection of points (x, y) obtained from a file before scaling
+ * @brief The collection of points (x, y) obtained from a file before scaling and re-centering.
  *
  */
 std::vector<Vector2> fileDataPoints;
@@ -221,7 +226,7 @@ std::unique_ptr<ConvexHullAlgorithm> ch;
  */
 Settings settings(&settingsWindowPosition, &settingsWindowSize, &settingsContentSize, "Settings");
 /**
- * @brief Height of the bottom bar.
+ * @brief The height of the bottom bar.
  *
  */
 const float bottomBarHeight = 60;
