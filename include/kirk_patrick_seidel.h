@@ -55,13 +55,13 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     };
 
     /**
-     * @brief Construct a new Kirkpatrick Seidel object.
+     * @brief Constructs a new Kirkpatrick Seidel object.
      *
      * @param p Set of input points.
      */
     KirkpatrickSeidel(std::vector<Vector2> p);
     /**
-     * @brief Destroy the Kirkpatrick Seidel object.
+     * @brief Destroys the Kirkpatrick Seidel object.
      *
      */
     ~KirkpatrickSeidel();
@@ -103,10 +103,11 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      */
     void drawLine(Vector2 p, float slope, float x_mid, Color c);
     /**
-     * @brief Comparator function for Vector2.
+     * @brief Comparator function for Vector2. A vector is defined as smaller than another if it has a smaller X
+     * coordinate. For equal X coordinates, the one with the smaller Y coordinate is considered smaller.
      *
-     * @param a Vector2 operand.
-     * @param b Vector2 operand.
+     * @param a The first Vector2 operand.
+     * @param b The second Vector2 operand.
      * @return true if (a < b).
      * @return false otherwise.
      */
@@ -114,19 +115,19 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     /**
      * @brief Calculates an error threshold for float comparisons.
      *
-     * @param a The float operand.
-     * @param b The float operand.
+     * @param a The first float operand.
+     * @param b The second float operand.
      * @return float threshold.
      */
     static inline float calculateLim(float a, float b);
     /**
-     * @brief Get the Number Of Steps in the convex hull computation.
+     * @brief Gets the Number Of Steps in the convex hull computation.
      *
      * @return int number of steps.
      */
     int getNumberOfSteps();
     /**
-     * @brief Get the Current Step that is being drawn.
+     * @brief Gets the Current Step that is being drawn.
      *
      * @return int The current step.
      */
@@ -134,11 +135,11 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     /**
      * @brief Sets the current step to the specified value.
      *
-     * @param step The step to set.
+     * @param step The value to set the current step to.
      */
     void setCurrentStep(int step);
     /**
-     * @brief Show the legend for the visualization of the KirkPatrickSeidel computation.
+     * @brief Shows the legend for the visualization of the KirkpatrickSeidel computation.
      *
      * @param showLegend The variable used to indicate if the legend is to be displayed.
      * @param windowPosition The position of the legend window on the screen.
@@ -157,7 +158,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
                     Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
                     float toolbarHeight, float bottomBarHeight, const char *title);
     /**
-     * @brief Get all the points on the final convex hull.
+     * @brief Gets all the points on the final convex hull.
      *
      * @return std::vector<Vector2> All the points on the convex hull.
      */

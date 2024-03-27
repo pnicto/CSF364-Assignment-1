@@ -18,8 +18,7 @@
 /**
  * @brief Abstract class that represents a convex hull algorithm.
  *
- * This class is an abstract class that represents a convex hull algorithm. It contains the common methods and
- * attributes that all convex hull algorithms should have.
+ * This class contains the common methods and attributes that all convex hull algorithms should have.
  */
 class ConvexHullAlgorithm
 {
@@ -40,14 +39,14 @@ class ConvexHullAlgorithm
      */
     virtual void computeConvexHull() = 0;
     /**
-     * @brief Represents the current step in the JarvisMarch object.
+     * @brief Represents the current step in the ConvexHullAlgorithm object.
      *
      */
     int currentStep;
 
   public:
     /**
-     * @brief Destroy the ConvexHullAlgorithm object
+     * @brief Destroys the ConvexHullAlgorithm object
      *
      */
     virtual ~ConvexHullAlgorithm() = default;
@@ -74,7 +73,7 @@ class ConvexHullAlgorithm
      */
     virtual void previous() = 0;
     /**
-     * @brief Get the number of steps in the convex hull computation process.
+     * @brief Gets the number of steps in the convex hull computation process.
      *
      * @return int The number of steps.
      */
@@ -88,11 +87,11 @@ class ConvexHullAlgorithm
     /**
      * @brief Sets the current step to the specified value.
      *
-     * @param stepIndex The step to set.
+     * @param stepIndex The value to set the current step to.
      */
     virtual void setCurrentStep(int stepIndex) = 0;
     /**
-     * @brief Show the legend for the visualization of the ConvexHullAlgorithm computation.
+     * @brief Shows the legend for the visualization of the ConvexHullAlgorithm computation.
      *
      * @param showLegend The variable used to indicate if the legend is to be displayed
      * @param windowPosition The position of the legend window on the screen
@@ -111,9 +110,9 @@ class ConvexHullAlgorithm
                             Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
                             float toolbarHeight, float bottomBarHeight, const char *title) = 0;
     /**
-     * @brief Get all the points on the final convex hull.
+     * @brief Gets all the points on the final convex hull.
      *
-     * @return std::vector<Vector2> All the points on the convex hull.
+     * @return std::vector<Vector2> Vector containing the points on the convex hull.
      */
     virtual std::vector<Vector2> exportHull() = 0;
 };

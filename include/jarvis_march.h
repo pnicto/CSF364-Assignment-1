@@ -126,13 +126,13 @@ class JarvisMarch : public ConvexHullAlgorithm
 
   public:
     /**
-     * @brief Construct a new Jarvis March object
+     * @brief Constructs a new Jarvis March object
      *
      * @param points The set of points to be used to compute the convex hull.
      */
     JarvisMarch(std::vector<Vector2> points);
     /**
-     * @brief Destroy the Jarvis March object
+     * @brief Destroys the Jarvis March object
      *
      */
     ~JarvisMarch();
@@ -173,11 +173,11 @@ class JarvisMarch : public ConvexHullAlgorithm
     /**
      * @brief Sets the current step to the specified value.
      *
-     * @param step The step to set.
+     * @param step The value to set the current step to.
      */
     void setCurrentStep(int step);
     /**
-     * @brief Show the legend for the visualization of the JarvisMarch computation.
+     * @brief Shows the legend for the visualization of the JarvisMarch computation.
      *
      * @param showLegend The variable used to indicate if the legend is to be displayed.
      * @param windowPosition The position of the legend window on the screen.
@@ -196,7 +196,7 @@ class JarvisMarch : public ConvexHullAlgorithm
                     Vector2 *contentSize, Vector2 *scroll, bool *moving, bool *resizing, bool *minimized,
                     float toolbarHeight, float bottomBarHeight, const char *title);
     /**
-     * @brief Get all the points on the final convex hull.
+     * @brief Gets all the points on the final convex hull.
      *
      * @return std::vector<Vector2> All the points on the convex hull.
      */
