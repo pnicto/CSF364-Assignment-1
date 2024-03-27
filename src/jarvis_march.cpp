@@ -110,7 +110,7 @@ void JarvisMarch::computeConvexHull()
     if (n < 3)
     {
         convexHull = points;
-        steps.push_back((struct StepInfo){0, 0, 0, convexHull});
+        steps.push_back((struct JarvisMarchStep){0, 0, 0, convexHull});
         return;
     }
 
@@ -124,7 +124,7 @@ void JarvisMarch::computeConvexHull()
 
         for (int i = 0; i < n; i++)
         {
-            steps.push_back((struct StepInfo){current, next, i, convexHull});
+            steps.push_back((struct JarvisMarchStep){current, next, i, convexHull});
             if (orientation(points[current], points[i], points[next]) == Orientation::COUNTER_CLOCKWISE)
             {
                 next = i;
@@ -136,7 +136,7 @@ void JarvisMarch::computeConvexHull()
     ;
 
     convexHull.push_back(convexHull[0]);
-    steps.push_back((struct StepInfo){current, next, 0, convexHull});
+    steps.push_back((struct JarvisMarchStep){current, next, 0, convexHull});
 }
 
 void JarvisMarch::setCurrentStep(int step)

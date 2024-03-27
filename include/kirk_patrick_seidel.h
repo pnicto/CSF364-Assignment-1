@@ -248,10 +248,10 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
     State currentState = State::INIT;
 
     /**
-     * @brief Holds the informations about a step in KirkpatrickSeidel algorithm.
+     * @brief Represents information about a step in the Kirkpatric Seidel algorithm.
      *
      */
-    struct Step
+    struct KirkpatrickSeidelStep
     {
         /**
          * @brief State of the step.
@@ -309,7 +309,7 @@ class KirkpatrickSeidel : public ConvexHullAlgorithm
      * @brief Holds steps in the computation of convex hull.
      *
      */
-    std::vector<Step> steps;
+    std::vector<KirkpatrickSeidelStep> steps;
     /**
      * @brief The current step in the visualization process.
      *

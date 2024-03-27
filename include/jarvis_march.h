@@ -49,7 +49,7 @@ class JarvisMarch : public ConvexHullAlgorithm
      *
      *
      */
-    struct StepInfo
+    struct JarvisMarchStep
     {
         /**
          * @brief The index of the current point.
@@ -112,7 +112,7 @@ class JarvisMarch : public ConvexHullAlgorithm
      * JarvisMarch::computeNextStep.
      *
      */
-    std::vector<StepInfo> steps;
+    std::vector<JarvisMarchStep> steps;
     /**
      * @brief Represents the current step in the JarvisMarch object.
      *
