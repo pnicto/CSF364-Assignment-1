@@ -45,14 +45,14 @@ There are additional files in the root directory of the project, which are used 
 -   **minshell.html** - This file is the template for the shell used in the web application.
 -   **package.json** - This file contains the dependencies for the development live server.
 -   **pnpm-lock.yaml** - This file contains the lock file for the dependencies.
--   **README.md** - This file contains the documentation for the project.
+-   **README.md** - This file contains basic instructions for the project.
 -   **run** - This file is used to run the project.
 
 # Code Design
 
-Object Oriented Programming is used in this project, even though our external dependencies do not follow this paradigm(as they are written in `C`), because extending the project would be easier and more maintainable this way. The implementation of JarvisMarch and KirkpatrickSeidel classes are done in their respective files as the code was easier to understand and maintain this way. Both these classes extend the ConvexHullAlgorithm class and implement the `virtual` methods which are used in main.cpp. In a similar way, any new algorithms can be added to the project by extending the ConvexHullAlgorithm class.
+We have used Object Oriented Programming in this project, even though our external dependencies do not follow this paradigm (as they are written in `C`), because we felt that extending the project would be easier and make the project more maintainable this way. The implementation of JarvisMarch and KirkpatrickSeidel classes are done in their respective files as the code was easier to understand and maintain this way. Both of these classes extend the ConvexHullAlgorithm class and implement its `virtual` methods, which are then used in main.cpp. This way, any new algorithms can be added to the project by extending the ConvexHullAlgorithm class and implementing the necessary methods.
 
-Apart from the algorithms, the following are two more classes that we thought would be useful in the project:
+Apart from the algorithms, we have used the following two classes to help with the project:
 
--   Settings window had to be made into a separate class as it was too complex to have it in main.cpp with other GUI components. The Settings class is responsible for creating the floating window and providing the user with more options like generating random number of points, controlling the time delay between each step of the algorithm, etc.
+-   Settings window had to be made into a separate class in its own file as it was too complex to have it in main.cpp with other GUI components. This class is responsible for creating the floating window and providing the user with more options like generating random number of points, controlling the time delay between each step of the algorithm, inputting points through a file, etc.
 -   Timer class is used to create delay between each step of the algorithm. This was done to make the algorithm steps more visible to the user. This class uses raylib's `GetTime` function to decide if the delay has passed or not. It was made into a separate class to keep main.cpp more readable.
