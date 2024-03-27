@@ -75,7 +75,7 @@ class Settings
     const char *title = "Settings";
 
     /**
-     * @brief The function used to draw the random point generation component on the screen.
+     * @brief Draws the random point generation component on the screen.
      *
      * @param padding The top and left padding applied to the component.
      * @param componentPosition The current position of the component.
@@ -90,7 +90,7 @@ class Settings
                                             Vector2 *scroll, float toolbarHeight, float bottomBarHeight,
                                             float *numberOfPoints, std::vector<Vector2> &dataPoints);
     /**
-     * @brief The function used to draw the scale component on the screen.
+     * @brief Draws the scale component on the screen.
      *
      * @param padding The top and left padding applied to the component.
      * @param componentPosition The current position of the component.
@@ -101,7 +101,7 @@ class Settings
     void drawScaleComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize, Vector2 *scroll,
                             float *scale);
     /**
-     * @brief The function used to draw the file input component on the screen.
+     * @brief Draws the file input component on the screen.
      *
      * @param padding The top and left padding applied to the component.
      * @param componentPosition The current position of the component.
@@ -123,7 +123,7 @@ class Settings
                                 std::vector<Vector2> &dataPoints, float toolbarHeight, float bottomBarHeight,
                                 float *scale, Rectangle scissor, float &centerX, float &centerY);
     /**
-     * @brief The function used to draw the timestep component on the screen.
+     * @brief Draws the timestep component on the screen.
      *
      * @param padding The top and left padding applied to the component.
      * @param componentPosition The current position of the component.
@@ -134,8 +134,8 @@ class Settings
     void drawTimestepComponent(Vector2 padding, Vector2 componentPosition, Vector2 componentSize, Vector2 *scroll,
                                float *duration);
     /**
-     * @brief The function used to compute the new scale for the given points from the file, so as to fit them all on
-     * screen
+     * @brief Computes the new scale for the given points from the file, so as to fit them all on
+     * screen.
      *
      * @param fileDataPoints The coordinates of the points obtained from a file.
      * @param scale The scale using which the points are drawn on the screen.
@@ -146,7 +146,7 @@ class Settings
 
   public:
     /**
-     * @brief Construct a new Settings object.
+     * @brief Constructs a new Settings object.
      *
      * @param windowPosition The initial position of the settings window.
      * @param windowSize The initial size of the settings window.
@@ -155,12 +155,12 @@ class Settings
      */
     Settings(Vector2 *windowPosition, Vector2 *windowSize, Vector2 *contentSize, const char *title);
     /**
-     * @brief Destroy the Settings object.
+     * @brief Destroys the Settings object.
      *
      */
     ~Settings();
     /**
-     * @brief Display the settings window on screen.
+     * @brief Displays the settings window on screen.
      *
      * @param showSettings The variable used to indicate if the settings window is to be displayed.
      * @param toolbarHeight The height of the toolbar.

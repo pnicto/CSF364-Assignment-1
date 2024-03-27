@@ -34,13 +34,13 @@ class Timer
      * @brief Checks if the timer has started.
      *
      * @return true if the timer has started
-     * @return false if the timer has not started
+     * @return false if the timer has not started.
      */
     bool hasTimerStarted();
 
   public:
     /**
-     * @brief Construct a new Timer object
+     * @brief Construct a new Timer object.
      *
      */
     Timer();
@@ -59,7 +59,7 @@ class Timer
     /**
      * @brief Starts the timer.
      *
-     * @param duration the duration in seconds after which the timer will be considered done
+     * @param duration the duration in seconds after which the timer will be considered done.
      */
     void startTimer(double duration);
     /**
