@@ -12,6 +12,10 @@
 /**
  * @brief Utility class to check if a certain amount of time has passed.
  *
+ * Usage:
+ * 1. Create an instance of the Timer class.
+ * 2. Call startTimer() with a duration to start a timer for the given duration (in seconds).
+ * 3. Call isTimerDone() to check if the timer has finished.
  */
 class Timer
 {
@@ -22,7 +26,7 @@ class Timer
      */
     double startTime;
     /**
-     * @brief The duration after which the timer will be considered done.
+     * @brief The duration in seconds after which the timer will be considered done.
      *
      */
     double duration;
@@ -30,44 +34,44 @@ class Timer
      * @brief Checks if the timer has started.
      *
      * @return true if the timer has started
-     * @return false if the timer has not started
+     * @return false if the timer has not started.
      */
     bool hasTimerStarted();
 
   public:
     /**
-     * @brief Construct a new Timer object
+     * @brief Construct a new Timer object.
      *
      */
     Timer();
     /**
-     * @brief Destroy the Timer object
+     * @brief Destroy the Timer object.
      *
      */
     ~Timer();
     /**
      * @brief Checks if the timer has finished.
      *
-     * @return true if the timer has finished
-     * @return false if the timer has not finished
+     * @return true if the timer has finished.
+     * @return false if the timer has not finished.
      */
     bool isTimerDone();
     /**
      * @brief Starts the timer.
      *
-     * @param duration the duration after which the timer will be considered done
+     * @param duration the duration in seconds after which the timer will be considered done.
      */
     void startTimer(double duration);
     /**
      * @brief Gets the time elapsed since the timer started.
      *
-     * @return double the time elapsed since the timer started
+     * @return double the time elapsed since the timer started, in seconds.
      */
     double getElapsed();
     /**
      * @brief Resets the timer.
      *
-     * @param duration the duration after which the timer will be considered done
+     * @param duration the duration in seconds after which the timer will be considered done.
      */
     void resetTimer(double duration);
     /**

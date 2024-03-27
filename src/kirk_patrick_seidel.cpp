@@ -106,7 +106,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperBridge(std::vector<Vector2> S, floa
         pos++;
     }
 
-    Step step;
+    KirkpatrickSeidelStep step;
     step.state = currentState;
     step.type = PAIRS;
     step.arr = S;
@@ -149,7 +149,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperBridge(std::vector<Vector2> S, floa
 
     float K = quickSelect(only_slopes, k / 2 + 1);
 
-    Step step4;
+    KirkpatrickSeidelStep step4;
     step4.state = currentState;
     step4.type = MEDIAN_SLOPE;
     step4.arr = S;
@@ -178,7 +178,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperBridge(std::vector<Vector2> S, floa
     for (auto point : S)
         intersections.push_back(point.y - (K * point.x));
 
-    Step step1;
+    KirkpatrickSeidelStep step1;
     step1.state = currentState;
     step1.type = INTERCEPTS;
     step1.x_m = L;
@@ -217,7 +217,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperBridge(std::vector<Vector2> S, floa
     }
 
     // found the winning point
-    Step step2;
+    KirkpatrickSeidelStep step2;
     step2.state = currentState;
     step2.type = INTERCEPTS_FINAL;
     step2.x_m = L;
@@ -262,7 +262,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperBridge(std::vector<Vector2> S, floa
     }
 
     // final candidates step
-    Step step3;
+    KirkpatrickSeidelStep step3;
     step3.state = currentState;
     step3.type = ADD_TO_CANDIDATES;
     step3.arr = candidates;
@@ -282,7 +282,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperHull(std::vector<Vector2> S)
         sort(S.begin(), S.end(), &KirkpatrickSeidel::compareVector2);
         if (n == 2)
         {
-            Step step2;
+            KirkpatrickSeidelStep step2;
             step2.state = currentState;
             step2.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
             step2.p_k = S[0];
@@ -305,7 +305,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperHull(std::vector<Vector2> S)
     x_mid = x_mid - 0.001; // IMPORTANT
 
     // drawing the median line is a step
-    Step step;
+    KirkpatrickSeidelStep step;
     step.state = currentState;
     step.type = LINE;
     step.x_m = x_mid;
@@ -329,7 +329,7 @@ std::vector<Vector2> KirkpatrickSeidel::upperHull(std::vector<Vector2> S)
     }
 
     // drawing the bridge is a step
-    Step step1;
+    KirkpatrickSeidelStep step1;
     step1.state = currentState;
     step1.type = (currentState == UPPER_HULL) ? UP_BRIDGE : LOW_BRIDGE;
     step1.p_k = pq[0];
@@ -400,7 +400,7 @@ std::vector<Vector2> KirkpatrickSeidel::convexHull(std::vector<Vector2> &S)
     if (S.size() <= 2)
     {
         currentState = FINISH;
-        Step finalStep;
+        KirkpatrickSeidelStep finalStep;
         finalStep.state = currentState;
         finalStep.type = OVER;
         steps.push_back(finalStep);
@@ -530,7 +530,7 @@ std::vector<Vector2> KirkpatrickSeidel::convexHull(std::vector<Vector2> &S)
     }
 
     currentState = FINISH;
-    Step finalStep;
+    KirkpatrickSeidelStep finalStep;
     finalStep.state = currentState;
     finalStep.type = OVER;
     steps.push_back(finalStep);
@@ -715,8 +715,8 @@ bool KirkpatrickSeidel::isFinished()
 
 void KirkpatrickSeidel::drawPrevSteps()
 {
-    Step temp;
-    Step curr = steps[currentStep];
+    KirkpatrickSeidelStep temp;
+    KirkpatrickSeidelStep curr = steps[currentStep];
     switch (curr.state)
     {
     case INIT:
