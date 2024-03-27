@@ -329,6 +329,14 @@ static void UpdateDrawFrame(void)
                                           : ch = std::make_unique<KirkpatrickSeidel>(dataPoints);
     }
 
+    if (!showConvexHull)
+    {
+        if (IsKeyPressed(KEY_C))
+        {
+            dataPoints.clear();
+        }
+    }
+
     if (showConvexHull)
     {
         if (IsKeyPressed(KEY_L))
@@ -344,6 +352,28 @@ static void UpdateDrawFrame(void)
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
+
+    if (dataPoints.size() == 0)
+    {
+        float x = static_cast<float>(GetScreenWidth() * 30) / 100;
+        float y = static_cast<float>(GetScreenHeight() * 25) / 100;
+
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+        GuiDrawText("How to use the GUI", {x, y, 700, 30}, TEXT_ALIGN_CENTER, BLACK);
+        GuiDrawText("- Left Click anywhere on the canvas to add points", {x, y + 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- Right Click anywhere on the canvas to remove last added point", {x, y + 2 * 40, 800, 30},
+                    TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- Visit the settings window for more options", {x, y + 3 * 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When NOT visualizing press C to clear the canvas", {x, y + 4 * 40, 800, 30}, TEXT_ALIGN_LEFT,
+                    BLACK);
+        GuiDrawText("- When visualizing press L to see the legend", {x, y + 5 * 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When visualizing press Space to toggle the visualization mode", {x, y + 6 * 40, 800, 30},
+                    TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When visualizing press Left or Right arrows keys\n\n  to go back and forth between steps",
+                    {x, (y + 7.50f * 40), 800, 80}, TEXT_ALIGN_LEFT, BLACK);
+
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+    }
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
@@ -419,7 +449,8 @@ static void UpdateDrawFrame(void)
     if (showConvexHull)
     {
         if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
-                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
+                      (visualizeStepByStep) ? "Play automatically" : "Play step by step") ||
+            IsKeyPressed(KEY_SPACE))
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
@@ -432,12 +463,14 @@ static void UpdateDrawFrame(void)
                 hullString.append("(" + std::to_string((point.x - 25.0f) / scale + centerX) + "," +
                                   std::to_string((point.y - 25.0f - toolbarHeight) / scale + centerY) + ")\n");
             }
-            createFileDownload(hullString.c_str(), hullString.size());
-        }
-    }
 
-    if (showConvexHull)
-    {
+#if defined(PLATFORM_WEB)
+            createFileDownload(hullString.c_str(), hullString.size());
+#else
+            SaveFileText("hull.txt", const_cast<char *>(hullString.c_str()));
+#endif
+        }
+
         int maxSteps;
         float currentStep;
 
@@ -452,7 +485,7 @@ static void UpdateDrawFrame(void)
 
         if (currentStep == 0)
             GuiDisable();
-        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
+        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev") || IsKeyPressed(KEY_LEFT))
         {
             ch->previous();
             currentStep = ch->getCurrentStep();
@@ -462,7 +495,7 @@ static void UpdateDrawFrame(void)
 
         if (currentStep >= maxSteps)
             GuiDisable();
-        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
+        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next") || IsKeyPressed(KEY_RIGHT))
         {
             ch->next();
             currentStep = ch->getCurrentStep();
