@@ -269,6 +269,7 @@ int main()
         point.y = centerY + point.y * scale;
     }
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
     // load defaultFont
