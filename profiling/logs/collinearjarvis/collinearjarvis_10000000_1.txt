@@ -1,0 +1,11 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 99.35     16.90    16.90        1    16.90    16.90  computeConvexHull(std::vector<Vector2, std::allocator<Vector2> >)
+  0.47     16.98     0.08                             main
+  0.18     17.01     0.03                             _init
+  0.00     17.01     0.00       25     0.00     0.00  void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&)
+  0.00     17.01     0.00        7     0.00     0.00  void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2 const&>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2 const&)
+  0.00     17.01     0.00        2     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >(char const*, std::allocator<char> const&)

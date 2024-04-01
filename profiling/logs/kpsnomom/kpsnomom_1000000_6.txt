@@ -1,0 +1,20 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 66.09      1.15     1.15     1570     0.00     0.00  compareVector2(Vector2, Vector2)
+ 15.52      1.42     0.27       44     0.01     0.03  upper_bridge(std::vector<Vector2, std::allocator<Vector2> >&, float)
+ 11.49      1.62     0.20     1380     0.00     0.00  median(std::vector<float, std::allocator<float> >&)
+  2.30      1.66     0.04      998     0.00     0.00  quick_select(std::vector<float, std::allocator<float> >&, int)
+  2.30      1.70     0.04        2     0.02     0.86  upper_hull(std::vector<Vector2, std::allocator<Vector2> >&)
+  1.15      1.72     0.02     7295     0.00     0.00  void std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::_M_realloc_insert<std::pair<int, int> >(__gnu_cxx::__normal_iterator<std::pair<int, int>*, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > > >, std::pair<int, int>&&)
+  0.57      1.73     0.01     7294     0.00     0.00  void std::vector<std::pair<std::pair<int, int>, float>, std::allocator<std::pair<std::pair<int, int>, float> > >::_M_realloc_insert<std::pair<std::pair<int, int>, float> >(__gnu_cxx::__normal_iterator<std::pair<std::pair<int, int>, float>*, std::vector<std::pair<std::pair<int, int>, float>, std::allocator<std::pair<std::pair<int, int>, float> > > >, std::pair<std::pair<int, int>, float>&&)
+  0.57      1.74     0.01        1     0.01     1.74  convex_hull(std::vector<Vector2, std::allocator<Vector2> >&)
+  0.00      1.74     0.00    20280     0.00     0.00  void std::vector<float, std::allocator<float> >::_M_realloc_insert<float const&>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float const&)
+  0.00      1.74     0.00    15587     0.00     0.00  void std::vector<float, std::allocator<float> >::_M_realloc_insert<float>(__gnu_cxx::__normal_iterator<float*, std::vector<float, std::allocator<float> > >, float&&)
+  0.00      1.74     0.00     8557     0.00     0.00  void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2 const&>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2 const&)
+  0.00      1.74     0.00       97     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(Vector2, Vector2)> >(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, __gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, __gnu_cxx::__ops::_Iter_comp_iter<bool (*)(Vector2, Vector2)>)
+  0.00      1.74     0.00       42     0.00     0.00  void std::vector<Vector2, std::allocator<Vector2> >::_M_realloc_insert<Vector2>(__gnu_cxx::__normal_iterator<Vector2*, std::vector<Vector2, std::allocator<Vector2> > >, Vector2&&)
+  0.00      1.74     0.00        2     0.00     0.00  std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<std::allocator<char> >(char const*, std::allocator<char> const&)
+  0.00      1.74     0.00        1     0.00     0.86  lower_hull(std::vector<Vector2, std::allocator<Vector2> >&)

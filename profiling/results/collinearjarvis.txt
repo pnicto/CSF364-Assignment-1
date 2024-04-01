@@ -1,0 +1,7 @@
+The average time for 10 points is 0.0 seconds.
+The average time for 100 points is 0.0 seconds.
+The average time for 1000 points is 0.0 seconds.
+The average time for 10000 points is 0.002 seconds.
+The average time for 100000 points is 0.085 seconds.
+The average time for 1000000 points is 1.263 seconds.
+The average time for 10000000 points is 13.751 seconds.
