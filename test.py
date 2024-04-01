@@ -8,4 +8,4 @@ for x in inFile:
 hull = ConvexHull(points)
 outFile = open("pyout.txt", "w")
 for i in hull.vertices:
-    outFile.write(f'({points[i][0]},{points[i][1]})\n')
+    outFile.write(f'({int(points[i][0])},{int(points[i][1])})\n')

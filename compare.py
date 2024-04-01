@@ -9,14 +9,14 @@ def readPoints(filename):
             coords = line.split(",")
             x = coords[0][1:]
             y = coords[1][:-2]
-            points.append((int(x), int(y)))
+            points.append((float(x), float(y)))
     return points
 
 
 def compare(a, b):
     if len(a) != len(b):
         return False
-    d = defaultdict(int)
+    d = defaultdict(float)
     for p in a:
         d[p] += 1
 

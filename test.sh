@@ -23,8 +23,12 @@ checkPoints(){
     fi
 }
 
-numPoints=100000
+g++ -O3 -pg jarvis.cpp -o jarvis
+g++ -O3 -pg kps.cpp -o kps
 for i in $(seq 1 1) ; do
-    python3 genPoints.py $numPoints
+    python3 genPoints.py $1
+    python3 test.py
+    ./jarvis
+    ./kps
     checkPoints
 done

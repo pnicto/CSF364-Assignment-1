@@ -1,0 +1,7 @@
+The average time for 5 points is 0.0 seconds.
+The average time for 25 points is 0.0 seconds.
+The average time for 50 points is 0.0 seconds.
+The average time for 250 points is 0.0 seconds.
+The average time for 500 points is 0.0 seconds.
+The average time for 2500 points is 0.002 seconds.
+The average time for 5000 points is 0.017 seconds.
