@@ -56,6 +56,8 @@ vector<Vector2> computeConvexHull(vector<Vector2> points)
 
         for (int i = 0; i < n; i++)
         {
+            if (i == current)
+                continue;
             if (orientation(points[current], points[i], points[next]) == 2)
             {
                 next = i;

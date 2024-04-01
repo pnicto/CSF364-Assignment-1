@@ -25,40 +25,20 @@ float calculateLim(float a, float b)
     return 0.01;
 }
 
-float median_of_medians(vector<float> &arr)
+float median(vector<float> &arr)
 {
+    sort(arr.begin(), arr.end());
     int n = arr.size();
-    vector<vector<float>> matrix(n / 5 + (n % 5 != 0));
-    int i = 0, s = 0;
-
-    while (i < n)
-    {
-        int count = 0;
-        while (count < 5)
-        {
-            if (i < n)
-            {
-                matrix[s].push_back(arr[i]);
-                i++;
-            }
-            else
-                matrix[s].push_back(arr[n - 1]);
-            count++;
-        }
-        s++;
-    }
-
-    for (vector<float> &V : matrix)
-        sort(V.begin(), V.end());
-
-    return matrix[matrix.size() / 2][2];
+    if (n % 2 != 0)
+        return arr[n / 2];
+    return (arr[(n - 1) / 2] + arr[n / 2]) / 2.0;
 }
 
 float quick_select(vector<float> &S, int rank)
 {
     if (S.size() < rank)
         return 0;
-    float x = median_of_medians(S);
+    float x = median(S);
     int r = 0, dup = 0;
     vector<float> L, R;
 
@@ -389,7 +369,7 @@ int main()
         P.push_back((Vector2){x, y});
     }
     vector<Vector2> res = convex_hull(P);
-    const std::string outputFilePath = "./kpsout.txt";
+    const std::string outputFilePath = "./kpsnomomout.txt";
     std::ofstream ostream(outputFilePath);
     for (auto h : res)
     {

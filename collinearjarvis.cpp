@@ -61,6 +61,17 @@ vector<Vector2> computeConvexHull(vector<Vector2> points)
                 next = i;
             }
         }
+        for (int i = 0; i < n; i++)
+        {
+            if (i != current && i != next)
+            {
+                if ((std::find(convexHull.begin(), convexHull.end(), points[i]) == convexHull.end()) &&
+                    orientation(points[current], points[i], points[next]) == 0)
+                {
+                    convexHull.push_back(points[i]);
+                }
+            }
+        }
         current = next;
     } while (current != left);
     return convexHull;

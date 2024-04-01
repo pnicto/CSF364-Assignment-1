@@ -4,7 +4,6 @@
 #include <iostream>
 #include <limits>
 #include <raymath.h>
-#include <set>
 #include <vector>
 
 using namespace std;
@@ -20,12 +19,12 @@ float calculateLim(float a, float b)
     float m = std::max(std::abs(a), std::abs(b));
     if (m <= 500)
         return 0.0001;
-    else if (m <= 1000)
+    else if (m <= 5000)
         return 0.001;
     return 0.01;
 }
 
-float median_of_medians(vector<float> &arr)
+float median_of_medians(vector<float> arr)
 {
     int n = arr.size();
     vector<vector<float>> matrix(n / 5 + (n % 5 != 0));
@@ -48,13 +47,13 @@ float median_of_medians(vector<float> &arr)
         s++;
     }
 
-    for (vector<float> &V : matrix)
+    for (vector<float> V : matrix)
         sort(V.begin(), V.end());
 
     return matrix[matrix.size() / 2][2];
 }
 
-float quick_select(vector<float> &S, int rank)
+float quick_select(vector<float> S, int rank)
 {
     if (S.size() < rank)
         return 0;
@@ -84,7 +83,7 @@ float quick_select(vector<float> &S, int rank)
         return quick_select(R, rank - (r + dup));
 }
 
-vector<Vector2> upper_bridge(vector<Vector2> &S, float L)
+vector<Vector2> upper_bridge(vector<Vector2> S, float L)
 {
     int n = S.size();
     if (n <= 2)
@@ -196,7 +195,7 @@ vector<Vector2> upper_bridge(vector<Vector2> &S, float L)
     return upper_bridge(candidates, L);
 }
 
-vector<Vector2> upper_hull(vector<Vector2> &S)
+vector<Vector2> upper_hull(vector<Vector2> S)
 {
     int n = S.size();
     if (n <= 2)
@@ -260,7 +259,7 @@ vector<Vector2> upper_hull(vector<Vector2> &S)
     return res;
 }
 
-vector<Vector2> lower_hull(vector<Vector2> &S)
+vector<Vector2> lower_hull(vector<Vector2> S)
 {
     vector<Vector2> S_new, res;
     for (auto v : S)
@@ -272,7 +271,7 @@ vector<Vector2> lower_hull(vector<Vector2> &S)
     return res;
 }
 
-vector<Vector2> convex_hull(vector<Vector2> &S)
+vector<Vector2> convex_hull(vector<Vector2> S)
 {
     if (S.size() <= 2)
         return S;
@@ -388,8 +387,9 @@ int main()
     {
         P.push_back((Vector2){x, y});
     }
+
     vector<Vector2> res = convex_hull(P);
-    const std::string outputFilePath = "./kpsout.txt";
+    const std::string outputFilePath = "./kpsnopointersout.txt";
     std::ofstream ostream(outputFilePath);
     for (auto h : res)
     {
