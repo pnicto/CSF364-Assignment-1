@@ -32,12 +32,21 @@ def drawPolygon(vertex_points, num_points, radius):
             i += 1
     return points
 
-num_points = int(sys.argv[1])
-min_value = -10 * num_points
-max_value = 10 * num_points
-vertex_points = num_points
-random_points = generate_random_points(num_points, min_value, max_value)
-# random_points = drawPolygon(vertex_points, 0, num_points)
+flag = sys.argv[1]
+num_points = 0
+if flag != "--uniform" and flag != "--polygon":
+    print("Invalid flag. Use --uniform or --polygon")
+    sys.exit(1)
+else:
+    num_points = int(sys.argv[2])
+    min_value = -10 * num_points
+    max_value = 10 * num_points
+    vertex_points = num_points
+    if flag == "--uniform":
+        random_points = generate_random_points(num_points, min_value, max_value)
+    else:
+        random_points = drawPolygon(vertex_points, num_points, num_points)
+
 outFile = open("in.txt", "w")
 for p in random_points:
     outFile.write(f'({p[0]},{p[1]})\n')
