@@ -1,6 +1,4 @@
-# DAA Assignment 1
-
-# Development
+# Running the project
 
 ## Setup
 
@@ -8,7 +6,7 @@
 -   [Optional] Install [Doxygen](https://www.doxygen.nl/download.html) for generating documentation.
 -   Install raylib dependencies for your operating system following the wiki [here](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
 -   Install [emscripten](https://emscripten.org/docs/getting_started/downloads.html) in the `external` directory.
-    ```bash
+
         # run these commands in the project root
         cd external
         git clone https://github.com/emscripten-core/emsdk.git
@@ -19,7 +17,7 @@
         ./emsdk activate latest # it shows you some information on updating the PATH either follow them or do it on your own
         # verify the installation
         emcc --check
-    ```
+
 -   In `VSCode`, in the command center(<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>), choose the `Select configuration` option given by the `C/C++` extension by `Microsoft`. Choose the `raylib web` option.
 -   There should be no errors when you open the project's `cpp` files in `VSCode`.
 -   [Optional] Install `live-server` using `pnpm i`.
@@ -33,13 +31,7 @@ make PLATFORM=PLATFORM_WEB run
 make run
 ```
 
-## Workflow
-
--   `main.cpp` is the root of the project.
--   `src` and `include` is where most code is going to be written in.
--   After making changes to the code, you have to run the `make` command with appropriate arguments.
--   You can use the experimental utility script `run` to run make on **saving** files. For which you will have to install `entr`. You can probably do this using your package manager.
--   **Note that the utility script runs `make`(i.e., it compiles the project using `make`) for you but it does not run the build.**
+## Building
 
 ### Desktop
 
@@ -71,7 +63,7 @@ emrun ./build/convex_hull.html
 You can read about the flags [here](https://www.npmjs.com/package/live-server). When using `live-server`, you just have to create the build using `make`, whenever live-server detects changes it will reload the page for you.
 
 ```bash
-pnpm live-server build --entry-file=convex_hull.html --wait=500 -q
+pnpm live-server build --entry-file=convex_hull.html --wait=50 -q
 
 # run this another terminal window when you make changes
 make PLATFORM=PLATFORM_WEB
@@ -86,5 +78,5 @@ make PLATFORM=PLATFORM_WEB
 ./run PLATFORM_WEB
 
 # in another window run the live-server
-pnpm live-server build --entry-file=convex_hull.html --wait=500 -q
+pnpm live-server build --entry-file=convex_hull.html --wait=50 -q
 ```

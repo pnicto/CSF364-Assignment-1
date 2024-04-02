@@ -13,6 +13,7 @@
 #include "settings.h"
 #include "timer.h"
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,22 @@ EM_JS(int, getDocumentBodyWidth, (), { return window.innerWidth; });
  *
  */
 EM_JS(int, getDocumentBodyHeight, (), { return window.innerHeight; });
+/**
+ * @brief EM JS object that creates a text file from the points in the convex hull and offers it for download
+ *
+ */
+EM_JS(void, createFileDownload, (const char *data, int dataLength), {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(UTF8ToString(data, dataLength)));
+    element.setAttribute('download', 'hull.txt');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+});
 #endif
 
 //----------------------------------------------------------------------------------
@@ -73,30 +90,85 @@ bool isDropdownOpen = false;
  */
 bool showConvexHull = false;
 /**
- * @brief Indicates whether to display the settings modal.
+ * @brief Indicates whether to display the settings window.
  *
  */
 bool showSettings = false;
 /**
+ * @brief Indicates whether to display the legend window.
+ *
+ */
+bool showLegend = false;
+/**
  * @brief Specifies the position for the settings window
  *
  */
-Vector2 window_position = {10, 80};
+Vector2 settingsWindowPosition = {10, 80};
 /**
  * @brief Specifies the size of the settings window
  *
  */
-Vector2 window_size = {400, 400};
+Vector2 settingsWindowSize = {400, 400};
 /**
  * @brief Specifies the size of the content to be displayed in the settings window
  *
  */
-Vector2 content_size = {600, 600};
+Vector2 settingsContentSize = {600, 600};
+/**
+ * @brief Specifies the position for the legend window
+ *
+ */
+Vector2 legendWindowPosition = {10, 80};
+/**
+ * @brief Specifies the size of the legend window
+ *
+ */
+Vector2 legendWindowSize = {450, 200};
+/**
+ * @brief Specifies the maximum size of the legend window
+ *
+ */
+Vector2 legendWindowMaximumSize = {450, 200};
+/**
+ * @brief Specifies the size of the content to be displayed in the legend window
+ *
+ */
+Vector2 legendContentSize = {400, 250};
+/**
+ * @brief Scroll object associated with the legend window
+ *
+ */
+Vector2 legendScroll = {0, 0};
+/**
+ * @brief Specifies whether the legend window is currently being moved
+ *
+ */
+bool moving = false;
+/**
+ * @brief Specifies whether the legend window is currently being resized
+ *
+ */
+bool resizing = false;
+/**
+ * @brief Specifies whether the legend window is currently minimized
+ *
+ */
+bool minimized = false;
 /**
  * @brief Specifies the scale for drawing points
  *
  */
 float scale = 20.0f;
+/**
+ * @brief Specifies the new center X value by which points are shifted to fit on screen
+ *
+ */
+float centerX;
+/**
+ * @brief Specifies the new center Y value by which points are shifted to fit on screen
+ *
+ */
+float centerY;
 /**
  * @brief Specifies the file path from which points are loaded
  *
@@ -118,22 +190,28 @@ float numberOfPoints = 10.0f;
  */
 float duration = 0.01f;
 /**
- * @brief Height of the toolbar.
+ * @brief The height of the toolbar.
  *
  */
 const float toolbarHeight = 50;
 /**
- * @brief A collection of points (x, y) to be used as test data
+ * @brief The collection of points (x, y) to be displayed and used as the input for the convex hull algorithms.
  *
  */
 std::vector<Vector2> dataPoints;
 /**
- * @brief Indicates whether to visualize the algorithm one step at a time or play the full thing.
+ * @brief Indicates whether to visualize the algorithm one step at a time. If false, it is played automatically.
  *
  */
 bool visualizeStepByStep = true;
 /**
- * @brief A collection of points (x, y) obtained from a file before scaling
+ * @brief Helps check whether the step number has been changed manually (via the slider), in which case
+ * visualizeStepByStep is made true.
+ *
+ */
+float lastStep = 0;
+/**
+ * @brief The collection of points (x, y) obtained from a file before scaling and re-centering.
  *
  */
 std::vector<Vector2> fileDataPoints;
@@ -141,14 +219,14 @@ std::vector<Vector2> fileDataPoints;
  * @brief Represents the ConvexHullAlgorithm object.
  *
  */
-ConvexHullAlgorithm *ch;
+std::unique_ptr<ConvexHullAlgorithm> ch;
 /**
  * @brief Represents the Settings object.
  *
  */
-Settings settings(&window_position, &window_size, &content_size, "Settings");
+Settings settings(&settingsWindowPosition, &settingsWindowSize, &settingsContentSize, "Settings");
 /**
- * @brief Height of the bottom bar.
+ * @brief The height of the bottom bar.
  *
  */
 const float bottomBarHeight = 60;
@@ -183,14 +261,15 @@ int main()
     screenHeight = getDocumentBodyHeight();
 #endif
 
-    float centerX = screenWidth / 2.0f;
-    float centerY = (screenHeight + toolbarHeight) / 2.0f;
+    centerX = screenWidth / 2.0f;
+    centerY = (screenHeight + toolbarHeight) / 2.0f;
     for (auto &point : dataPoints)
     {
         point.x = centerX + point.x * scale;
         point.y = centerY + point.y * scale;
     }
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Convex Hull");
 
     // load defaultFont
@@ -231,6 +310,7 @@ static void UpdateDrawFrame(void)
     {
         ch->next();
         frameTimer.resetTimer(duration);
+        lastStep = ch->getCurrentStep();
     }
 
     if (!showConvexHull && !isDropdownOpen)
@@ -251,7 +331,24 @@ static void UpdateDrawFrame(void)
                 dataPoints.pop_back();
             }
         }
-        selectedAlgorithm == JARVIS_MARCH ? ch = new JarvisMarch(dataPoints) : ch = new Kirk(dataPoints);
+        selectedAlgorithm == JARVIS_MARCH ? ch = std::make_unique<JarvisMarch>(dataPoints)
+                                          : ch = std::make_unique<KirkpatrickSeidel>(dataPoints);
+    }
+
+    if (!showConvexHull)
+    {
+        if (IsKeyPressed(KEY_C))
+        {
+            dataPoints.clear();
+        }
+    }
+
+    if (showConvexHull)
+    {
+        if (IsKeyPressed(KEY_L))
+        {
+            showLegend = !showLegend;
+        }
     }
 
     //----------------------------------------------------------------------------------
@@ -261,6 +358,28 @@ static void UpdateDrawFrame(void)
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
+
+    if (dataPoints.size() == 0)
+    {
+        float x = static_cast<float>(GetScreenWidth() * 30) / 100;
+        float y = static_cast<float>(GetScreenHeight() * 25) / 100;
+
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 30);
+        GuiDrawText("How to use the GUI", {x, y, 700, 30}, TEXT_ALIGN_CENTER, BLACK);
+        GuiDrawText("- Left Click anywhere on the canvas to add points", {x, y + 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- Right Click anywhere on the canvas to remove last added point", {x, y + 2 * 40, 800, 30},
+                    TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- Visit the settings window for more options", {x, y + 3 * 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When NOT visualizing press C to clear the canvas", {x, y + 4 * 40, 800, 30}, TEXT_ALIGN_LEFT,
+                    BLACK);
+        GuiDrawText("- When visualizing press L to see the legend", {x, y + 5 * 40, 800, 30}, TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When visualizing press Space to toggle the visualization mode", {x, y + 6 * 40, 800, 30},
+                    TEXT_ALIGN_LEFT, BLACK);
+        GuiDrawText("- When visualizing press Left or Right arrows keys\n\n  to go back and forth between steps",
+                    {x, (y + 7.50f * 40), 800, 80}, TEXT_ALIGN_LEFT, BLACK);
+
+        GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+    }
 
     switch (static_cast<Algorithms>(selectedAlgorithm))
     {
@@ -276,8 +395,7 @@ static void UpdateDrawFrame(void)
 
     for (size_t i = 0; i < dataPoints.size(); i++)
     {
-        if (settings.checkPointValidity(dataPoints[i], &showSettings))
-            DrawCircleV(dataPoints[i], 5, BLACK);
+        DrawCircleV(dataPoints[i], 5, BLACK);
     }
 
     if (showConvexHull)
@@ -303,10 +421,14 @@ static void UpdateDrawFrame(void)
         if (previousAlgorithm != selectedAlgorithm)
         {
             showConvexHull = false;
+            visualizeStepByStep = true;
             frameTimer.stopTimer();
         }
         previousAlgorithm = selectedAlgorithm;
     }
+
+    // Draw bottom bar
+    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
 
     // disable the GuiButton when there are no points
     if (dataPoints.size() == 0)
@@ -315,6 +437,7 @@ static void UpdateDrawFrame(void)
     {
         showConvexHull = !showConvexHull;
         showSettings = false;
+        showLegend = false;
     }
     // enable the remaining GUI
     if (dataPoints.size() == 0)
@@ -329,23 +452,31 @@ static void UpdateDrawFrame(void)
         showSettings = !showSettings;
     }
 
-    settings.showSettings(&showSettings, toolbarHeight, &scale, &duration, filePath, &isFilePathAdded, &numberOfPoints,
-                          fileDataPoints, dataPoints);
-
     if (showConvexHull)
     {
         if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 810), 10, 210, 30},
-                      (visualizeStepByStep) ? "Play automatically" : "Play step by step"))
+                      (visualizeStepByStep) ? "Play automatically" : "Play step by step") ||
+            IsKeyPressed(KEY_SPACE))
         {
             visualizeStepByStep = !visualizeStepByStep;
         }
-    }
+        if (GuiButton(Rectangle{static_cast<float>(GetScreenWidth() - 970), 10, 150, 30}, "Export Hull"))
+        {
+            std::vector<Vector2> hull = ch->exportHull();
+            std::string hullString;
+            for (auto point : hull)
+            {
+                hullString.append("(" + std::to_string((point.x - 25.0f) / scale + centerX) + "," +
+                                  std::to_string((point.y - 25.0f - toolbarHeight) / scale + centerY) + ")\n");
+            }
 
-    // Draw bottom bar
-    GuiLine(Rectangle{0, GetScreenHeight() - bottomBarHeight, static_cast<float>(GetScreenWidth()), 0}, NULL);
+#if defined(PLATFORM_WEB)
+            createFileDownload(hullString.c_str(), hullString.size());
+#else
+            SaveFileText("hull.txt", const_cast<char *>(hullString.c_str()));
+#endif
+        }
 
-    if (showConvexHull)
-    {
         int maxSteps;
         float currentStep;
 
@@ -353,30 +484,43 @@ static void UpdateDrawFrame(void)
 
         maxSteps = ch->getNumberOfSteps() - 1;
         currentStep = ch->getCurrentStep();
+        if (currentStep != lastStep)
+        {
+            visualizeStepByStep = true;
+        }
 
-        if (currentStep == 1)
+        if (currentStep == 0)
             GuiDisable();
-        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev"))
+        if (GuiButton(Rectangle{70, h, 70, 30}, "Prev") || IsKeyPressed(KEY_LEFT))
         {
             ch->previous();
             currentStep = ch->getCurrentStep();
+            visualizeStepByStep = true;
         }
         GuiEnable();
 
         if (currentStep >= maxSteps)
             GuiDisable();
-        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next"))
+        if (GuiButton(Rectangle{GetScreenWidth() - 150.0f + 10.0f, h, 70, 30}, "Next") || IsKeyPressed(KEY_RIGHT))
         {
             ch->next();
             currentStep = ch->getCurrentStep();
+            visualizeStepByStep = true;
         }
         GuiEnable();
 
-        GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 1, maxSteps);
-        GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep), maxSteps),
+        GuiSlider(Rectangle{150, h, GetScreenWidth() - 300.0f, 30}, NULL, NULL, &(currentStep), 0, maxSteps);
+        GuiDrawText(TextFormat("%d/%d", static_cast<int>(currentStep + 1), maxSteps + 1),
                     {150 + (GetScreenWidth() - 450.0f) / 2, h, 150, 30}, TEXT_ALIGN_LEFT, BLACK);
         ch->setCurrentStep(currentStep);
+
+        ch->showLegend(&showLegend, &legendWindowPosition, &legendWindowSize, &legendWindowMaximumSize,
+                       &legendContentSize, &legendScroll, &moving, &resizing, &minimized, toolbarHeight,
+                       bottomBarHeight, "Legend");
+        lastStep = currentStep;
     }
+    settings.showSettings(&showSettings, toolbarHeight, bottomBarHeight, &scale, &duration, filePath, &isFilePathAdded,
+                          &numberOfPoints, fileDataPoints, dataPoints, centerX, centerY);
     EndDrawing();
     //----------------------------------------------------------------------------------
 }

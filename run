@@ -1,11 +1,21 @@
 #!/bin/bash
-PLATFORM="$1"
 
-if [ -z "$PLATFORM" ]; then
-	echo "Usage: $0 PLATFORM"
+if [[ -z "$1" || $1 == "-h" || $1 == "--help" ]]; then
+	echo "Usage: $0 [PLATFORM]"
 	echo "  PLATFORM: PLATFORM_WEB, PLATFORM_DESKTOP"
-	exit 1
+	echo "  docs: Generate documentation"
+	exit 0
 fi
+
+if [[ $1 == "docs" ]]; then
+	(
+		find src include md_docs -type f
+		find . -type f -name 'main.cpp'
+	) | entr -rc doxygen
+	exit 0
+fi
+
+PLATFORM="$1"
 
 echo "Monitoring src and include folders for changes..."
 (
