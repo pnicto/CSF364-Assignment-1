@@ -80,7 +80,7 @@ int main()
         points.push_back({x, y});
     }
     auto result = computeConvexHull(points);
-    const std::string outputFilePath = "./jarvisout.txt";
+    const std::string outputFilePath = "./jarvisskipcurrout.txt";
     std::ofstream ostream(outputFilePath);
     for (auto &point : result)
     {
