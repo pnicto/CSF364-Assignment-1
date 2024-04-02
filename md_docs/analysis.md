@@ -20,38 +20,6 @@ For Kirkpatrick-Seidel, the variations are as follows:
 1. Calculating the median by sorting instead of using the median of medians algorithm
 2. Passing arguments to functions as values instead of references
 
-# Testing 2
-
-```cpp
-for (int i = 0; i < n; i++)
-        {
-            if (i != current && i != next)
-            {
-                if ((find(convexHull.begin(), convexHull.end(), points[i]) == convexHull.end()) &&
-                    orientation(points[current], points[i], points[next]) == 0)
-                {
-                    convexHull.push_back(points[i]);
-                }
-            }
-        }
-```
-
--   something
--   something
--   something
--   something
--   something
--   [ ] checklist
--   [x] checklist
-
-[Link to Convex Hull Algorithm](@ref ConvexHullAlgorithm)
-
-`Lorem ipsum dolor sit amet.`
-
-> Lorem ipsum dolor sit amet.
-
-![alt text](./images/test1.png)
-
 # Uniform probability distribution
 
 Below is a table of the average runtimes in seconds of the algorithms for a given input size.
@@ -79,13 +47,3 @@ Below is a table of the average runtimes in seconds of the algorithms for a give
 | 1000             | 0            | 0.022                            | 0                            | 0                  | 0                                            | 0                                     |
 | 5000             | 0.016        | 0.921                            | 0.02                         | 0.006              | 0.002                                        | 0.011                                 |
 | 10000            | 0.053        | 3.369                            | 0.068                        | 0.034              | 0.017                                        | 0.034                                 |
-
-\note html a note
-
-The distance between \f$(x_1,y_1)\f$ and \f$(x_2,y_2)\f$ is
-\f$\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}\f$.
-
-# References
-
--   https://www.doxygen.nl/manual/formulas.html
--   https://www.doxygen.nl/manual/markdown.html
