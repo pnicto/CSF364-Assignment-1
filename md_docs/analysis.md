@@ -11,7 +11,7 @@ Our implemented Jarvis March Algorithm has time complexity \f$O(nh)\f$, where \f
 
 ### First Variation
 
-This implementation outputs the all the points that lie on the convex hull but at the cost of a greater time complexity than the original implementation. The calculated time complexity of this algorithm comes out to be \f$O(h(n + nlogn))\f$.
+This implementation outputs the all the points that lie on the convex hull but at the cost of a greater time complexity than the original implementation. The calculated time complexity of this algorithm comes out to be \f$O(nhlogn))\f$.
 
 ### Second Variation
 
