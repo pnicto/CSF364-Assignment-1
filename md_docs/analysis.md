@@ -70,6 +70,9 @@ Below is a table of the average runtimes in seconds of the algorithms for a give
 | 1000000          | 0.193        | 0.539                            | 0.244                        | 0.786              | 0.848                                        | 0.844                                 |
 | 10000000         | 2.285        | 6.996                            | 2.863                        | 7.204              | 9.563                                        | 8.649                                 |
 
+The above table represented as a graph:
+![uniform-profiling-graph](images/uniform_profiling_graph.png)
+
 ## Regular Polygon
 
 Below is a table of the average runtimes in seconds of the algorithms for a given input size.
@@ -83,6 +86,9 @@ Below is a table of the average runtimes in seconds of the algorithms for a give
 | 1000             | 0            | 0.022                            | 0                            | 0                  | 0                                            | 0                                     |
 | 5000             | 0.016        | 0.921                            | 0.02                         | 0.006              | 0.002                                        | 0.011                                 |
 | 10000            | 0.053        | 3.369                            | 0.068                        | 0.034              | 0.017                                        | 0.034                                 |
+
+The above table represented as a graph:
+![polygon_profiling_graph](images/polygon_profiling_graph.png)
 
 ## Observations
 - For a uniform distribution, Jarvis March comfortably outperforms Kirkpatrick-Seidel, while the reverse is true for a polygonal distribution.
