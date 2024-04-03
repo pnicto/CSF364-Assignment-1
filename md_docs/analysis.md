@@ -99,4 +99,8 @@ The above table represented as a graph:
 - We can also see that for smaller numbers (n < 10E5), Kirkpatrick-Seidel performs better or as well as by calculating the median by sorting instead of using median of medians. 
 - With median of medians for 10E5 points: ![kps_uniform_10E5](images/kps_uniform_10E5.png)
 - Without median of medians for 10E5 points: ![kpsnomom_uniform_10E5](images/kpsnomom_uniform_10E5.png)
-- Justification/explanation for this.
+- This result can be explained by the fact that `std::sort()` uses the introselect algorithm, which itself is a combination of quick select and heap select to achieve a best-case time complexity of \f$O(n)\f$, and a worst case time complexity of \f$O(nlogn)\f$. The median of medians algorithm meanwhile, has a best and worst case time complexity of \f$O(n)\f$. Furthermore, introselect does less constant work per item, making it faster than median of medians for \f$O(n)\f$ cases.
+  
+
+## References
+1. Musser, D. R. (1997). Introspective sorting and selection algorithms. Software: Practice and Experience, 27(8), 983-993.
