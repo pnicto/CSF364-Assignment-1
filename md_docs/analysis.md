@@ -46,11 +46,6 @@ We also varied the number of input points from 10E1 to 10E7 for distribution 1, 
 
 Furthermore, we also experimented with a few variations in our implementations of our algorithms to find their impact on the performance of our code.
 
-For Jarvis March, the variations are as follows:
-
-1. Accounting for collinear points
-2. Skipping the current point while iterating over all points
-
 For Kirkpatrick-Seidel, the variations are as follows:
 
 1. Calculating the median by sorting instead of using the median of medians algorithm
