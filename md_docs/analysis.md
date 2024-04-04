@@ -96,17 +96,36 @@ The above table represented as a graph:
 ## Observations
 
 -   For a uniform distribution, Jarvis March comfortably outperforms Kirkpatrick-Seidel, while the reverse is true for a polygonal distribution. We may infer that this is because, in our uniform distribution at higher point counts, enough points tend to end up near the edges of our spacial boundaries that the hull ends up mostly having the shape of our boundaries itself, and a large majority of the points are on its inside. In this case, since the number of points on the hull, \f$h\f$, is much smaller than the total number of points, the difference in \f$h\f$ and \f$logh\f$ is not significant, and therefore the lesser constant factor in Jarvis March ends up being enough to make it faster than Kirkpatrick-Seidel. On the other hand, in a polygonal distribution, the number of points on the hull is much closer to the total number of points, and the difference in \f$h\f$ and \f$logh\f$ is significant, making Kirkpatrick-Seidel faster than Jarvis March.
--   Jarvis March for a uniform distribution with 10E7 points: ![jarvis_uniform_10E7](images/jarvis_uniform_10E7.png)
--   Kirkpatrick-Seidel for a uniform distribution with 10E7 points: ![kps_uniform_10E7](images/kps_uniform_10E7.png)
+-   Jarvis March for a uniform distribution with 10E7 points: <img
+    src="jarvis_uniform_10E7.png"
+    style="width: 100%;"
+    />
+
+-   Kirkpatrick-Seidel for a uniform distribution with 10E7 points: <img
+    src="kps_uniform_10E7.png"
+    style="width: 100%;"
+    />
 -   We can see that a significant amount of time is being spent in the median of medians and quick select functions in the Kirkpatrick-Seidel algorithm, as well as a lot of `push_back` operations being performed on vectors, which also contributes to the runtime.
 
--   Jarvis March for a polygonal distribution with 10E4 points: ![jarvis_polygon_10E4](images/jarvis_polygon_10E4.png)
--   Kirkpatrick=Seidel for a polygonal distribution with 10E4 points: ![kps_polygon_10E4](images/kps_polygon_10E4.png)
+-   Jarvis March for a polygonal distribution with 10E4 points: <img
+    src="jarvis_polygon_10E4.png"
+    style="width: 100%;"
+    />
+-   Kirkpatrick=Seidel for a polygonal distribution with 10E4 points: <img
+    src="kps_polygon_10E4.png"
+    style="width: 100%;"
+    />
 -   Here, we see that with this distribution of points, Kirkpatrick-Seidel performs better than Jarvis March, and the median of medians and quick select functions are not as costly.
 
 -   We can also see that for smaller numbers (n < 10E5), Kirkpatrick-Seidel performs better or as well as by calculating the median by sorting instead of using median of medians.
--   With median of medians for 10E5 points: ![kps_uniform_10E5](images/kps_uniform_10E5.png)
--   Without median of medians for 10E5 points: ![kpsnomom_uniform_10E5](images/kpsnomom_uniform_10E5.png)
+-   With median of medians for 10E5 points: <img
+    src="kps_uniform_10E5.png"
+    style="width: 100%;"
+    />
+-   Without median of medians for 10E5 points: <img
+    src="kpsnomom_uniform_10E5.png"
+    style="width: 100%;"
+    />
 -   This result can be explained by the fact that `std::sort()` uses the introselect algorithm, which itself is a combination of quick select and heap select to achieve a best-case time complexity of \f$O(n)\f$, and a worst case time complexity of \f$O(nlogn)\f$. The median of medians algorithm meanwhile, has a best and worst case time complexity of \f$O(n)\f$. Furthermore, introselect does less constant work per item, making it faster than median of medians for \f$O(n)\f$ cases.
 
 ## References
