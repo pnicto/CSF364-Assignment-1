@@ -4,7 +4,7 @@
 
 ## Jarvis March Algorithm
 
-Our implemented Jarvis March Algorithm has time complexity \f$O(nh)\f$, where \f$n\f$ is the number of points in the input and \f$h\f$ is the number of points on the final convex hull. This implementation of the algorithm only outputs the vertices of the convex hull instead of all the points that lie on the convex hull. The case of the implementation not reporting all the points that lie on convex hull arises only when there are collinear points on the convex hull. Further we have made modifications and come up with two more implementations. The variation are as follows:
+Our implemented Jarvis March Algorithm has time complexity \f$O(nh)\f$, where \f$n\f$ is the number of points in the input and \f$h\f$ is the number of points on the final convex hull. This implementation of the algorithm only outputs the vertices of the convex hull instead of all the points that lie on the convex hull. The case of the implementation not reporting all the points that lie on convex hull arises only when there are collinear points on the convex hull. Further we have made modifications and come up with two more implementations. The variations are as follows:
 
 1. Accounting for collinear points
 2. Skipping the current point while iterating over all points
@@ -32,7 +32,18 @@ for (int i = 0; i < n; i++)
 
 ## Kirkpatrick-Seidel Algorithm
 
-# TODO
+Our implemented Kirkpatrick-Seidel Algorithm has time complexity \f$O(nlogh)\f$, where \f$n\f$ is the number of points in the input and \f$h\f$ is the number of points on the final convex hull. This implementation of the algorithm outputs every point on the convex hull, including collinear ones. Further we have made modifications and come up with two more implementations. The variations are as follows:
+
+1. Calculating the median by sorting instead of using the median of medians algorithm
+2. Passing arguments to functions as values instead of references
+
+### First Variation
+
+This implementation finds the median by sorting the points instead of using the median of medians algorithm, because despite having higher time complexity, this method tends to be faster on smaller sized inputs due to the high constant factors attached to the median of medians method.
+
+### Second Variation
+
+This variation passes arguments to functions as values instead of references, which takes away the overhead of dereferencing pointers at the cost of storing the values in the system stack. This does not affect the algorithm's time complexity.
 
 # Comparison
 
@@ -44,12 +55,7 @@ We profiled the algorithms on two types of randomly distributed points:
 
 We also varied the number of input points from 10E1 to 10E7 for distribution 1, and from 10E1 to 10E4 for distribution 2.
 
-Furthermore, we also experimented with a few variations in our implementations of our algorithms to find their impact on the performance of our code.
-
-For Kirkpatrick-Seidel, the variations are as follows:
-
-1. Calculating the median by sorting instead of using the median of medians algorithm
-2. Passing arguments to functions as values instead of references
+Furthermore, we also experimented with a few variations in our implementations of our algorithms to find their impact on the performance of our code, as detailed above.
 
 ## Uniform probability distribution
 
@@ -89,7 +95,7 @@ The above table represented as a graph:
 
 ## Observations
 
--   For a uniform distribution, Jarvis March comfortably outperforms Kirkpatrick-Seidel, while the reverse is true for a polygonal distribution.
+-   For a uniform distribution, Jarvis March comfortably outperforms Kirkpatrick-Seidel, while the reverse is true for a polygonal distribution. We may infer that this is because, in our uniform distribution at higher point counts, enough points tend to end up near the edges of our spacial boundaries that the hull ends up mostly having the shape of our boundaries itself, and a large majority of the points are on its inside. In this case, since the number of points on the hull, \f$h\f$, is much smaller than the total number of points, the difference in \f$h\f$ and \f$logh\f$ is not significant, and therefore the lesser constant factor in Jarvis March ends up being enough to make it faster than Kirkpatrick-Seidel. On the other hand, in a polygonal distribution, the number of points on the hull is much closer to the total number of points, and the difference in \f$h\f$ and \f$logh\f$ is significant, making Kirkpatrick-Seidel faster than Jarvis March.
 -   Jarvis March for a uniform distribution with 10E7 points: ![jarvis_uniform_10E7](images/jarvis_uniform_10E7.png)
 -   Kirkpatrick-Seidel for a uniform distribution with 10E7 points: ![kps_uniform_10E7](images/kps_uniform_10E7.png)
 -   We can see that a significant amount of time is being spent in the median of medians and quick select functions in the Kirkpatrick-Seidel algorithm, as well as a lot of `push_back` operations being performed on vectors, which also contributes to the runtime.
