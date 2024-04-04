@@ -66,7 +66,8 @@ Below is a table of the average runtimes in seconds of the algorithms for a give
 | 10000000         | 2.285        | 6.996                            | 2.863                        | 7.204              | 9.563                                        | 8.649                                 |
 
 The above table represented as a graph:
-![uniform-profiling-graph](images/uniform_profiling_graph.png)
+
+![Uniform profiling graph](images/uniform_profiling_graph.png)
 
 ## Regular Polygon
 
@@ -83,24 +84,25 @@ Below is a table of the average runtimes in seconds of the algorithms for a give
 | 10000            | 0.053        | 3.369                            | 0.068                        | 0.034              | 0.017                                        | 0.034                                 |
 
 The above table represented as a graph:
-![polygon_profiling_graph](images/polygon_profiling_graph.png)
+
+![Polygon profiling graph](images/polygon_profiling_graph.png)
 
 ## Observations
-- For a uniform distribution, Jarvis March comfortably outperforms Kirkpatrick-Seidel, while the reverse is true for a polygonal distribution.
-- Jarvis March for a uniform distribution with 10E7 points: ![jarvis_uniform_10E7](images/jarvis_uniform_10E7.png)
-- Kirkpatrick-Seidel for a uniform distribution with 10E7 points: ![kps_uniform_10E7](images/kps_uniform_10E7.png)
-- We can see that a significant amount of time is being spent in the median of medians and quick select functions in the Kirkpatrick-Seidel algorithm, as well as a lot of `push_back` operations being performed on vectors, which also contributes to the runtime.
 
-- Jarvis March for a polygonal distribution with 10E4 points: ![jarvis_polygon_10E4](images/jarvis_polygon_10E4.png)
-- Kirkpatrick=Seidel for a polygonal distribution with 10E4 points: ![kps_polygon_10E4](images/kps_polygon_10E4.png)
-- Here, we see that with this distribution of points, Kirkpatrick-Seidel performs better than Jarvis March, and the median of medians and quick select functions are not as costly.  
-  
-  
-- We can also see that for smaller numbers (n < 10E5), Kirkpatrick-Seidel performs better or as well as by calculating the median by sorting instead of using median of medians. 
-- With median of medians for 10E5 points: ![kps_uniform_10E5](images/kps_uniform_10E5.png)
-- Without median of medians for 10E5 points: ![kpsnomom_uniform_10E5](images/kpsnomom_uniform_10E5.png)
-- This result can be explained by the fact that `std::sort()` uses the introselect algorithm, which itself is a combination of quick select and heap select to achieve a best-case time complexity of \f$O(n)\f$, and a worst case time complexity of \f$O(nlogn)\f$. The median of medians algorithm meanwhile, has a best and worst case time complexity of \f$O(n)\f$. Furthermore, introselect does less constant work per item, making it faster than median of medians for \f$O(n)\f$ cases.
-  
+-   For a uniform distribution, Jarvis March comfortably outperforms Kirkpatrick-Seidel, while the reverse is true for a polygonal distribution.
+-   Jarvis March for a uniform distribution with 10E7 points: ![jarvis_uniform_10E7](images/jarvis_uniform_10E7.png)
+-   Kirkpatrick-Seidel for a uniform distribution with 10E7 points: ![kps_uniform_10E7](images/kps_uniform_10E7.png)
+-   We can see that a significant amount of time is being spent in the median of medians and quick select functions in the Kirkpatrick-Seidel algorithm, as well as a lot of `push_back` operations being performed on vectors, which also contributes to the runtime.
+
+-   Jarvis March for a polygonal distribution with 10E4 points: ![jarvis_polygon_10E4](images/jarvis_polygon_10E4.png)
+-   Kirkpatrick=Seidel for a polygonal distribution with 10E4 points: ![kps_polygon_10E4](images/kps_polygon_10E4.png)
+-   Here, we see that with this distribution of points, Kirkpatrick-Seidel performs better than Jarvis March, and the median of medians and quick select functions are not as costly.
+
+-   We can also see that for smaller numbers (n < 10E5), Kirkpatrick-Seidel performs better or as well as by calculating the median by sorting instead of using median of medians.
+-   With median of medians for 10E5 points: ![kps_uniform_10E5](images/kps_uniform_10E5.png)
+-   Without median of medians for 10E5 points: ![kpsnomom_uniform_10E5](images/kpsnomom_uniform_10E5.png)
+-   This result can be explained by the fact that `std::sort()` uses the introselect algorithm, which itself is a combination of quick select and heap select to achieve a best-case time complexity of \f$O(n)\f$, and a worst case time complexity of \f$O(nlogn)\f$. The median of medians algorithm meanwhile, has a best and worst case time complexity of \f$O(n)\f$. Furthermore, introselect does less constant work per item, making it faster than median of medians for \f$O(n)\f$ cases.
 
 ## References
+
 1. Musser, D. R. (1997). Introspective sorting and selection algorithms. Software: Practice and Experience, 27(8), 983-993.
