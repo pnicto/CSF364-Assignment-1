@@ -1,5 +1,7 @@
 # Project Structure and Code Design
 
+Project Demo can be found https://pnicto.github.io/CSF364-Assignment-1/convex_hull.html
+
 ## Project Structure
 
 The project has been structured as follows and the explanation of each directory is given below:
